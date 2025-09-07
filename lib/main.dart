@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pov2/config/theme/app_theme.dart';
+import 'package:pov2/presentation/pages/shimmer/splashPage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,10 +12,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: SizedBox()
+      theme: AppTheme.lightTheme,
+      debugShowCheckedModeBanner: false,
+      home: const SplashPage()
     );
   }
 }
