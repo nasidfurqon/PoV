@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pov2/core/widget/custom_layout.dart';
+import 'package:pov2/core/widget/custom_scaffold.dart';
 
 class Dashboardpage extends StatefulWidget {
   const Dashboardpage({super.key});
@@ -10,6 +12,10 @@ class Dashboardpage extends StatefulWidget {
 class _DashboardpageState extends State<Dashboardpage> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox();
+    return CustomScaffold(
+      body: AppLayout(
+        child: SizedBox(),
+      ),
+    );
   }
 }

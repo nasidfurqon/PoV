@@ -7,6 +7,7 @@ import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/core/widget/custom_layout.dart';
+import 'package:pov2/core/widget/custom_scaffold.dart';
 import 'package:pov2/core/widget/custom_textfield.dart';
 
 class LoginPage extends StatefulWidget {
@@ -19,15 +20,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Image.asset(
-          'assets/patra-tanpa-bg.png',
-          width: 180,
-          color: AppColor.background,
-        ),
-        centerTitle: true,
-      ),
+    return CustomScaffold(
       body: AppLayout(
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
