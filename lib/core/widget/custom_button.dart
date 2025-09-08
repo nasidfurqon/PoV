@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 
 class CustomButton extends StatelessWidget {
@@ -9,14 +10,14 @@ class CustomButton extends StatelessWidget {
   final double? borderRadius;
   final Function() onPressed;
   final TextStyle textStyle;
-  const CustomButton({super.key, required this.textStyle, required this.title, required this.backgroundColor, this.foregroundColor, required this.padding, this.borderRadius, required this.onPressed});
+  final IconData? icon;
+  const CustomButton({super.key, this.icon, required this.textStyle, required this.title, required this.backgroundColor, this.foregroundColor, required this.padding, this.borderRadius, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-      
         backgroundColor: backgroundColor,
         foregroundColor: foregroundColor,
         padding: padding,
@@ -25,7 +26,18 @@ class CustomButton extends StatelessWidget {
         ),
         elevation: 0,
       ),
-      child: Text(
+      child: icon != null ? Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: AppColor.background, size: AppSpacing.lg,),
+          SizedBox(width: AppSpacing.sm,),
+          Text(
+            title,
+            style: textStyle,
+          ),
+        ],
+      ) :
+      Text(
         title,
         style: textStyle,
       ),
@@ -42,13 +54,14 @@ class CustomButtonFull extends StatelessWidget {
   final double? borderRadius;
   final Function() onPressed;
   final TextStyle textStyle;
-  const CustomButtonFull({super.key, required this.textStyle, required this.title, required this.backgroundColor, this.foregroundColor, required this.padding, this.borderRadius, required this.onPressed});
+  final IconData? icon;
+  const CustomButtonFull({super.key, this.icon, required this.textStyle, required this.title, required this.backgroundColor, this.foregroundColor, required this.padding, this.borderRadius, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      child: CustomButton(textStyle: textStyle, title: title, backgroundColor: backgroundColor, padding: padding, onPressed: onPressed),
+      child: CustomButton(textStyle: textStyle, icon: icon, title: title, backgroundColor: backgroundColor, padding: padding, onPressed: onPressed),
     );
   }
 }

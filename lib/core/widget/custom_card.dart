@@ -17,6 +17,10 @@ class CustomCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColor.background,
           borderRadius: BorderRadius.circular(borderRadius ?? AppSpacing.radiusSm),
+          border: Border.all(
+            color: AppColor.border,
+            width: 1
+          ),
           boxShadow: [BoxShadow(
             color: Color.fromARGB(8, 0, 0, 0),
             blurRadius: 8,

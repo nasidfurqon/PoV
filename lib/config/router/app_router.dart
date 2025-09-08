@@ -26,7 +26,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RoutePath.dashboard,
       name: AppRoutes.dashboard.name,
-      builder: (context, state) =>  Dashboardpage()
+      builder: (context, state) =>  DashboardPage()
     )
   ]
 );  
