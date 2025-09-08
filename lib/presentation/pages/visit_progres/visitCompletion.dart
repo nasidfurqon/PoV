@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-
+import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 class VisitCompletionPage extends StatefulWidget {
   final String placeName;
   final String placeAddress;
@@ -16,6 +18,10 @@ class VisitCompletionPage extends StatefulWidget {
 
 class _VisitCompletionPageState extends State<VisitCompletionPage> {
   final TextEditingController _notesController = TextEditingController();
+  final List<File> _capturedPhotos = [];
+  final List<PlatformFile> _uploadedDocuments = [];
+
+  final ImagePicker _picker = ImagePicker();
 
   // Sample photos data
   final List<Map<String, dynamic>> photoEvidence = [
@@ -38,6 +44,40 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
       'location': 'Verified',
     },
   ];
+
+  Future<void> _takePhoto() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
+    if (pickedFile != null) {
+      setState(() {
+        _capturedPhotos.add(File(pickedFile.path));
+      });
+    }
+  }
+
+  Future<void> _uploadPhoto() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _capturedPhotos.add(File(pickedFile.path));
+      });
+    }
+  }
+
+  Future<void> _uploadDocument() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'jpg', 'png'],
+    );
+
+    if (result != null && result.files.isNotEmpty) {
+      setState(() {
+        _uploadedDocuments.add(result.files.first);
+      });
+    }
+  }
+
 
   @override
   void dispose() {
@@ -151,8 +191,9 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
                   child: ElevatedButton.icon(
                     onPressed: () {
                       // Take photo functionality
+                      _takePhoto();
                     },
-                    icon: const Icon(Icons.camera, size: 16),
+                    icon: const Icon(Icons.camera_alt_outlined, size: 16),
                     label: const Text('Take Photo'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
@@ -166,6 +207,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
                   child: OutlinedButton.icon(
                     onPressed: () {
                       // Upload photo functionality
+                      _uploadPhoto();
                     },
                     icon: const Icon(Icons.upload, size: 16),
                     label: const Text('Upload Photo'),
@@ -235,6 +277,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
                   OutlinedButton.icon(
                     onPressed: () {
                       // Upload document functionality
+                      _uploadDocument();
                     },
                     icon: const Icon(Icons.upload_file, size: 20),
                     label: const Text('Upload Document'),
