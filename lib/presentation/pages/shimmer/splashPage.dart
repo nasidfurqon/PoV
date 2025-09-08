@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:pov2/config/router/app_routes.dart';
 import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
+import 'package:go_router/go_router.dart';
 
 class SplashPage extends StatelessWidget {
   const SplashPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Future.delayed(const Duration(seconds: 1), () {
+      context.goNamed(AppRoutes.login.name);
+    });
     return Scaffold(
       backgroundColor: AppColor.primary,
       body: Center(
