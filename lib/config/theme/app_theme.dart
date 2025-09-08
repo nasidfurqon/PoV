@@ -21,7 +21,7 @@ class AppTheme {
 
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColor.textSecondary,
+        fillColor: AppColor.background,
         contentPadding: EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: AppSpacing.md),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
