@@ -6,7 +6,7 @@ import 'package:pov2/core/utils/format_date.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_layout.dart';
 import 'package:pov2/core/widget/custom_scaffold.dart';
-import 'package:pov2/data/visitData.dart';
+import 'package:pov2/data/services/visitData.dart';
 import 'package:pov2/presentation/widgets/custom_card_dashboard.dart';
 
 class DashboardPage extends StatefulWidget {

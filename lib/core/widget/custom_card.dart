@@ -6,7 +6,8 @@ class CustomCard extends StatelessWidget {
   final Widget child;
   final EdgeInsets padding;
   final double? borderRadius;
-  CustomCard({super.key, required this.child, required this.padding, this.borderRadius});
+  final Color? color;
+  CustomCard({super.key,this.color, required this.child, required this.padding, this.borderRadius});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,7 @@ class CustomCard extends StatelessWidget {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: AppColor.background,
+          color: color ?? AppColor.background,
           borderRadius: BorderRadius.circular(borderRadius ?? AppSpacing.radiusSm),
           border: Border.all(
             color: AppColor.border,

@@ -76,7 +76,7 @@ class CustomCardDashboard extends StatelessWidget {
               backgroundColor: AppColor.primary,
               padding: EdgeInsets.all(2),
               onPressed: () {
-                context.goNamed(AppRoutes.visit.name, pathParameters: {
+                context.pushNamed(AppRoutes.visit.name, pathParameters: {
                   'id': id.toString()
                 });
               },
