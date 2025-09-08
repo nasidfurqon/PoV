@@ -10,15 +10,21 @@ class AppText {
 
   static const TextStyle heading2 = TextStyle(
     fontSize: 20,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w700,
     color: AppColor.textPrimary
   );
 
   static const TextStyle heading3 = TextStyle(
     fontSize: 18,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w600,
     color: AppColor.textPrimary,
   );
+
+  static const TextStyle heading3Secondary = TextStyle(
+      fontSize: 18,
+      fontWeight: FontWeight.w600,
+      color: AppColor.textTertiary,
+    );
 
   static const TextStyle body = TextStyle(
     fontSize: 16,
@@ -27,7 +33,7 @@ class AppText {
   );
 
   static const TextStyle caption = TextStyle(
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: FontWeight.normal,
     color: AppColor.textSecondary
   );
