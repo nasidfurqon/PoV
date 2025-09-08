@@ -11,7 +11,8 @@ class CustomButton extends StatelessWidget {
   final Function() onPressed;
   final TextStyle textStyle;
   final IconData? icon;
-  const CustomButton({super.key, this.icon, required this.textStyle, required this.title, required this.backgroundColor, this.foregroundColor, required this.padding, this.borderRadius, required this.onPressed});
+  final Color? iconColor;
+  const CustomButton({super.key, this.icon, this.iconColor, required this.textStyle, required this.title, required this.backgroundColor, this.foregroundColor, required this.padding, this.borderRadius, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +30,8 @@ class CustomButton extends StatelessWidget {
       child: icon != null ? Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: AppColor.background, size: AppSpacing.lg,),
-          SizedBox(width: AppSpacing.sm,),
+          Icon(icon, color: iconColor ?? AppColor.background, size: AppSpacing.lg,),
+          SizedBox(width: AppSpacing.xs),
           Text(
             title,
             style: textStyle,
@@ -55,13 +56,14 @@ class CustomButtonFull extends StatelessWidget {
   final Function() onPressed;
   final TextStyle textStyle;
   final IconData? icon;
-  const CustomButtonFull({super.key, this.icon, required this.textStyle, required this.title, required this.backgroundColor, this.foregroundColor, required this.padding, this.borderRadius, required this.onPressed});
+  final Color? iconColor;
+  const CustomButtonFull({super.key, this.iconColor, this.icon, required this.textStyle, required this.title, required this.backgroundColor, this.foregroundColor, required this.padding, this.borderRadius, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      child: CustomButton(textStyle: textStyle, icon: icon, title: title, backgroundColor: backgroundColor, padding: padding, onPressed: onPressed),
+      child: CustomButton(textStyle: textStyle, iconColor: iconColor, icon: icon, title: title, backgroundColor: backgroundColor, padding: padding, onPressed: onPressed),
     );
   }
 }

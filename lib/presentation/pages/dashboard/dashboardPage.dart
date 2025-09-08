@@ -50,7 +50,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 fit: BoxFit.cover,
               ),
             ),
-            SizedBox(width: AppSpacing.sm,),
+            SizedBox(width: AppSpacing.lg),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -75,10 +75,12 @@ class _DashboardPageState extends State<DashboardPage> {
           children: [
             Text("Today's Visit", style: AppText.heading2Secondary,),
             CustomButton(
+              iconColor: AppColor.textPrimary,
+              icon: Icons.date_range_outlined,
               textStyle: AppText.body,
               title: FormatDate.formateddDate(DateTime.now()),
               backgroundColor: AppColor.background,
-              padding: EdgeInsets.symmetric(vertical: 0, horizontal: 2),
+              padding: EdgeInsets.symmetric(vertical: 1, horizontal: 5),
               onPressed: () {},
             ),
           ],
