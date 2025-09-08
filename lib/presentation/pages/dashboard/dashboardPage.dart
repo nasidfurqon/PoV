@@ -6,6 +6,7 @@ import 'package:pov2/core/utils/format_date.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_layout.dart';
 import 'package:pov2/core/widget/custom_scaffold.dart';
+import 'package:pov2/data/visitData.dart';
 import 'package:pov2/presentation/widgets/custom_card_dashboard.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -16,6 +17,9 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  List<Map<String, dynamic>> visitUncompleted = VisitData().taskData.where((task){
+    return task['isCompleted'] == false;
+  }).toList();
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -86,28 +90,29 @@ class _DashboardPageState extends State<DashboardPage> {
           ],
         ),
         SizedBox(height: AppSpacing.global),
-        CustomCardDashboard(
-          place: 'Jakarta Office Building',
-          status: 'high',
-          street: 'Jl. Sudirman No. 123',
-          city: 'Jakarta',
-          hourfrom: '09:00',
-          hourTo: '10:00',
-          radius: '50',
-          description: 'Routine inspection and maintenance check',
+        SizedBox(
+          height: 500,
+          child: ListView.separated(
+              itemBuilder: (BuildContext context, int index){
+                final data = visitUncompleted[index];
+                return CustomCardDashboard(
+                  place: data['place'],
+                  status: data['status'],
+                  street: data['street'],
+                  city: data['city'],
+                  hourfrom: data['hourFrom'],
+                  hourTo: data['hourTo'],
+                  radius: data['radius'],
+                  description: data['description'],
+                  id: index
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return SizedBox(height: AppSpacing.global);
+              },
+              itemCount: visitUncompleted.length,
+          ),
         ),
-        SizedBox(height: AppSpacing.sm,),
-        CustomCardDashboard(
-          place: 'Jakarta Office Building',
-          status: 'normal',
-          street: 'Jl. Sudirman No. 123',
-          city: 'Jakarta',
-          hourfrom: '09:00',
-          hourTo: '10:00',
-          radius: '50',
-          description: 'Routine inspection and maintenance check',
-        ),
-
       ],
     );
   }

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:pov2/config/router/app_routes.dart';
 import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
-
+import 'package:go_router/go_router.dart';
 class CustomCardDashboard extends StatelessWidget {
   final String place;
   final String status;
@@ -15,6 +16,7 @@ class CustomCardDashboard extends StatelessWidget {
   final String hourTo;
   final String radius;
   final String description;
+  final dynamic id;
   const CustomCardDashboard({
     super.key,
     required this.place,
@@ -25,6 +27,7 @@ class CustomCardDashboard extends StatelessWidget {
     required this.hourTo,
     required this.radius,
     required this.description,
+    required this.id
   });
 
   @override
@@ -72,7 +75,11 @@ class CustomCardDashboard extends StatelessWidget {
               title: 'Start Visit',
               backgroundColor: AppColor.primary,
               padding: EdgeInsets.all(2),
-              onPressed: () {},
+              onPressed: () {
+                context.goNamed(AppRoutes.visit.name, pathParameters: {
+                  'id': id.toString()
+                });
+              },
             ),
           ],
         ),

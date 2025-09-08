@@ -6,6 +6,7 @@ import 'package:pov2/config/router/route_path.dart';
 import 'package:pov2/presentation/pages/auth/loginPage.dart';
 import 'package:pov2/presentation/pages/dashboard/dashboardPage.dart';
 import 'package:pov2/presentation/pages/shimmer/splashPage.dart';
+import 'package:pov2/presentation/pages/visit_progres/visitProgresPage.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -27,6 +28,14 @@ final GoRouter appRouter = GoRouter(
       path: RoutePath.dashboard,
       name: AppRoutes.dashboard.name,
       builder: (context, state) =>  DashboardPage()
+    ),
+    GoRoute(
+      path: RoutePath.visit,
+      name: AppRoutes.visit.name,
+      builder: (context, state) {
+        final String? id = state.pathParameters['id'];
+        return VisitProgressPage(id: id);
+      }
     )
   ]
 );  
