@@ -20,7 +20,7 @@ class SplashPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: AppSpacing.xxl ,),
+            SizedBox(height: AppSpacing.xxxl ,),
             const Text(
               'Proof-of-Visit',
               style: TextStyle(
@@ -29,10 +29,10 @@ class SplashPage extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: AppSpacing.xxl),
+            SizedBox(height: AppSpacing.xxxl),
             Column(
               children: [
-                Text('presented by:', style: AppText.heading3Secondary,),
+                Text('presented by:', style: AppText.heading3Tertiary,),
                 Image.asset('assets/patra-tanpa-bg.png', height: 150, color: AppColor.textTertiary,),
               ],
             ),

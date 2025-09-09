@@ -56,13 +56,13 @@ class _LoginPageState extends State<LoginPage> {
                   padding: EdgeInsets.all(AppSpacing.global),
                   child: Column(
                     children: [
-                      CustomTextfield(
+                      CustomTextFieldWithLabel(
                         keyboardType: TextInputType.emailAddress,
                         label: "Email",
                         hint: "anda@pertamina.com",
                       ),
                       SizedBox(height: AppSpacing.md),
-                      CustomTextfield(
+                      CustomTextFieldWithLabel(
                         keyboardType: TextInputType.visiblePassword,
                         label: "Password",
                         hint: "***",
@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       SizedBox(height: AppSpacing.md),
                       CustomButtonFull(
-                        textStyle: AppText.heading3Secondary,
+                        textStyle: AppText.heading3Tertiary,
                         title: 'Masuk',
                         backgroundColor: AppColor.primary,
                         padding: EdgeInsets.symmetric(

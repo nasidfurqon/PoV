@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
+import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/data/services/visitData.dart';
 import 'package:pov2/data/services/visitStepData.dart';
 import 'package:pov2/presentation/pages/visit_progres/visitCompletion.dart';
-
+import 'package:go_router/go_router.dart';
+import 'package:pov2/presentation/widgets/custom_header_visit.dart';
+import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 class VisitProgressPage extends StatefulWidget {
   final dynamic id;
   const VisitProgressPage({super.key, required this.id});
@@ -64,7 +67,6 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
 
   @override
   Widget build(BuildContext context) {
-    print('ID VISIT = ${widget.id}, data = ${visitData}');
     final currentStepData = stepData[currentStep - 1];
     final progressPercentage = ((currentStep / totalSteps) * 100).round();
 
@@ -74,27 +76,20 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
         backgroundColor: Colors.white,
         elevation: 1,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
-          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back, color: AppColor.textPrimary),
+          onPressed: () {context.pop();}
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               visitData['place'],
-              style: const TextStyle(
-                color: Colors.black87,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: AppText.heading3
             ),
             SizedBox(height: AppSpacing.xs),
             Text(
               visitData['street'],
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 12,
-              ),
+              style: AppText.caption
             ),
           ],
         ),
@@ -104,149 +99,13 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomCard(
-                color: Colors.white,
-                padding: EdgeInsets.all(2),
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Visit Progress',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          Text(
-                            '$progressPercentage% Complete',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Text(
-                            'Step $currentStep of $totalSteps',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[700],
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      AnimatedBuilder(
-                        animation: _progressAnimation,
-                        builder: (context, child) {
-                          return LinearProgressIndicator(
-                            value: _progressAnimation.value,
-                            backgroundColor: Colors.grey[200],
-                            valueColor: const AlwaysStoppedAnimation<Color>(Colors.red),
-                            minHeight: 8,
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-            ),
+            _header(progressPercentage),
             // Progress Card
             SizedBox(height: AppSpacing.lg),
             if(currentStep == 3)
               VisitCompletionPage(placeName: visitData['place'], placeAddress: visitData['street'])
             else
-              CustomCard(
-                  color: Colors.white,
-                  padding: EdgeInsets.all(2),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                // color: Colors.blue.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Icon(
-                                currentStepData['icon'],
-                                color: Colors.black,
-                                size: 30,
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    currentStepData['title'],
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    currentStepData['description'],
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        // Step-specific content
-                        _buildStepContent(currentStepData),
-                        const SizedBox(height: 24),
-                        // Action Button
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: _nextStep,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            child: Text(
-                              currentStepData['buttonText'],
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-              ),
+              _body(currentStepData)
           ],
         ),
       ),
@@ -254,6 +113,100 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
   }
 
 
+  Widget _header(dynamic progressPercentage){
+    return CustomCard(
+      color: Colors.white,
+      padding: EdgeInsets.all(2),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.global),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Visit Progress',
+                  style: AppText.heading3
+                ),
+                Text(
+                  '$progressPercentage% Complete',
+                  style: AppText.heading4Secondary
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Text(
+                  'Step $currentStep of $totalSteps',
+                  style: AppText.bodySecondary
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            AnimatedBuilder(
+              animation: _progressAnimation,
+              builder: (context, child) {
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(AppSpacing.xs),
+                  child: LinearProgressIndicator(
+                    value: _progressAnimation.value,
+                    backgroundColor: AppColor.background,
+                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.red),
+                    minHeight: 8,
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  Widget _body(dynamic currentStepData){
+    return CustomCard(
+        color: Colors.white,
+        padding: EdgeInsets.all(2),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.global),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomHeaderVisit(icon: currentStepData['icon'], title: currentStepData['title'], description: currentStepData['description']),
+              const SizedBox(height: AppSpacing.md),
+              // Step-specific content
+              _buildStepContent(currentStepData),
+              const SizedBox(height: AppSpacing.md),
+
+              // Action Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _nextStep,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    currentStepData['buttonText'],
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )
+    );
+  }
   Widget _buildStepContent(Map<String, dynamic> stepData) {
     switch (currentStep) {
       case 1:
@@ -270,28 +223,28 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
   Widget _buildLocationVerificationContent(Map<String, dynamic> data) {
     return Column(
       children: [
-        _buildInfoRow('Current Location', data['currentLocation'], Icons.my_location),
-        const SizedBox(height: 12),
-        _buildInfoRow('Accuracy', data['accuracy'], Icons.gps_fixed),
-        const SizedBox(height: 16),
+        _buildInfoRow('Current Location', data['currentLocation']),
+        const SizedBox(height: AppSpacing.sm),
+        _buildInfoRow('Accuracy', data['accuracy']),
+        const SizedBox(height: AppSpacing.md),
         const Divider(),
-        const SizedBox(height: 16),
-        _buildInfoRow('Target Location', data['targetLocation'], Icons.location_on),
-        const SizedBox(height: 12),
-        _buildInfoRow('Geofence', data['geofence'], Icons.radio_button_unchecked),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.md),
+        _buildInfoRow('Target Location', data['targetLocation']),
+        const SizedBox(height: AppSpacing.sm),
+        _buildInfoRow('Geofence', data['geofence']),
+        const SizedBox(height: AppSpacing.md),
         Row(
           children: [
-            const Icon(Icons.check_circle, color: Colors.green, size: 20),
+            const Icon(Icons.check_circle, color: AppColor.success, size: AppSpacing.lg),
             const SizedBox(width: 8),
             const Text(
               'Within geofence area',
               style: TextStyle(
-                color: Colors.green,
+                color: AppColor.success,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.sm),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
@@ -314,40 +267,35 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
   }
 
   Widget _buildPhotoDocumentationContent(Map<String, dynamic> data) {
-    return Column(
-      children: [
-        Container(
-          height: 100,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey[300]!),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.add_photo_alternate, size: 32, color: Colors.grey),
-                SizedBox(height: 8),
-                Text('Photos will appear here', style: TextStyle(color: Colors.grey)),
-              ],
-            ),
+    return CustomCard(
+      padding: EdgeInsets.zero,
+      child: Padding(
+        padding: EdgeInsets.all(AppSpacing.md),
+        child: const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.add_photo_alternate, size: AppSpacing.xl, color: Colors.grey),
+              SizedBox(height: AppSpacing.sm),
+              Text('Photos will appear here', style: TextStyle(color: Colors.grey)),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 
   Widget _buildCompletionContent(Map<String, dynamic> data) {
     return Column(
       children: [
-        const Icon(Icons.check_circle_outline, size: 64, color: Colors.green),
+        const Icon(Icons.check_circle_outline, size: 64, color: AppColor.success),
         const SizedBox(height: 16),
         const Text(
           'Ready to Complete Visit',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.green,
+            color: AppColor.success,
           ),
         ),
         const SizedBox(height: 8),
@@ -360,27 +308,17 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
     );
   }
 
-  Widget _buildInfoRow(String label, String value, IconData icon) {
+  Widget _buildInfoRow(String label, String value) {
     return Row(
       children: [
-        // Icon(icon, size: 16, color: Colors.grey[600]),
-        // const SizedBox(width: 8),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w500,
-          ),
+          style: AppText.heading5Secondary
         ),
         const Spacer(),
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
+          style:  AppText.heading5
         ),
       ],
     );

@@ -2,6 +2,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:pov2/config/theme/app_color.dart';
+import 'package:pov2/config/theme/app_spacing.dart';
+import 'package:pov2/config/theme/app_text.dart';
+import 'package:pov2/core/widget/custom_button.dart';
+import 'package:pov2/core/widget/custom_card.dart';
+import 'package:pov2/core/widget/custom_textfield.dart';
+import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
+
+import '../../widgets/custom_header_visit.dart';
 class VisitCompletionPage extends StatefulWidget {
   final String placeName;
   final String placeAddress;
@@ -23,7 +32,6 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
 
   final ImagePicker _picker = ImagePicker();
 
-  // Sample photos data
   final List<Map<String, dynamic>> photoEvidence = [
     {
       'type': 'evidence',
@@ -93,130 +101,80 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
         // Photo Evidence Section
         _buildPhotoEvidenceCard(),
 
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.md),
 
         // Document Upload Section
         _buildDocumentUploadCard(),
 
-        const SizedBox(height: 20),
+        const SizedBox(height:  AppSpacing.md),
 
         // Photo Evidence Gallery
         _buildPhotoEvidenceGallery(),
 
-        const SizedBox(height: 20),
+        const SizedBox(height:  AppSpacing.md),
 
         // Visit Notes Section
         _buildVisitNotesCard(),
 
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.lg),
 
         // Complete Visit Button
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () {
+        CustomButtonFull(
+            textStyle: AppText.heading4Tertiary,
+            title: 'Complete Visit',
+            backgroundColor: AppColor.primary,
+            padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
+            onPressed: (){
               _showFinalConfirmationDialog();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: const Text(
-              'Complete Visit',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
-          ),
+            }
         ),
 
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.lg),
       ],
     );
   }
 
   Widget _buildPhotoEvidenceCard() {
-    return Card(
+    return CustomCard(
       color: Colors.white,
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      padding: EdgeInsets.zero,
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(AppSpacing.global),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.camera_alt, color: Colors.black, size: 20),
-                ),
-                const SizedBox(width: 12),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Photo Evidence',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      Text(
-                        'Capture photos with automatic watermarking and location verification',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
+            CustomHeader2Visit(icon: Icons.camera_alt_outlined, title: 'Photo Evidence', description: 'Capture photos with automatic watermarking and location verification'),
+            const SizedBox(height: AppSpacing.md),
             Row(
               children: [
                 Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      // Take photo functionality
-                      _takePhoto();
-                    },
-                    icon: const Icon(Icons.camera_alt_outlined, size: 16),
-                    label: const Text('Take Photo'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    ),
-                  ),
+                  child:
+                      CustomButton(
+                          icon: Icons.camera,
+                          iconColor: AppColor.textTertiary,
+                          textStyle: AppText.heading5Tertiary,
+                          title: 'Take Photo',
+                          backgroundColor: AppColor.primary,
+                          padding: EdgeInsets.all(AppSpacing.xs),
+                          onPressed: (){
+                            _takePhoto();
+                          }
+                      )
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () {
-                      // Upload photo functionality
-                      _uploadPhoto();
-                    },
-                    icon: const Icon(Icons.upload, size: 16),
-                    label: const Text('Upload Photo'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.black,
-                      side: const BorderSide(color: Colors.black),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    ),
-                  ),
+                  child:
+                  CustomButton(
+                      icon: Icons.upload,
+                      iconColor: AppColor.textPrimary,
+                      textStyle: AppText.heading5,
+                      title: 'Upload Photo',
+                      backgroundColor: AppColor.background,
+                      padding: EdgeInsets.all(AppSpacing.xs),
+                      onPressed: (){
+                        _uploadPhoto();
+                      }
+                  )
                 ),
               ],
             ),
@@ -227,74 +185,34 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
   }
 
   Widget _buildDocumentUploadCard() {
-    return Card(
+    return CustomCard(
       color: Colors.white,
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      padding: EdgeInsets.zero,
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(AppSpacing.global),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.description, color: Colors.black, size: 20),
-                ),
-                const SizedBox(width: 12),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Document Upload',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      Text(
-                        'Upload supporting documents like reports, forms, or certificates',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
+            CustomHeader2Visit(icon: Icons.description_outlined, title: 'Document Upload', description: 'Upload supporting documents like reports, forms, or certificates'),
+            const SizedBox(height: AppSpacing.md),
             Center(
               child: Column(
                 children: [
-                  OutlinedButton.icon(
-                    onPressed: () {
-                      // Upload document functionality
-                      _uploadDocument();
-                    },
-                    icon: const Icon(Icons.upload_file, size: 20),
-                    label: const Text('Upload Document'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.black,
-                      side: const BorderSide(color: Colors.black),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    ),
+                  CustomButton(
+                      icon: Icons.upload_file,
+                      textStyle: AppText.heading5,
+                      title: 'Upload Document',
+                      iconColor: AppColor.textPrimary,
+                      backgroundColor: AppColor.background,
+                      padding: EdgeInsets.all(AppSpacing.xs),
+                      onPressed: (){
+                        _uploadDocument();
+                      }
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Supported formats: PDF, Word, Excel, Text files, Images (Max 10MB)',
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: Colors.grey[600],
-                    ),
+                    style: AppText.highlight,
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -307,50 +225,16 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
   }
 
   Widget _buildPhotoEvidenceGallery() {
-    return Card(
+    return CustomCard(
+      padding: EdgeInsets.zero,
       color: Colors.white,
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(AppSpacing.global),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.photo_library, color: Colors.black, size: 20),
-                ),
-                const SizedBox(width: 12),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Photo Evidence (3)',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      Text(
-                        'Watermarked photos with location and timestamp verification',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
+            CustomHeader2Visit(icon: Icons.photo_library_outlined, title: 'Photo Evidence (3)', description: 'Watermarked photos with location and timestamp verification'),
+            const SizedBox(height: AppSpacing.md),
             SizedBox(
               height: 120,
               child: ListView.builder(
@@ -373,23 +257,28 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
 
   Widget _buildPhotoItem(Map<String, dynamic> photo, int index) {
     Color tagColor;
+    Color bgColor;
     String tagText;
 
     switch (photo['type']) {
       case 'evidence':
-        tagColor = Colors.black;
+        tagColor = AppColor.accentMedium;
+        bgColor = AppColor.onAccentMedium;
         tagText = 'evidence';
         break;
       case 'before':
-        tagColor = Colors.orange;
+        tagColor = AppColor.accentHigh;
+        bgColor = AppColor.onAccentHigh;
         tagText = 'before';
         break;
       case 'completion':
-        tagColor = Colors.purple;
+        tagColor = AppColor.accentCompletion;
+        bgColor = AppColor.onAccentCompletion;
         tagText = 'completion';
         break;
       default:
         tagColor = Colors.grey;
+        bgColor = Colors.black;
         tagText = 'photo';
     }
 
@@ -399,17 +288,17 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
           width: 100,
           height: 120,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey[300]!),
+            borderRadius: BorderRadius.circular(AppSpacing.xs),
+            border: Border.all(color: AppColor.background),
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Container(
-              color: Colors.grey[100],
+              color: AppColor.primaryTransparent,
               child: const Icon(
                 Icons.image,
                 size: 40,
-                color: Colors.grey,
+                color: AppColor.primary,
               ),
             ),
           ),
@@ -417,114 +306,106 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
         Positioned(
           top: 4,
           left: 4,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(
-              color: tagColor,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Text(
-              tagText,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 8,
+          child:
+            CustomHighlightDashboard(
+                title: tagText,
+                customFontStyle: true,
                 fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+                fontSize: 9,
+                fontColor: tagColor,
+                containerColor: bgColor
+            )
         ),
         Positioned(
           bottom: 4,
           right: 4,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-            decoration: BoxDecoration(
-              color: Colors.green,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: const Text(
-              'Verified',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 8,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+          child: CustomHighlightDashboard(
+              title: 'Verified',
+              customFontStyle: true,
+              fontWeight: FontWeight.bold,
+              fontSize: 9,
+              fontColor: Colors.white,
+              containerColor: AppColor.success
+          )
         ),
       ],
     );
   }
 
   Widget _buildVisitNotesCard() {
-    return Card(
+    return CustomCard(
+      padding: EdgeInsets.zero,
       color: Colors.white,
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(AppSpacing.global),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            CustomHeader2Visit(icon: Icons.check_circle_outline, title: 'Visit Notes', description: 'Add notes about your visit'),
+
+            const SizedBox(height: AppSpacing.md),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.orange.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.note_alt, color: Colors.orange, size: 20),
+                Text(
+                  'Visit Notes',
+                  style: AppText.heading5,
                 ),
-                const SizedBox(width: 12),
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                SizedBox(height: AppSpacing.xs),
+                CustomTextField(
+                    maxLines: 4,
+                    hint: 'Describe what you observed, any issued found, or actions taken..'
+                ),
+
+                SizedBox(height: AppSpacing.sm,),
+                Text(
+                  'Visit Summary',
+                  style: AppText.heading5,
+                ),
+                SizedBox(height: AppSpacing.xs),
+                Column(
                   children: [
-                    Text(
-                      'Visit Notes',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _row(Icons.check_circle_outline, AppColor.success, 'Location Verified'),
+                        _row(Icons.check_circle_outline, AppColor.success, 'Selfie Verified'),
+                      ],
                     ),
-                    Text(
-                      'Add notes about your visit',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey,
-                      ),
-                    ),
+                    SizedBox(height: AppSpacing.xs),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _row(Icons.check_circle_outline, AppColor.success, 'QR Verified'),
+                        _row(Icons.camera_alt_outlined, AppColor.accentMedium, '0 Photos taken'),
+                      ],
+                    )
                   ],
                 ),
+
+                SizedBox(height: AppSpacing.sm,),
+                CustomHighlightDashboard(
+                    title: 'Estimated PoV Score: 80/100',
+                    fontColor: AppColor.textPrimary,
+                    containerColor: AppColor.background
+                )
               ],
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _notesController,
-              maxLines: 4,
-              decoration: InputDecoration(
-                hintText: 'Write your visit notes here...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: Colors.black),
-                ),
-              ),
-            ),
+            )
           ],
         ),
       ),
     );
   }
 
+  Widget _row(IconData icon, Color color, String title){
+    return Row(
+      children: [
+        Icon(icon, color: color,),
+        SizedBox(width: AppSpacing.xxs),
+        Text(title, style: AppText.heading6,)
+      ],
+    );
+  }
   void _showFinalConfirmationDialog() {
     showDialog(
       context: context,

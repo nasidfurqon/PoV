@@ -71,7 +71,7 @@ class CustomCardDashboard extends StatelessWidget {
             SizedBox(height: AppSpacing.sm,),
             CustomButtonFull(
               icon: Icons.check_circle_outline,
-              textStyle: AppText.heading3Secondary,
+              textStyle: AppText.heading3Tertiary,
               title: 'Start Visit',
               backgroundColor: AppColor.primary,
               padding: EdgeInsets.all(2),

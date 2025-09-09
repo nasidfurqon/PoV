@@ -97,7 +97,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 Text('PoV Dashboard', style: AppText.headingTertirary),
                 Text(
                   'Welcome back, Administrator',
-                  style: AppText.bodySecondary,
+                  style: AppText.bodyTertiary,
                 ),
               ],
             ),
@@ -119,7 +119,7 @@ class _DashboardPageState extends State<DashboardPage> {
               CustomButton(
                 iconColor: AppColor.textTertiary,
                 icon: Icons.date_range_outlined,
-                textStyle: AppText.bodySecondary,
+                textStyle: AppText.bodyTertiary,
                 title: FormatDate.formateddDate(DateTime.now()),
                 backgroundColor: AppColor.primary,
                 padding: EdgeInsets.symmetric(vertical: 1, horizontal: 5),
