@@ -20,7 +20,7 @@ class CustomTextField extends StatelessWidget {
           obscureText: obscureText  ,
           keyboardType: keyboardType ?? TextInputType.text,
           style: AppText.body,
-          maxLines: maxLines ?? null,
+          maxLines: maxLines ?? 1,
           decoration: InputDecoration(
               hintText: hint,
               hintStyle: AppText.caption,

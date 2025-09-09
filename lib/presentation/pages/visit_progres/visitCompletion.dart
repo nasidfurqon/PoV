@@ -1,12 +1,15 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
+import 'package:pov2/core/utils/camera_helper.dart';
+import 'package:pov2/core/utils/file_helper.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
+import 'package:pov2/core/widget/custom_file_preview.dart';
+import 'package:pov2/core/widget/custom_photo_preview.dart';
 import 'package:pov2/core/widget/custom_textfield.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 
@@ -27,10 +30,8 @@ class VisitCompletionPage extends StatefulWidget {
 
 class _VisitCompletionPageState extends State<VisitCompletionPage> {
   final TextEditingController _notesController = TextEditingController();
-  final List<File> _capturedPhotos = [];
-  final List<PlatformFile> _uploadedDocuments = [];
-
-  final ImagePicker _picker = ImagePicker();
+  File? _capturedPhotos;
+  PlatformFile? _uploadedDocuments;
 
   final List<Map<String, dynamic>> photoEvidence = [
     {
@@ -53,44 +54,37 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
     },
   ];
 
-  Future<void> _takePhoto() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
-
-    if (pickedFile != null) {
-      setState(() {
-        _capturedPhotos.add(File(pickedFile.path));
-      });
-    }
-  }
-
-  Future<void> _uploadPhoto() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      setState(() {
-        _capturedPhotos.add(File(pickedFile.path));
-      });
-    }
-  }
-
-  Future<void> _uploadDocument() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'jpg', 'png'],
-    );
-
-    if (result != null && result.files.isNotEmpty) {
-      setState(() {
-        _uploadedDocuments.add(result.files.first);
-      });
-    }
-  }
-
-
   @override
   void dispose() {
     _notesController.dispose();
     super.dispose();
+  }
+
+  Future<void> _takePhoto() async{
+    final file = await CameraHelper.takePhoto();
+    if(file != null){
+      setState(() {
+        _capturedPhotos = file;
+      });
+    }
+  }
+
+  Future<void> _uploadPhoto() async{
+    final file = await FileHelper.pickPhoto();
+    if(file != null){
+      setState(() {
+        _capturedPhotos = file;
+      });
+    }
+  }
+
+  Future<void> _uploadFile() async{
+    final file = await FileHelper.pickDocument();
+    if(file != null){
+      setState(() {
+        _uploadedDocuments = file;
+      });
+    }
   }
 
   @override
@@ -145,6 +139,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
           children: [
             CustomHeader2Visit(icon: Icons.camera_alt_outlined, title: 'Photo Evidence', description: 'Capture photos with automatic watermarking and location verification'),
             const SizedBox(height: AppSpacing.md),
+            CustomPhotoPreview(photo: _capturedPhotos),
             Row(
               children: [
                 Expanded(
@@ -195,6 +190,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
           children: [
             CustomHeader2Visit(icon: Icons.description_outlined, title: 'Document Upload', description: 'Upload supporting documents like reports, forms, or certificates'),
             const SizedBox(height: AppSpacing.md),
+            CustomFilePreview(file : _uploadedDocuments),
             Center(
               child: Column(
                 children: [
@@ -206,7 +202,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
                       backgroundColor: AppColor.background,
                       padding: EdgeInsets.all(AppSpacing.xs),
                       onPressed: (){
-                        _uploadDocument();
+                        _uploadFile();
                       }
                   ),
                   const SizedBox(height: 8),
