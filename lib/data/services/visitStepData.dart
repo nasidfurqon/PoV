@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 
 class VisitStepData{
-  final List<Map<String, dynamic>> stepData = [
+  List<Map<String, dynamic>> stepData = [
     {
       'title': 'Location Verification',
       'description': 'Verify you\'re at the correct location',
       'icon': Icons.location_on,
-      'currentLocation': '-6.208700, 106.845700',
-      'targetLocation': '-6.2088, 106.8456',
+      'currentLocation': {
+        'lat': '-',
+        'long': '-'
+      },
+      'targetLocation': {
+        'lat': '-6.208700',
+        'long': '106.845700'
+      },
       'accuracy': '±5m',
       'geofence': '50m radius',
       'isInGeofence': true,

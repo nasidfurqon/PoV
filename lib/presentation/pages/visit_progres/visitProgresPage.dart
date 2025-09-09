@@ -4,16 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
+import 'package:pov2/core/utils/location.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/core/widget/custom_photo_preview.dart';
+import 'package:pov2/core/widget/custom_progress_indicator.dart';
 import 'package:pov2/data/services/visitData.dart';
 import 'package:pov2/data/services/visitStepData.dart';
 import 'package:pov2/presentation/pages/visit_progres/visitCompletion.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pov2/presentation/widgets/custom_header_visit.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
-
+import 'package:geolocator/geolocator.dart';
 import '../../../core/utils/camera_helper.dart';
 class VisitProgressPage extends StatefulWidget {
   final dynamic id;
@@ -31,6 +33,7 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
   late AnimationController _progressAnimationController;
   late Animation<double> _progressAnimation;
   File? _capturedPhotos;
+  Position? positioned = null;
   bool isValid = false;
 
   @override
@@ -82,6 +85,27 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
     }
   }
 
+  void _checkLocation() async{
+    CustomProgressIndicator.showLoadingDialog(context);
+    Position pos = await LocationHelper.getCurrentLocation();
+    CustomProgressIndicator.hideLoading();
+    setState(() {
+      positioned = pos;
+      print('GET LOCATION, LAT ${positioned?.latitude}, LONG= ${positioned?.longitude} ');
+      stepData[0]['currentLocation']['lat'] = (positioned?.latitude).toString();
+      stepData[0]['currentLocation']['long'] = (positioned?.longitude).toString();
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Location is Valid!',
+            style: AppText.heading4Tertiary,
+          ),
+          backgroundColor: AppColor.success,
+        )
+    );
+  }
+
   void _checkPhoto(){
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -96,6 +120,7 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
       isValid = true;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -231,13 +256,13 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
   Widget _buildLocationVerificationContent(Map<String, dynamic> data) {
     return Column(
       children: [
-        _buildInfoRow('Current Location', data['currentLocation']),
+        _buildInfoRow('Current Location', '${data['currentLocation']['lat']},${data['currentLocation']['long']} '),
         const SizedBox(height: AppSpacing.sm),
         _buildInfoRow('Accuracy', data['accuracy']),
         const SizedBox(height: AppSpacing.md),
         const Divider(),
         const SizedBox(height: AppSpacing.md),
-        _buildInfoRow('Target Location', data['targetLocation']),
+        _buildInfoRow('Target Location', '${data['targetLocation']['lat']},${data['targetLocation']['long']} '),
         const SizedBox(height: AppSpacing.sm),
         _buildInfoRow('Geofence', data['geofence']),
         const SizedBox(height: AppSpacing.md),
@@ -273,9 +298,20 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
 
         const SizedBox(height: AppSpacing.md),
         // Action Button
+        if(positioned == null)
         CustomButtonFull(
             textStyle: AppText.heading4Tertiary,
             title: 'Check In',
+            backgroundColor: AppColor.primary,
+            padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
+            onPressed: (){
+              _checkLocation();
+            }
+        ),
+        if(positioned != null)
+        CustomButtonFull(
+            textStyle: AppText.heading4Tertiary,
+            title: 'Next',
             backgroundColor: AppColor.primary,
             padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
             onPressed: (){

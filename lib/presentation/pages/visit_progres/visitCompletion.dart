@@ -369,13 +369,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
                       ],
                     ),
                     SizedBox(height: AppSpacing.xs),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _row(Icons.check_circle_outline, AppColor.success, 'QR Verified'),
-                        _row(Icons.camera_alt_outlined, AppColor.accentMedium, '0 Photos taken'),
-                      ],
-                    )
+                    _row(Icons.camera_alt_outlined, AppColor.accentMedium, '0 Photos taken'),
                   ],
                 ),
 
