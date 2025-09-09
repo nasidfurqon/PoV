@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
+import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/data/services/visitData.dart';
 import 'package:pov2/data/services/visitStepData.dart';
@@ -181,26 +182,14 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
               const SizedBox(height: AppSpacing.md),
 
               // Action Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _nextStep,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    currentStepData['buttonText'],
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+              CustomButtonFull(
+                  textStyle: AppText.heading4Tertiary,
+                  title: currentStepData['buttonText'],
+                  backgroundColor: AppColor.primary,
+                  padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
+                  onPressed: (){
+                    _nextStep();
+                  }
               ),
             ],
           ),
