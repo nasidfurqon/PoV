@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
                 const Text(
                   'Masuk untuk mengakses sistem Proof-of-Visit Pertamina Patraniaga',
                   textAlign: TextAlign.center,
-                  style: AppText.caption,
+                  style: AppText.caption3,
                 ),
                 SizedBox(height: AppSpacing.md),
                 CustomButton(

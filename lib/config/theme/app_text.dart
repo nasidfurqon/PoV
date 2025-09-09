@@ -25,6 +25,11 @@ class AppText {
     color: AppColor.textPrimary
   );
 
+  static const TextStyle heading2Primary = TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.w700,
+      color: AppColor.primary
+  );
 
   static const TextStyle heading2Secondary = TextStyle(
     fontSize: 20,
@@ -57,9 +62,20 @@ static const TextStyle bodySecondary = TextStyle(
   );
 
   static const TextStyle caption = TextStyle(
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: FontWeight.normal,
     color: AppColor.textSecondary
+  );
+
+  static const TextStyle caption3 = TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.normal,
+      color: AppColor.textSecondary
+  );
+  static const TextStyle caption2 = TextStyle(
+      fontSize: 9,
+      fontWeight: FontWeight.normal,
+      color: AppColor.textPrimary
   );
 
   static const TextStyle highlight = TextStyle(

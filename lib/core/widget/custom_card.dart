@@ -7,7 +7,8 @@ class CustomCard extends StatelessWidget {
   final EdgeInsets padding;
   final double? borderRadius;
   final Color? color;
-  CustomCard({super.key,this.color, required this.child, required this.padding, this.borderRadius});
+  final bool? isBoxShadow;
+  CustomCard({super.key,this.color, this.isBoxShadow = true, required this.child, required this.padding, this.borderRadius});
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +18,10 @@ class CustomCard extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           color: color ?? AppColor.background,
-          borderRadius: BorderRadius.circular(borderRadius ?? AppSpacing.radiusSm),
+          borderRadius: BorderRadius.circular(borderRadius ?? AppSpacing.radiusLg),
           border: Border.all(
             color: AppColor.border,
-            width: 1
+            width: (isBoxShadow == true) ?  1 : 0
           ),
           boxShadow: [BoxShadow(
             color: Color.fromARGB(8, 0, 0, 0),
