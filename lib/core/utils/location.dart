@@ -1,5 +1,7 @@
 import 'package:geolocator/geolocator.dart';
 
+import '../widget/custom_progress_indicator.dart';
+
 class LocationHelper{
   static Future<Position> getCurrentLocation() async{
     bool serviceEnabled;
@@ -8,6 +10,7 @@ class LocationHelper{
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if(!serviceEnabled){
       bool opened = await Geolocator.openLocationSettings();
+      CustomProgressIndicator.hideLoading();
       return Future.error('Location services are disabled.');
     }
 
@@ -15,7 +18,9 @@ class LocationHelper{
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
+        CustomProgressIndicator.hideLoading();
         return Future.error('Location permissions are denied');
+
       }
     }
 

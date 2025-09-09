@@ -349,6 +349,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
                 ),
                 SizedBox(height: AppSpacing.xs),
                 CustomTextField(
+                    keyboardType: TextInputType.multiline,
                     maxLines: 4,
                     hint: 'Describe what you observed, any issued found, or actions taken..'
                 ),
