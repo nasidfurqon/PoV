@@ -11,19 +11,16 @@ class VisitStepData{
       'accuracy': '±5m',
       'geofence': '50m radius',
       'isInGeofence': true,
-      'buttonText': 'Check In',
     },
     {
       'title': 'Selfie Documentation',
       'description': 'Take a selfie to verify your presence at the location ',
       'icon': Icons.camera_alt,
-      'buttonText': 'Take Selfie',
     },
     {
       'title': 'Visit Completion',
       'description': 'Complete your visit',
       'icon': Icons.check_circle,
-      'buttonText': 'Complete Visit',
     },
   ];
 }

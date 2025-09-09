@@ -1,15 +1,20 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
+import 'package:pov2/core/widget/custom_photo_preview.dart';
 import 'package:pov2/data/services/visitData.dart';
 import 'package:pov2/data/services/visitStepData.dart';
 import 'package:pov2/presentation/pages/visit_progres/visitCompletion.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pov2/presentation/widgets/custom_header_visit.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
+
+import '../../../core/utils/camera_helper.dart';
 class VisitProgressPage extends StatefulWidget {
   final dynamic id;
   const VisitProgressPage({super.key, required this.id});
@@ -25,6 +30,8 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
   final List<Map<String, dynamic>> stepData = VisitStepData().stepData;
   late AnimationController _progressAnimationController;
   late Animation<double> _progressAnimation;
+  File? _capturedPhotos;
+  bool isValid = false;
 
   @override
   void initState(){
@@ -64,6 +71,30 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
       _progressAnimationController.reset();
       _progressAnimationController.forward();
     }
+  }
+
+  Future<void> _takePhoto() async{
+    final file = await CameraHelper.takePhoto();
+    if(file != null){
+      setState(() {
+        _capturedPhotos = file;
+      });
+    }
+  }
+
+  void _checkPhoto(){
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Photo is Valid!',
+            style: AppText.heading4Tertiary,
+          ),
+          backgroundColor: AppColor.success,
+        )
+    );
+    setState(() {
+      isValid = true;
+    });
   }
 
   @override
@@ -179,18 +210,6 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
               const SizedBox(height: AppSpacing.md),
               // Step-specific content
               _buildStepContent(currentStepData),
-              const SizedBox(height: AppSpacing.md),
-
-              // Action Button
-              CustomButtonFull(
-                  textStyle: AppText.heading4Tertiary,
-                  title: currentStepData['buttonText'],
-                  backgroundColor: AppColor.primary,
-                  padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
-                  onPressed: (){
-                    _nextStep();
-                  }
-              ),
             ],
           ),
         )
@@ -251,26 +270,86 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
             ),
           ],
         ),
+
+        const SizedBox(height: AppSpacing.md),
+        // Action Button
+        CustomButtonFull(
+            textStyle: AppText.heading4Tertiary,
+            title: 'Check In',
+            backgroundColor: AppColor.primary,
+            padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
+            onPressed: (){
+              _nextStep();
+            }
+        ),
       ],
     );
   }
 
   Widget _buildPhotoDocumentationContent(Map<String, dynamic> data) {
-    return CustomCard(
-      padding: EdgeInsets.zero,
-      child: Padding(
-        padding: EdgeInsets.all(AppSpacing.md),
-        child: const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.add_photo_alternate, size: AppSpacing.xl, color: Colors.grey),
-              SizedBox(height: AppSpacing.sm),
-              Text('Photos will appear here', style: TextStyle(color: Colors.grey)),
-            ],
+    return Column(
+      children: [
+
+        if(_capturedPhotos == null)
+          CustomCard(
+            padding: EdgeInsets.zero,
+            child: Padding(
+              padding: EdgeInsets.all(AppSpacing.md),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.add_photo_alternate, size: AppSpacing.xl, color: Colors.grey),
+                    SizedBox(height: AppSpacing.sm),
+                    Text('Photos will appear here', style: TextStyle(color: Colors.grey)),
+                  ],
+                ),
+              ),
+            ),
           ),
+        CustomPhotoPreview(photo: _capturedPhotos),
+        const SizedBox(height: AppSpacing.md),
+        // Action Button
+        if(_capturedPhotos == null)
+        CustomButtonFull(
+            textStyle: AppText.heading4Tertiary,
+            title: 'Take Selfie',
+            backgroundColor: AppColor.primary,
+            padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
+            onPressed: (){
+              _takePhoto();
+            }
         ),
-      ),
+        if(_capturedPhotos != null)
+        Row(
+          children: [
+            Expanded(
+              child: CustomButtonFull(
+                  textStyle: AppText.heading4Tertiary,
+                  title: 'Check',
+                  backgroundColor: AppColor.primary,
+                  padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
+                  onPressed: (){
+                    _checkPhoto();
+                  }
+              ),
+            ),
+            SizedBox(width: AppSpacing.md,),
+            Expanded(
+              child: CustomButtonFull(
+                  textStyle: AppText.heading4Tertiary,
+                  isActive: isValid,
+                  title: 'Next Step',
+                  backgroundColor: AppColor.primary,
+                  padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
+                  onPressed: (){
+                    _nextStep();
+                  }
+              ),
+            )
+          ],
+        )
+      ],
     );
   }
 

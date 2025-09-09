@@ -41,7 +41,6 @@ class _QuickMenuState extends State<QuickMenu> {
                 )
               ],
             ),
-            SizedBox(height: AppSpacing.xs)
           ],
         ),
       );

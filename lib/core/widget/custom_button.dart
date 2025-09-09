@@ -12,12 +12,13 @@ class CustomButton extends StatelessWidget {
   final TextStyle textStyle;
   final IconData? icon;
   final Color? iconColor;
-  const CustomButton({super.key, this.icon, this.iconColor, required this.textStyle, required this.title, required this.backgroundColor, this.foregroundColor, required this.padding, this.borderRadius, required this.onPressed});
+  final bool? isActive;
+  const CustomButton({super.key, this.isActive = true, this.icon, this.iconColor, required this.textStyle, required this.title, required this.backgroundColor, this.foregroundColor, required this.padding, this.borderRadius, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: onPressed,
+      onPressed: isActive == true ? onPressed : null,
       style: ElevatedButton.styleFrom(
         backgroundColor: backgroundColor,
         foregroundColor: foregroundColor,
@@ -57,13 +58,14 @@ class CustomButtonFull extends StatelessWidget {
   final TextStyle textStyle;
   final IconData? icon;
   final Color? iconColor;
-  const CustomButtonFull({super.key, this.iconColor, this.icon, required this.textStyle, required this.title, required this.backgroundColor, this.foregroundColor, required this.padding, this.borderRadius, required this.onPressed});
+  final bool? isActive;
+  const CustomButtonFull({super.key, this.iconColor, this.isActive = true  , this.icon, required this.textStyle, required this.title, required this.backgroundColor, this.foregroundColor, required this.padding, this.borderRadius, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      child: CustomButton(textStyle: textStyle, iconColor: iconColor, icon: icon, title: title, backgroundColor: backgroundColor, padding: padding, onPressed: onPressed),
+      child: CustomButton(textStyle: textStyle, isActive: isActive, iconColor: iconColor, icon: icon, title: title, backgroundColor: backgroundColor, padding: padding, onPressed: onPressed),
     );
   }
 }
