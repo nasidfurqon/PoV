@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:pov2/config/router/app_routes.dart';
 import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
@@ -17,7 +18,7 @@ import 'package:pov2/data/services/dropdown_data.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 import 'package:pov2/presentation/widgets/custom_photo_dialog.dart';
 import 'package:pov2/presentation/widgets/custom_row_icon.dart';
-
+import 'package:go_router/go_router.dart';
 import '../../../core/widget/custom_progress_indicator.dart';
 import '../../../data/services/visit_data.dart';
 import '../../widgets/custom_header_visit.dart';
@@ -510,11 +511,11 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusLg)),
         title: const Row(
           children: [
             Icon(Icons.check_circle, color: Colors.red, size: 32),
-            SizedBox(width: 12),
+            SizedBox(width: AppSpacing.md),
             Text('Complete Visit?'),
           ],
         ),
@@ -523,10 +524,10 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Are you sure you want to complete this visit?'),
-            SizedBox(height: 8),
+            SizedBox(height: AppSpacing.xs),
             Text(
               'This action cannot be undone once submitted.',
-              style: TextStyle(color: Colors.grey, fontSize: 12),
+              style: AppText.caption,
             ),
           ],
         ),
@@ -537,52 +538,13 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pop(); // Close dialog
-              _showSuccessDialog();
+              context.goNamed(AppRoutes.dashboard.name);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.md)),
             ),
             child: const Text('Complete', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showSuccessDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Column(
-          children: [
-            Icon(Icons.check_circle, color: Colors.green, size: 64),
-            SizedBox(height: 16),
-            Text('Visit Completed Successfully!'),
-          ],
-        ),
-        content: const Text(
-          'Your visit has been completed and all data has been saved.',
-          textAlign: TextAlign.center,
-        ),
-        actions: [
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-              child: const Text('Back to Dashboard', style: TextStyle(color: Colors.white)),
-            ),
           ),
         ],
       ),

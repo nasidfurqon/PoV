@@ -102,6 +102,7 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
             style: AppText.heading4Tertiary,
           ),
           backgroundColor: AppColor.success,
+          duration: Duration(milliseconds: 800),
         )
     );
   }
@@ -114,6 +115,7 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
             style: AppText.heading4Tertiary,
           ),
           backgroundColor: AppColor.success,
+          duration: Duration(milliseconds: 800),
         )
     );
     setState(() {
