@@ -15,6 +15,8 @@ import 'package:pov2/core/widget/custom_photo_preview.dart';
 import 'package:pov2/core/widget/custom_textfield.dart';
 import 'package:pov2/data/services/dropdown_data.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
+import 'package:pov2/presentation/widgets/custom_photo_dialog.dart';
+import 'package:pov2/presentation/widgets/custom_row_icon.dart';
 
 import '../../../core/widget/custom_progress_indicator.dart';
 import '../../../data/services/visit_data.dart';
@@ -235,13 +237,13 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
                               style: AppText.heading4,
                             ),
                             SizedBox(height: AppSpacing.sm),
-                            _row(Icons.location_on_outlined, AppColor.textSecondary, visitData['place'], AppText.heading6Secondary),
+                            CustomRowIcon(icon:  Icons.location_on_outlined,color:  AppColor.textSecondary,title:  visitData['place'], textStyle:  AppText.heading6Secondary),
                             SizedBox(height: AppSpacing.xs),
-                            _row(Icons.access_time_outlined, AppColor.textSecondary, imageTimeUploaded!, AppText.heading6Secondary),
+                            CustomRowIcon(icon:  Icons.access_time_outlined, color:  AppColor.textSecondary, title:  imageTimeUploaded!,textStyle:  AppText.heading6Secondary),
                             SizedBox(height: AppSpacing.sm),
-                            _row(Icons.person, AppColor.textSecondary, '', AppText.heading6Secondary),
+                            CustomRowIcon(icon:  Icons.person, color:  AppColor.textSecondary, title:  '', textStyle:  AppText.heading6Secondary),
                             SizedBox(height: AppSpacing.xs),
-                            _row(Icons.location_on_outlined, AppColor.textSecondary, 'GPS Verified', AppText.heading6Secondary),
+                            CustomRowIcon(icon:  Icons.location_on_outlined, color:  AppColor.textSecondary,title:  'GPS Verified',textStyle:  AppText.heading6Secondary),
                           ],
                         ),
                       ),
@@ -383,21 +385,33 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
 
     return Stack(
       children: [
-        Container(
-          width: 100,
-          height: 120,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppSpacing.xs),
-            border: Border.all(color: AppColor.background),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-              color: AppColor.primaryTransparent,
-              child: const Icon(
-                Icons.image,
-                size: 40,
-                color: AppColor.primary,
+        GestureDetector(
+          onTap: (){
+            CustomPhotoDialog.show(
+                context,
+                "assets/patra_logo.png",
+                tagText,
+                "Condition before maintenance work",
+                "9/10/2025, 6:14:33 PM",
+                "-6.208800, 106.845600",
+            );
+          },
+          child: Container(
+            width: 100,
+            height: 120,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppSpacing.xs),
+              border: Border.all(color: AppColor.background),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                color: AppColor.primaryTransparent,
+                child: const Icon(
+                  Icons.image,
+                  size: 40,
+                  color: AppColor.primary,
+                ),
               ),
             ),
           ),
@@ -468,12 +482,12 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _row(Icons.check_circle_outline, AppColor.success, 'Location Verified',  AppText.heading6,),
-                        _row(Icons.check_circle_outline, AppColor.success, 'Selfie Verified',  AppText.heading6,),
+                        CustomRowIcon(icon: Icons.check_circle_outline, color: AppColor.success,title: 'Location Verified', textStyle:   AppText.heading6,),
+                        CustomRowIcon(icon: Icons.check_circle_outline,color:  AppColor.success,title:  'Selfie Verified',textStyle:   AppText.heading6,),
                       ],
                     ),
                     SizedBox(height: AppSpacing.xs),
-                    _row(Icons.camera_alt_outlined, AppColor.accentMedium, '0 Photos taken',  AppText.heading6,),
+                    CustomRowIcon(icon:  Icons.camera_alt_outlined, color:  AppColor.accentMedium,title:  '0 Photos taken',textStyle:   AppText.heading6,),
                   ],
                 ),
 
@@ -491,15 +505,6 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
     );
   }
 
-  Widget _row(IconData icon, Color color, String title, TextStyle textStyle){
-    return Row(
-      children: [
-        Icon(icon, color: color,),
-        SizedBox(width: AppSpacing.xxs),
-        Text(title, style: textStyle)
-      ],
-    );
-  }
   void _showFinalConfirmationDialog() {
     showDialog(
       context: context,

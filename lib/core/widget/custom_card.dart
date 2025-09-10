@@ -6,15 +6,17 @@ class CustomCard extends StatelessWidget {
   final Widget child;
   final EdgeInsets padding;
   final double? borderRadius;
+  final double? height;
   final Color? color;
   final bool? isBoxShadow;
-  CustomCard({super.key,this.color, this.isBoxShadow = true, required this.child, required this.padding, this.borderRadius});
+  CustomCard({super.key,this.color, this.height, this.isBoxShadow = true, required this.child, required this.padding, this.borderRadius});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: padding,
       child: Container(
+        height: height ?? null,
         width: double.infinity,
         decoration: BoxDecoration(
           color: color ?? AppColor.background,

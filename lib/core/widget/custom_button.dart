@@ -13,7 +13,8 @@ class CustomButton extends StatelessWidget {
   final IconData? icon;
   final Color? iconColor;
   final bool? isActive;
-  const CustomButton({super.key, this.isActive = true, this.icon, this.iconColor, required this.textStyle, required this.title, required this.backgroundColor, this.foregroundColor, required this.padding, this.borderRadius, required this.onPressed});
+  final BorderSide? borderSide;
+  const CustomButton({super.key, this.borderSide,    this.isActive = true, this.icon, this.iconColor, required this.textStyle, required this.title, required this.backgroundColor, this.foregroundColor, required this.padding, this.borderRadius, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,8 @@ class CustomButton extends StatelessWidget {
         foregroundColor: foregroundColor,
         padding: padding,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius ?? AppSpacing.sm)
+          borderRadius: BorderRadius.circular(borderRadius ?? AppSpacing.sm),
+          side: borderSide ?? BorderSide.none
         ),
         elevation: 0,
       ),
@@ -59,13 +61,14 @@ class CustomButtonFull extends StatelessWidget {
   final IconData? icon;
   final Color? iconColor;
   final bool? isActive;
-  const CustomButtonFull({super.key, this.iconColor, this.isActive = true  , this.icon, required this.textStyle, required this.title, required this.backgroundColor, this.foregroundColor, required this.padding, this.borderRadius, required this.onPressed});
+  final BorderSide? borderSide;
+  const CustomButtonFull({super.key, this.borderSide, this.iconColor, this.isActive = true  , this.icon, required this.textStyle, required this.title, required this.backgroundColor, this.foregroundColor, required this.padding, this.borderRadius, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      child: CustomButton(textStyle: textStyle, isActive: isActive, iconColor: iconColor, icon: icon, title: title, backgroundColor: backgroundColor, padding: padding, onPressed: onPressed),
+      child: CustomButton(textStyle: textStyle, borderSide: borderSide, borderRadius: borderRadius, isActive: isActive, iconColor: iconColor, icon: icon, title: title, backgroundColor: backgroundColor, padding: padding, onPressed: onPressed),
     );
   }
 }
