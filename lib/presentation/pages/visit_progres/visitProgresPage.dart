@@ -9,8 +9,8 @@ import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/core/widget/custom_photo_preview.dart';
 import 'package:pov2/core/widget/custom_progress_indicator.dart';
-import 'package:pov2/data/services/visitData.dart';
-import 'package:pov2/data/services/visitStepData.dart';
+import 'package:pov2/data/services/visit_data.dart';
+import 'package:pov2/data/services/visitStep_data.dart';
 import 'package:pov2/presentation/pages/visit_progres/visitCompletion.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pov2/presentation/widgets/custom_header_visit.dart';
@@ -160,7 +160,7 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
             // Progress Card
             SizedBox(height: AppSpacing.lg),
             if(currentStep == 3)
-              VisitCompletionPage(placeName: visitData['place'], placeAddress: visitData['street'])
+              VisitCompletionPage(id: widget.id)
             else
               _body(currentStepData)
           ],

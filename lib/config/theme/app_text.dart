@@ -89,6 +89,12 @@ class AppText {
     color: AppColor.textPrimary,
   );
 
+  static const TextStyle heading6Secondary = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.bold,
+    color: AppColor.textSecondary,
+  );
+
   static const TextStyle heading7 = TextStyle(
     fontSize: 8,
     fontWeight: FontWeight.bold,
@@ -146,5 +152,11 @@ class AppText {
       fontSize: 12,
       fontWeight: FontWeight.normal,
       color: AppColor.textSecondary
+  );
+
+  static const TextStyle highlightPrimary = TextStyle(
+      fontSize: 12,
+      fontWeight: FontWeight.normal,
+      color: AppColor.textPrimary
   );
 }

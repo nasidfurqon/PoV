@@ -9,7 +9,7 @@ class CustomTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final bool obscureText;
   final int? maxLines;
-  const CustomTextField({super.key, this.obscureText = false,required this.hint, this.maxLines, this.keyboardType});
+  const CustomTextField({super.key,this.obscureText = false,required this.hint, this.maxLines, this.keyboardType});
 
   @override
   Widget build(BuildContext context) {
@@ -49,11 +49,12 @@ class CustomTextField extends StatelessWidget {
 
 class CustomTextFieldWithLabel extends StatelessWidget {
   final String label;
+  final TextStyle? textStyle;
   final String hint;
   final TextInputType? keyboardType; 
   final bool obscureText;
   final int? maxLines;
-  const CustomTextFieldWithLabel({super.key, this.maxLines, this.obscureText = false, required this.label, required this.hint, this.keyboardType});
+  const CustomTextFieldWithLabel({super.key, this.textStyle, this.maxLines, this.obscureText = false, required this.label, required this.hint, this.keyboardType});
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +63,7 @@ class CustomTextFieldWithLabel extends StatelessWidget {
       children: [
         Text(
           label,
-          style: AppText.body,
+          style: textStyle ?? AppText.body,
         ),
         SizedBox(height: AppSpacing.xs),
         CustomTextField(hint: hint, maxLines: maxLines, keyboardType: keyboardType, obscureText: obscureText,)

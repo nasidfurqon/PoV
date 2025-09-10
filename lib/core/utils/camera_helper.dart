@@ -1,6 +1,9 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../widget/custom_progress_indicator.dart';
 class CameraHelper{
   static final ImagePicker _picker = ImagePicker();
 

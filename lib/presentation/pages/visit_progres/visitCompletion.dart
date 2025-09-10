@@ -6,22 +6,26 @@ import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/utils/camera_helper.dart';
 import 'package:pov2/core/utils/file_helper.dart';
+import 'package:pov2/core/utils/format_date.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
+import 'package:pov2/core/widget/custom_dropdown.dart';
 import 'package:pov2/core/widget/custom_file_preview.dart';
 import 'package:pov2/core/widget/custom_photo_preview.dart';
 import 'package:pov2/core/widget/custom_textfield.dart';
+import 'package:pov2/data/services/dropdown_data.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 
+import '../../../core/widget/custom_progress_indicator.dart';
+import '../../../data/services/visit_data.dart';
 import '../../widgets/custom_header_visit.dart';
 class VisitCompletionPage extends StatefulWidget {
-  final String placeName;
-  final String placeAddress;
+  final dynamic id;
+
 
   const VisitCompletionPage({
     super.key,
-    required this.placeName,
-    required this.placeAddress,
+    required this.id,
   });
 
   @override
@@ -29,9 +33,14 @@ class VisitCompletionPage extends StatefulWidget {
 }
 
 class _VisitCompletionPageState extends State<VisitCompletionPage> {
+  late Map<String, dynamic> visitData = VisitData().taskData[int.tryParse(widget.id )!];
   final TextEditingController _notesController = TextEditingController();
   File? _capturedPhotos;
   PlatformFile? _uploadedDocuments;
+  String? imageTimeUploaded;
+  String? documentTimeUploaded;
+  final _formKey = GlobalKey<FormState>();
+  String? selectedValue;
 
   final List<Map<String, dynamic>> photoEvidence = [
     {
@@ -61,30 +70,46 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
   }
 
   Future<void> _takePhoto() async{
+    CustomProgressIndicator.showUploadingDialog(context);
     final file = await CameraHelper.takePhoto();
     if(file != null){
       setState(() {
         _capturedPhotos = file;
+        imageTimeUploaded = FormatDate.formatedDateTime(DateTime.now());
       });
     }
+    CustomProgressIndicator.hideLoading();
+  }
+
+  Future<void> _discardPhoto() async{
+    setState(() {
+      _capturedPhotos = null;
+      imageTimeUploaded = FormatDate.formatedDateTime(DateTime.now());
+    });
   }
 
   Future<void> _uploadPhoto() async{
+    CustomProgressIndicator.showUploadingDialog(context);
     final file = await FileHelper.pickPhoto();
     if(file != null){
       setState(() {
         _capturedPhotos = file;
+        imageTimeUploaded = FormatDate.formatedDateTime(DateTime.now());
       });
     }
+    CustomProgressIndicator.hideLoading();
   }
 
   Future<void> _uploadFile() async{
+    CustomProgressIndicator.showUploadingDialog(context);
     final file = await FileHelper.pickDocument();
     if(file != null){
       setState(() {
         _uploadedDocuments = file;
+        documentTimeUploaded = FormatDate.formatedDateTime(DateTime.now());
       });
     }
+    CustomProgressIndicator.hideLoading();
   }
 
   @override
@@ -140,6 +165,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
             CustomHeader2Visit(icon: Icons.camera_alt_outlined, title: 'Photo Evidence', description: 'Capture photos with automatic watermarking and location verification'),
             const SizedBox(height: AppSpacing.md),
             CustomPhotoPreview(photo: _capturedPhotos),
+            if(_capturedPhotos == null)
             Row(
               children: [
                 Expanded(
@@ -173,6 +199,83 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
                 ),
               ],
             ),
+            if(_capturedPhotos != null)
+              Column(
+                children: [
+                  SizedBox(height: AppSpacing.sm),
+                  CustomDropdownWithLabel(
+                    label: 'Photo Type',
+                    textStyle: AppText.heading5,
+                    items: DropdownData.photoType,
+                    initialValue: '1' ?? '',
+                    onChanged: (value){
+                      setState(() {
+                        selectedValue = value;
+                      });
+                    },
+                  ),
+                  SizedBox(height: AppSpacing.sm),
+                  CustomTextFieldWithLabel(
+                      textStyle: AppText.heading5,
+                      label: 'Description',
+                      maxLines: 4,
+                      keyboardType: TextInputType.multiline,
+                      hint: 'Describe what this photo shows...'
+                  ),
+                  SizedBox(height: AppSpacing.sm),
+                  CustomCard(
+                      padding: EdgeInsets.zero,
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppSpacing.sm),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start ,
+                          children: [
+                            Text(
+                              'Watermark Information',
+                              style: AppText.heading4,
+                            ),
+                            SizedBox(height: AppSpacing.sm),
+                            _row(Icons.location_on_outlined, AppColor.textSecondary, visitData['place'], AppText.heading6Secondary),
+                            SizedBox(height: AppSpacing.xs),
+                            _row(Icons.access_time_outlined, AppColor.textSecondary, imageTimeUploaded!, AppText.heading6Secondary),
+                            SizedBox(height: AppSpacing.sm),
+                            _row(Icons.person, AppColor.textSecondary, '', AppText.heading6Secondary),
+                            SizedBox(height: AppSpacing.xs),
+                            _row(Icons.location_on_outlined, AppColor.textSecondary, 'GPS Verified', AppText.heading6Secondary),
+                          ],
+                        ),
+                      ),
+                  ),
+                  SizedBox(height: AppSpacing.xs),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: CustomButton(
+                            textStyle: AppText.heading4Tertiary,
+                            title: 'Save Photo',
+                            backgroundColor: AppColor.primary,
+                            padding: EdgeInsets.all(AppSpacing.xs),
+                            onPressed: (){}
+                        ),
+                      ),
+                      SizedBox(width: AppSpacing.xs),
+                      Expanded(
+                        flex: 1,
+                        child: CustomButton(
+                            textStyle: AppText.heading4,
+                            title: 'Discard',
+                            backgroundColor: AppColor.background,
+                            padding: EdgeInsets.all(AppSpacing.xs),
+                            onPressed: (){
+                              _discardPhoto();
+                            }
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              )
           ],
         ),
       ),
@@ -365,12 +468,12 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _row(Icons.check_circle_outline, AppColor.success, 'Location Verified'),
-                        _row(Icons.check_circle_outline, AppColor.success, 'Selfie Verified'),
+                        _row(Icons.check_circle_outline, AppColor.success, 'Location Verified',  AppText.heading6,),
+                        _row(Icons.check_circle_outline, AppColor.success, 'Selfie Verified',  AppText.heading6,),
                       ],
                     ),
                     SizedBox(height: AppSpacing.xs),
-                    _row(Icons.camera_alt_outlined, AppColor.accentMedium, '0 Photos taken'),
+                    _row(Icons.camera_alt_outlined, AppColor.accentMedium, '0 Photos taken',  AppText.heading6,),
                   ],
                 ),
 
@@ -388,12 +491,12 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
     );
   }
 
-  Widget _row(IconData icon, Color color, String title){
+  Widget _row(IconData icon, Color color, String title, TextStyle textStyle){
     return Row(
       children: [
         Icon(icon, color: color,),
         SizedBox(width: AppSpacing.xxs),
-        Text(title, style: AppText.heading6,)
+        Text(title, style: textStyle)
       ],
     );
   }

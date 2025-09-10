@@ -6,7 +6,7 @@ import '../../../config/theme/app_color.dart';
 import '../../../config/theme/app_spacing.dart';
 import '../../../config/theme/app_theme.dart';
 import '../../../config/theme/app_text.dart';
-import '../../../data/models/dashboardModel.dart';
+import '../../../data/models/dashboard_model.dart';
 
 class QuickMenu extends StatefulWidget {
   final String status;

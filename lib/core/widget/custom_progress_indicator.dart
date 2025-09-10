@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
+import 'package:pov2/config/theme/app_text.dart';
 
-class CustomProgressIndicator{
+class   CustomProgressIndicator{
   static BuildContext? _dialogContext;
 
   static showLoadingDialog(BuildContext context){
@@ -18,7 +19,28 @@ class CustomProgressIndicator{
                 children: [
                   CircularProgressIndicator(),
                   SizedBox(height: AppSpacing.lg),
-                  Text('Procesing..')
+                  Text('Procesing..', style: AppText.heading4,)
+                ],
+              ),
+            ),
+          );
+        }
+    );
+  }
+
+  static showUploadingDialog(BuildContext context){
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        useRootNavigator: true,
+        builder:(BuildContext dialogContext){
+          _dialogContext = dialogContext;
+          return const AlertDialog(
+            content: SizedBox(
+              height: 23,
+              child: Column(
+                children: [
+                  Text('Uploading..', style: AppText.heading4,)
                 ],
               ),
             ),

@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 
+import 'custom_progress_indicator.dart';
+
 class CustomPhotoPreview extends StatelessWidget {
   final File? photo;
   const CustomPhotoPreview({super.key, this.photo});
@@ -21,5 +23,6 @@ class CustomPhotoPreview extends StatelessWidget {
           fit: BoxFit.cover,
         ),
       );
+
   }
 }

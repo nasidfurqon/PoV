@@ -7,7 +7,7 @@ import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/core/widget/custom_layout.dart';
 import 'package:pov2/core/widget/custom_scaffold.dart';
-import 'package:pov2/data/services/visitData.dart';
+import 'package:pov2/data/services/visit_data.dart';
 import 'package:pov2/presentation/pages/dashboard/quickMenu.dart';
 import 'package:pov2/presentation/widgets/custom_card_dashboard.dart';
 
