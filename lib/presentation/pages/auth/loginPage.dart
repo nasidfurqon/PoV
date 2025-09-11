@@ -49,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
                     horizontal: AppSpacing.sm,
                   ),
                   onPressed: () {
-                    context.goNamed(AppRoutes.dashboard.name);
+                    context.goNamed(AppRoutes.home.name);
                   },
                 ),
                 Padding(

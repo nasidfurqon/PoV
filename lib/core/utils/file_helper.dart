@@ -43,7 +43,7 @@ class FileHelper {
 
     int logoSize = (originalImage.height * 0.03).toInt();
     int spacingY = (originalImage.height * 0.01).toInt();
-    int padding = (originalImage.height * 0.02).toInt();
+    int padding = (originalImage.height * 0.02).toInt();  
     print('IMAGE UPLOADED HIGH = ${originalImage.height}');
 
     img.BitmapFont font;

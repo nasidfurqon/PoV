@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pov2/config/router/app_routes.dart';
 import 'package:pov2/config/router/route_path.dart';
+import 'package:pov2/presentation/main_page.dart';
 import 'package:pov2/presentation/pages/auth/loginPage.dart';
 import 'package:pov2/presentation/pages/dashboard/dashboardPage.dart';
 import 'package:pov2/presentation/pages/shimmer/splashPage.dart';
@@ -36,6 +37,11 @@ final GoRouter appRouter = GoRouter(
         final String? id = state.pathParameters['id'];
         return VisitProgressPage(id: id);
       }
+    ),
+    GoRoute(
+      path: RoutePath.home,
+      name: AppRoutes.home.name,
+      builder: (context, state) => MainPage()
     )
   ]
 );  
