@@ -14,7 +14,9 @@ import 'package:pov2/core/widget/custom_dropdown.dart';
 import 'package:pov2/core/widget/custom_file_preview.dart';
 import 'package:pov2/core/widget/custom_photo_preview.dart';
 import 'package:pov2/core/widget/custom_textfield.dart';
+import 'package:pov2/data/models/file_watermark_model.dart';
 import 'package:pov2/data/services/dropdown_data.dart';
+import 'package:pov2/data/services/visitStep_data.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 import 'package:pov2/presentation/widgets/custom_photo_dialog.dart';
 import 'package:pov2/presentation/widgets/custom_row_icon.dart';
@@ -37,6 +39,7 @@ class VisitCompletionPage extends StatefulWidget {
 
 class _VisitCompletionPageState extends State<VisitCompletionPage> {
   late Map<String, dynamic> visitData = VisitData().taskData[int.tryParse(widget.id )!];
+  late List<Map<String, dynamic>> visitStepData = VisitStepData().stepData;
   final TextEditingController _notesController = TextEditingController();
   File? _capturedPhotos;
   PlatformFile? _uploadedDocuments;
@@ -75,9 +78,20 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
   Future<void> _takePhoto() async{
     CustomProgressIndicator.showUploadingDialog(context);
     final file = await CameraHelper.takePhoto();
+    String timeNow = FormatDate.formatedDateTime(DateTime.now());
+
     if(file != null){
+      final watermarkedPhoto = await FileHelper.addTextandLogoWatermark(
+        file,
+        [
+          FileWatermarkModel(assetLogo: "assets/place-logo.png", text: visitData['place']),
+          FileWatermarkModel(assetLogo: "assets/clock-logo.png", text: timeNow),
+          FileWatermarkModel(assetLogo: "assets/place-logo.png", text: "${visitStepData[0]['currentLocation']['lat']}, ${visitStepData[0]['currentLocation']['long']}"),
+          FileWatermarkModel(assetLogo: "assets/person-logo.png", text: "undefined"),
+        ],
+      );
       setState(() {
-        _capturedPhotos = file;
+        _capturedPhotos = watermarkedPhoto;
         imageTimeUploaded = FormatDate.formatedDateTime(DateTime.now());
       });
     }
@@ -94,10 +108,20 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
   Future<void> _uploadPhoto() async{
     CustomProgressIndicator.showUploadingDialog(context);
     final file = await FileHelper.pickPhoto();
+    String timeNow = FormatDate.formatedDateTime(DateTime.now());
     if(file != null){
+      final watermarkedPhoto = await FileHelper.addTextandLogoWatermark(
+          file,
+          [
+            FileWatermarkModel(assetLogo: "assets/place-logo.png", text: visitData['place']),
+            FileWatermarkModel(assetLogo: "assets/clock-logo.png", text: timeNow),
+            FileWatermarkModel(assetLogo: "assets/place-logo.png", text: "${visitStepData[0]['currentLocation']['lat']}, ${visitStepData[0]['currentLocation']['long']}"),
+            FileWatermarkModel(assetLogo: "assets/person-logo.png", text: "undefined"),
+          ],
+      );
       setState(() {
-        _capturedPhotos = file;
-        imageTimeUploaded = FormatDate.formatedDateTime(DateTime.now());
+        _capturedPhotos = watermarkedPhoto;
+        imageTimeUploaded = timeNow;
       });
     }
     CustomProgressIndicator.hideLoading();
@@ -439,7 +463,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
               fontWeight: FontWeight.bold,
               fontSize: 9,
               fontColor: Colors.white,
-              containerColor: AppColor.success
+              containerColor: AppColor.onAccentCompleted
           )
         ),
       ],

@@ -19,8 +19,8 @@ class CustomPhotoPreview extends StatelessWidget {
         child: Image.file(
           photo!,
           width: double.infinity,
-          height: 200,
-          fit: BoxFit.cover,
+          // height: 200,
+          fit: BoxFit.fitWidth,
         ),
       );
 
