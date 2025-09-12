@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/presentation/pages/dashboard/dashboardPage.dart';
 import 'package:pov2/presentation/pages/history/history_page.dart';
+import 'package:pov2/presentation/pages/profile/profile_page.dart';
 import 'package:pov2/presentation/provider/bottom_nav_notifier.dart';
 import '../config/theme/app_spacing.dart';
 import '../config/theme/app_color.dart';
@@ -38,7 +39,7 @@ class _MainPageState extends ConsumerState<MainPage> {
               children: const [
                 DashboardPage(),
                 HistoryPage(),
-                HistoryPage()
+                ProfilePage()
               ],
             ),
           ),

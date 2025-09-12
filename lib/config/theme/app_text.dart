@@ -7,6 +7,12 @@ class AppText {
     fontWeight: FontWeight.bold,
     color: AppColor.textPrimary
   );
+
+  static const TextStyle heading1Tertiary = TextStyle(
+      fontSize: 24,
+      fontWeight: FontWeight.bold,
+      color: AppColor.textTertiary
+  );
   
   static const TextStyle headingPrimary = TextStyle(
     fontSize: 24,
