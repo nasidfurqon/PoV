@@ -1,5 +1,5 @@
 import 'package:geolocator/geolocator.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import '../widget/custom_progress_indicator.dart';
 
 class LocationHelper{
@@ -30,5 +30,17 @@ class LocationHelper{
     }
 
     return await Geolocator.getCurrentPosition();
+  }
+
+  static Future<void> openLocation(double lat, double long) async{
+    final Uri gmapsUrl = Uri.parse(
+      "https://www.google.com/maps/search/?api=1&query=$lat,$long"
+    );
+
+    if(await canLaunchUrl(gmapsUrl)){
+      await launchUrl(gmapsUrl, mode: LaunchMode.externalApplication);
+    }else{
+      throw "Cant open Google Maps";
+    }
   }
 }
