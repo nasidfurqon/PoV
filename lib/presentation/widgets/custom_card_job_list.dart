@@ -46,7 +46,7 @@ class CustomCardJobList extends StatelessWidget {
                   )
                 ],
               ),
-              SizedBox(height: AppSpacing.lg),
+              SizedBox(height: AppSpacing.xs),
               CustomRowIcon(icon: Icons.location_on_outlined, color: AppColor.textSecondary, title: place, textStyle: AppText.caption),
               SizedBox(height: AppSpacing.sm),
               CustomRowIcon(icon: Icons.calendar_today_outlined, color: AppColor.textSecondary, title: deadline, textStyle: AppText.caption),
