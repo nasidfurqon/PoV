@@ -7,6 +7,8 @@ import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../core/utils/parsing_status_color.dart';
 class CustomCardDashboard extends StatelessWidget {
   final String place;
   final String status;
@@ -43,7 +45,7 @@ class CustomCardDashboard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(place, style: AppText.heading3),
-                CustomHighlightDashboard(title: status, fontColor: _cekColor(status)[0], containerColor: _cekColor(status)[1])
+                CustomHighlightDashboard(title: status, fontColor: ParsingColor.cekColor(status)[0], containerColor: ParsingColor.cekColor(status)[1])
               ],
             ),
             SizedBox(height: AppSpacing.sm,),
@@ -85,15 +87,5 @@ class CustomCardDashboard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  List<Color> _cekColor(String status) {
-    if (status == 'high') {
-      return [AppColor.accentHigh, AppColor.onAccentHigh];
-    } else if (status == 'normal') {
-      return [AppColor.accentMedium, AppColor.onAccentMedium];
-    } else {
-      return [AppColor.accentCompleted, AppColor.onAccentCompleted];
-    }
   }
 }

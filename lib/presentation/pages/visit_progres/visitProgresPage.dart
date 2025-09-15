@@ -7,6 +7,7 @@ import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/utils/location.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
+import 'package:pov2/core/widget/custom_normal_scaffold.dart';
 import 'package:pov2/core/widget/custom_photo_preview.dart';
 import 'package:pov2/core/widget/custom_progress_indicator.dart';
 import 'package:pov2/data/services/visit_data.dart';
@@ -81,6 +82,7 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
     if(file != null){
       setState(() {
         _capturedPhotos = file;
+
       });
     }
   }
@@ -129,45 +131,37 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
     final currentStepData = stepData[currentStep - 1];
     final progressPercentage = ((currentStep / totalSteps) * 100).round();
 
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColor.textPrimary),
-          onPressed: () {context.pop();}
+    return CustomNormalScaffold(
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _header(progressPercentage),
+              // Progress Card
+              SizedBox(height: AppSpacing.lg),
+              if(currentStep == 3)
+                VisitCompletionPage(id: widget.id)
+              else
+                _body(currentStepData)
+            ],
+          ),
         ),
+        context: context,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              visitData['place'],
-              style: AppText.heading3
+                visitData['place'],
+                style: AppText.heading3
             ),
             SizedBox(height: AppSpacing.xs),
             Text(
-              visitData['street'],
-              style: AppText.caption
+                visitData['street'],
+                style: AppText.caption
             ),
           ],
         ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _header(progressPercentage),
-            // Progress Card
-            SizedBox(height: AppSpacing.lg),
-            if(currentStep == 3)
-              VisitCompletionPage(id: widget.id)
-            else
-              _body(currentStepData)
-          ],
-        ),
-      ),
     );
   }
 

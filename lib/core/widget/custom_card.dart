@@ -3,13 +3,13 @@ import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 
 class CustomCard extends StatelessWidget {
-  final Widget child;
   final EdgeInsets padding;
+  final Widget child;
   final double? borderRadius;
   final double? height;
   final Color? color;
   final bool? isBoxShadow;
-  CustomCard({super.key,this.color, this.height, this.isBoxShadow = true, required this.child, required this.padding, this.borderRadius});
+  CustomCard({super.key,this.color, this.height, this.isBoxShadow = true,required this.padding, required this.child,  this.borderRadius});
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pov2/config/router/route_path.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:go_router/go_router.dart';
 import '../../../config/router/app_routes.dart';
@@ -7,6 +8,7 @@ import '../../../config/theme/app_spacing.dart';
 import '../../../config/theme/app_theme.dart';
 import '../../../config/theme/app_text.dart';
 import '../../../data/models/dashboard_model.dart';
+import 'package:go_router/go_router.dart';
 
 class QuickMenu extends StatefulWidget {
   final String status;
@@ -50,23 +52,28 @@ class _QuickMenuState extends State<QuickMenu> {
     List<Map<String, dynamic>> menu = [
       {
         "label": "Daftar Tugas",
-        "icon": Icons.checklist_rtl_outlined
+        "icon": Icons.checklist_rtl_outlined,
+        "routes": () => context.pushNamed(AppRoutes.jobList.name)
       },
       {
         "label": "Lokasi Kunjungan",
-        "icon": Icons.location_on_outlined
+        "icon": Icons.location_on_outlined,
+        "routes": (){}
       },
       {
         "label": "Laporan",
-        "icon": Icons.bar_chart
+        "icon": Icons.bar_chart,
+        "routes": (){}
       },
       {
         "label": "Admin Panel",
-        "icon": Icons.admin_panel_settings
+        "icon": Icons.admin_panel_settings,
+        "routes": (){}
       },
       {
         "label": "Dokumentasi",
-        "icon": Icons.document_scanner_outlined
+        "icon": Icons.document_scanner_outlined,
+        "routes": (){}
       },
     ];
     return ListView.builder(
@@ -81,7 +88,7 @@ class _QuickMenuState extends State<QuickMenu> {
               label: data['label'],
               icon:Icon(data['icon'],
                   size: 34, color: AppColor.primary),
-              onTap: () {},
+              onTap: data['routes']
             ),
           );
         }
@@ -108,7 +115,7 @@ class MenuItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: (){},
+        onTap: () => onTap?.call(),
         child: _buildMenuItemContent()
     );
   }
