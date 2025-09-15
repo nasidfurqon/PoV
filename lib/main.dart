@@ -3,7 +3,8 @@ import 'package:pov2/config/router/app_router.dart';
 import 'package:pov2/config/theme/app_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 

@@ -7,6 +7,7 @@ import 'package:pov2/presentation/main_page.dart';
 import 'package:pov2/presentation/pages/auth/loginPage.dart';
 import 'package:pov2/presentation/pages/dashboard/dashboardPage.dart';
 import 'package:pov2/presentation/pages/job_list/job_list_page.dart';
+import 'package:pov2/presentation/pages/location_visit/location_visit_page.dart';
 import 'package:pov2/presentation/pages/shimmer/splashPage.dart';
 import 'package:pov2/presentation/pages/visit_progres/visitProgresPage.dart';
 
@@ -48,6 +49,11 @@ final GoRouter appRouter = GoRouter(
       path: RoutePath.jobList,
       name: AppRoutes.jobList.name,
       builder: (context, state) => JobListPage()
+    ),
+    GoRoute(
+      path: RoutePath.locationVisit,
+      name: AppRoutes.locationVisit.name,
+      builder: (context, state) => LocationVisitPage()
     )
   ]
 );  

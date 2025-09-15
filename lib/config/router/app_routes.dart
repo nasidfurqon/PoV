@@ -1,3 +1,3 @@
 enum AppRoutes {
-  splash, login, dashboard, visit, home, jobList
+  splash, login, dashboard, visit, home, jobList, locationVisit
 }

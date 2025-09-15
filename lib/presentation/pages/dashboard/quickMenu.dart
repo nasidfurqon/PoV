@@ -58,7 +58,7 @@ class _QuickMenuState extends State<QuickMenu> {
       {
         "label": "Lokasi Kunjungan",
         "icon": Icons.location_on_outlined,
-        "routes": (){}
+        "routes": () => context.pushNamed(AppRoutes.locationVisit.name)
       },
       {
         "label": "Laporan",
@@ -87,7 +87,8 @@ class _QuickMenuState extends State<QuickMenu> {
             child: MenuItem(
               label: data['label'],
               icon:Icon(data['icon'],
-                  size: 34, color: AppColor.primary),
+                  size: 34, color: AppColor.primary
+              ),
               onTap: data['routes']
             ),
           );
