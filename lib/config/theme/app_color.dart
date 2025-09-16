@@ -15,7 +15,7 @@ class AppColor {
   static const Color accentCompleted = Color(0xFF00712D);
   static const Color onAccentCompleted = Color(0xFFC2FFC7);
   static const Color accentCompletion = Color(0xFF6A0066);
-  static const Color onAccentCompletion = Color(0xFFB2B0E8);
+  static const Color onAccentCompletion = Color(0xFFEABDE6);
   static const Color success = Color(0xFF4CAF50);
   static const Color warning = Color(0xFFFFC107);
   static const Color error = Color(0xFFF44336);

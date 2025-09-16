@@ -73,7 +73,7 @@ class _QuickMenuState extends State<QuickMenu> {
       {
         "label": "Dokumentasi",
         "icon": Icons.document_scanner_outlined,
-        "routes": (){}
+        "routes": () => context.pushNamed(AppRoutes.documentation.name)
       },
     ];
     return ListView.builder(

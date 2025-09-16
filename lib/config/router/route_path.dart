@@ -7,4 +7,5 @@ class RoutePath {
   static const String jobList = '/job_list';
   static const String locationVisit = '/location_visit';
   static const String report ='/report';
+  static const String documentation = '/documentation';
 }
