@@ -52,6 +52,7 @@ class _ReportPageState extends State<ReportPage> {
 
   Widget _newReport(){
     return CustomCard(
+        isBoxShadow: false,
         gradient: LinearGradient(
           colors: [AppColor.primaryTransparent, AppColor.onAccentMedium],
           begin: Alignment.centerLeft,

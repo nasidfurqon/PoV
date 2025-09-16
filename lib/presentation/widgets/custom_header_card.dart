@@ -12,6 +12,7 @@ class CustomHeaderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomCard(
+      isBoxShadow: false ,
       color: ParsingColor.cekColor(status)[1],
       padding: EdgeInsets.zero,
       height: 80,
