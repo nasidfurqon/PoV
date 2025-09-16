@@ -116,7 +116,7 @@ import 'package:pov2/presentation/widgets/custom_row_icon.dart';
         ],
       );
     }
-
+  
     Widget _personalInformation(){
       return CustomCard(
           padding: EdgeInsets.zero,
