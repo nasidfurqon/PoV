@@ -55,8 +55,6 @@ class CustomCardBodyResume extends StatelessWidget {
                       fontColor: ParsingColor.cekColor(data['statusJadwal'])[0],
                       containerColor:  ParsingColor.cekColor(data['statusJadwal'])[1]
                   ),
-
-
                 ],
               )
             ],

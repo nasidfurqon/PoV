@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
+import 'package:pov2/core/utils/parsing_status_color.dart';
+import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/core/widget/custom_normal_scaffold.dart';
 import 'package:pov2/data/services/visit_data.dart';
 import 'package:pov2/presentation/widgets/custom_card_body_resume.dart';
 import 'package:pov2/presentation/widgets/custom_card_header_resume.dart';
+import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 
 class AdminPanelPage extends StatefulWidget {
   const AdminPanelPage({super.key});
@@ -69,7 +72,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                     child: TabBarView(
                       children: [
                         _resume(),
-                        Center(child: Text("Lokasi")),
+                        _schedule(),
                         Center(child: Text("Lokasi")),
                         Center(child: Text("Pengguna")),
                       ],
@@ -219,4 +222,111 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
         )
     );
   }
+
+  Widget _schedule(){
+    return ListView(
+      children: [
+        SizedBox(height: AppSpacing.sm,),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Jadwal Kunjungan',
+              style: AppText.heading2,
+            ),
+            CustomButton(
+                textStyle: AppText.heading4Tertiary,
+                title: 'Buat Jadwal',
+                backgroundColor: AppColor.primary,
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                onPressed: (){},
+                iconColor: AppColor.textTertiary,
+                icon: Icons.add,
+            ),
+          ],
+        ),
+        SizedBox(height: AppSpacing.sm,),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColor.border, width: 1),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                columnSpacing: 24,
+                headingRowColor: WidgetStateProperty.all(AppColor.background),
+                dividerThickness: 0.8,
+                columns: const [
+                  DataColumn(label: Text("Lokasi", style: AppText.heading4Secondary,)),
+                  DataColumn(label: Text("Ditugaskan Kepada", style: AppText.heading4Secondary)),
+                  DataColumn(label: Text("Tanggal", style: AppText.heading4Secondary)),
+                  DataColumn(label: Text("Waktu", style: AppText.heading4Secondary)),
+                  DataColumn(label: Text("Prioritas", style: AppText.heading4Secondary)),
+                  DataColumn(label: Text("Status", style: AppText.heading4Secondary)),
+                ],
+                rows: VisitData().taskData.map((e)=>DataRow(cells: _buildScheduleVisitCells(e))).toList()
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  List<DataCell> _buildScheduleVisitCells(Map<String, dynamic> data) {
+    return [
+      DataCell(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal:  AppSpacing.xs),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                data["place"] ?? ""
+              ),
+              Text(
+                '${data["street"]}, ${data['city']}',
+                style: AppText.caption,
+              ),
+            ],
+          ),
+        ),
+      ),
+      DataCell(Padding(
+        padding: const EdgeInsets.all(AppSpacing.xs),
+        child: Text(data["person"] ?? ""),
+      )),
+      DataCell(Padding(
+        padding: const EdgeInsets.all(AppSpacing.xs),
+        child: Text(data["deadline"] ?? ""),
+      )),
+      DataCell(Padding(
+        padding: const EdgeInsets.all(AppSpacing.xs),
+        child: Text('${data["hourFrom"]}-${data['hourTo']}' ?? ""),
+      )),
+      DataCell(Padding(
+        padding: const EdgeInsets.all(AppSpacing.xs),
+        child:
+          CustomHighlightDashboard(
+              title: data['status'],
+              fontColor: ParsingColor.cekColor(data['status'])[0],
+              containerColor: ParsingColor.cekColor(data['status'])[1]
+          )
+
+      )),
+      DataCell(Padding(
+        padding: const EdgeInsets.all(AppSpacing.xs),
+        child: CustomHighlightDashboard(
+            title: data['statusJadwal'],
+            fontColor: ParsingColor.cekColor(data['statusJadwal'])[0],
+            containerColor: ParsingColor.cekColor(data['statusJadwal'])[1]
+        )
+      )),
+    ];
+  }
+
 }
