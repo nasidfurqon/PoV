@@ -8,4 +8,5 @@ class RoutePath {
   static const String locationVisit = '/location_visit';
   static const String report ='/report';
   static const String documentation = '/documentation';
+  static const String adminPanel = '/adminPanel';
 }

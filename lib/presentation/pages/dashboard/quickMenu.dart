@@ -68,7 +68,7 @@ class _QuickMenuState extends State<QuickMenu> {
       {
         "label": "Admin Panel",
         "icon": Icons.admin_panel_settings,
-        "routes": (){}
+        "routes": () => context.pushNamed(AppRoutes.adminPanel.name)
       },
       {
         "label": "Dokumentasi",

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pov2/config/router/app_routes.dart';
 import 'package:pov2/config/router/route_path.dart';
 import 'package:pov2/presentation/main_page.dart';
+import 'package:pov2/presentation/pages/admin_panel/admin_panel_page.dart';
 import 'package:pov2/presentation/pages/auth/loginPage.dart';
 import 'package:pov2/presentation/pages/dashboard/dashboardPage.dart';
 import 'package:pov2/presentation/pages/documentation/documentation_page.dart';
@@ -66,6 +67,11 @@ final GoRouter appRouter = GoRouter(
       path: RoutePath.documentation,
       name: AppRoutes.documentation.name,
       builder: (context, state) => DocumentationPage()
+    ),
+    GoRoute(
+      path: RoutePath.adminPanel,
+      name: AppRoutes.adminPanel.name,
+      builder: (context, state) => AdminPanelPage()
     )
   ]
 );  
