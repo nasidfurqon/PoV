@@ -10,6 +10,8 @@ class ParsingColor{
       return [AppColor.accentMedium, AppColor.onAccentMedium];
     } else  if(status == 'Video' || status == 'MP4'){
       return [AppColor.accentCompletion, AppColor.onAccentCompletion];
+    } else if(status == 'Terjadwal' || status == 'score'){
+      return [AppColor.textPrimary, AppColor.border];
     }
     else {
       return [AppColor.accentCompleted, AppColor.onAccentCompleted];
