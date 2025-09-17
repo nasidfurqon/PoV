@@ -24,7 +24,7 @@ class CustomTextField extends StatelessWidget {
           decoration: InputDecoration(
               hintText: hint,
               hintStyle: AppText.caption,
-              contentPadding: EdgeInsets.all(AppSpacing.md),
+              contentPadding: EdgeInsets.all(AppSpacing.sm),
               filled: true,
               fillColor: AppColor.background,
               focusedBorder: OutlineInputBorder(
@@ -65,7 +65,7 @@ class CustomTextFieldWithLabel extends StatelessWidget {
           label,
           style: textStyle ?? AppText.body,
         ),
-        SizedBox(height: AppSpacing.xs),
+        SizedBox(height: AppSpacing.xxs),
         CustomTextField(hint: hint, maxLines: maxLines, keyboardType: keyboardType, obscureText: obscureText,)
       ],
     );

@@ -119,7 +119,7 @@ class _CustomDropdownWithLabelState extends State<CustomDropdownWithLabel> {
           widget.label,
           style: widget.textStyle ?? AppText.body,
         ),
-        SizedBox(height: AppSpacing.xs),
+        SizedBox(height: AppSpacing.xxs),
         CustomDropdown(items: widget.items, onSaved: widget.onSaved, hint: widget.hint ,initialValue: widget.initialValue, onChanged: widget.onChanged)
       ],
     );

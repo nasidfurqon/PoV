@@ -51,7 +51,7 @@ class CustomPhotoDialog {
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal:  AppSpacing.md),
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [

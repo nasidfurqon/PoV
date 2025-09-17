@@ -5,7 +5,10 @@ import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/utils/parsing_status_color.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
+import 'package:pov2/core/widget/custom_dropdown.dart';
+import 'package:pov2/core/widget/custom_modal_dialog.dart';
 import 'package:pov2/core/widget/custom_normal_scaffold.dart';
+import 'package:pov2/core/widget/custom_textfield.dart';
 import 'package:pov2/data/services/location_data.dart';
 import 'package:pov2/data/services/users_data.dart';
 import 'package:pov2/data/services/visit_data.dart';
@@ -13,6 +16,9 @@ import 'package:pov2/presentation/widgets/custom_card_body_resume.dart';
 import 'package:pov2/presentation/widgets/custom_card_header_resume.dart';
 import 'package:pov2/presentation/widgets/custom_card_location_admin.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
+
+import '../../../data/models/dropdown_model.dart';
+import '../../../data/services/dropdown_data.dart';
 
 class AdminPanelPage extends StatefulWidget {
   const AdminPanelPage({super.key});
@@ -24,6 +30,33 @@ class AdminPanelPage extends StatefulWidget {
 class _AdminPanelPageState extends State<AdminPanelPage> {
   final List<Map<String, dynamic>> visitData = VisitData().taskData;
   final List<Map<String, dynamic>> locationData = LocationData().data;
+  final List<Map<String, dynamic>> userData = UsersData().data;
+  final List<String> person = UsersData().data.map((e) => e['name'] as String).toList();
+  late final List<String> location = locationData.map((e) => e['place'] as String).toList();
+
+  late final List<DropdownItemModel> personDropdown = person.asMap().entries.map((entry) {
+    final index = entry.key;
+    final name = entry.value;
+    return DropdownItemModel(
+      id: (index + 1).toString(),
+      label: name,
+    );
+  }).toList();
+
+  late final List<DropdownItemModel> locationDropdown = location.asMap().entries.map((entry) {
+    final index = entry.key;
+    final name = entry.value;
+    return DropdownItemModel(
+      id: (index + 1).toString(),
+      label: name,
+    );
+  }).toList();
+
+
+  String? selectedAssignValue;
+  String? selectedLocationValue;
+  String? selectedPriorityValue;
+  String? selectedTypeLocationValue;
 
   @override
   Widget build(BuildContext context) {
@@ -244,7 +277,27 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                 title: 'Buat Jadwal',
                 backgroundColor: AppColor.primary,
                 padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-                onPressed: (){},
+                onPressed: (){
+                  CustomModelDialog.show(
+                    context,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          maxLines: 2,
+                          'Buat Jadwal Kunjungan Baru',
+                          style: AppText.heading3,
+                        ),
+                        Text(
+                          maxLines: 2,
+                          'Tugaskan kunjungan kepada petugas lapangan',
+                          style: AppText.caption,
+                        )
+                      ],
+                    ),
+                    _formSchedule()
+                  );
+                },
                 iconColor: AppColor.textTertiary,
                 icon: Icons.add,
             ),
@@ -321,7 +374,6 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
               fontColor: ParsingColor.cekColor(data['status'])[0],
               containerColor: ParsingColor.cekColor(data['status'])[1]
           )
-
       )),
       DataCell(Padding(
         padding: const EdgeInsets.all(AppSpacing.xs),
@@ -332,6 +384,61 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
         )
       )),
     ];
+  }
+
+  Widget _formSchedule(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomDropdownWithLabel(
+          label: 'Assign To',
+          items: personDropdown,
+          initialValue: '1' ?? '',
+          onChanged: (value){
+            setState(() {
+              selectedAssignValue = value;
+            });
+          },
+        ),
+        SizedBox(height: AppSpacing.xs,),
+        CustomDropdownWithLabel(
+          label: 'Assign To',
+          items: locationDropdown,
+          initialValue: '1' ?? '',
+          onChanged: (value){
+            setState(() {
+              selectedLocationValue = value;
+            });
+          },
+        ),
+        SizedBox(height: AppSpacing.xs,),
+        CustomDropdownWithLabel(
+          label: 'Priority',
+          items: DropdownData.priorityData,
+          initialValue: '1' ?? '',
+          onChanged: (value){
+            setState(() {
+              selectedPriorityValue = value;
+            });
+          },
+        ),
+        SizedBox(height: AppSpacing.xs,),
+        CustomTextFieldWithLabel(
+            label: 'Visit Purpose',
+            maxLines: 3,
+            hint: 'Describe the purpose of this visit',
+            keyboardType: TextInputType.multiline,
+        ),
+        SizedBox(height: AppSpacing.xs,),
+        CustomButtonFull(
+            textStyle: AppText.heading4Tertiary,
+            title: 'Create Schedule',
+            backgroundColor: AppColor.primary,
+            padding: EdgeInsets.zero,
+            onPressed: (){}
+        )
+      ],
+    );
   }
 
   Widget _location(){
@@ -351,7 +458,27 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                   title: 'Tambah Lokasi',
                   backgroundColor: AppColor.accentCompletion,
                   padding: EdgeInsets.all(AppSpacing.xxs),
-                  onPressed: (){},
+                  onPressed: (){
+                    CustomModelDialog.show(
+                        context,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              maxLines: 2,
+                              'Tambah Lokasi Baru',
+                              style: AppText.heading3,
+                            ),
+                            Text(
+                              maxLines: 2,
+                              'Daftarkan situs baru untuk kunjungan',
+                              style: AppText.caption,
+                            )
+                          ],
+                        ),
+                        _formLocation()
+                    );
+                  },
                   icon: Icons.add,
                   iconColor: AppColor.textTertiary,
               )
@@ -371,11 +498,78 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                   ),
                 );
               })
-
             ],
           )
         ]
       )
+    );
+  }
+
+  Widget _formLocation(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomTextFieldWithLabel(
+          label: 'Location Name',
+          hint: 'Office Building A',
+        ),
+        SizedBox(height: AppSpacing.xs,),
+        CustomDropdownWithLabel(
+          label: 'Type',
+          items: DropdownData.typeLocation,
+          initialValue: '1' ?? '',
+          onChanged: (value){
+            setState(() {
+              selectedTypeLocationValue = value;
+            });
+          },
+        ),
+        SizedBox(height: AppSpacing.xs,),
+        CustomTextFieldWithLabel(
+          label: 'Address',
+          maxLines: 3,
+          hint: 'Full address of the location',
+          keyboardType: TextInputType.multiline,
+        ),
+        SizedBox(height: AppSpacing.xs,),
+        Row(
+          children: [
+            Expanded(
+              child: CustomTextFieldWithLabel(
+                label: 'Latitude',
+                hint: '-6.2088',
+              ),
+            ),
+            SizedBox(width: AppSpacing.xs,),
+            Expanded(
+              child: CustomTextFieldWithLabel(
+                label: 'Longitude',
+                hint: '-6.2088',
+              ),
+            )
+          ],
+        ),
+        SizedBox(height: AppSpacing.xs,),
+        CustomTextFieldWithLabel(
+          label: 'Geofence',
+          hint: '100',
+        ),
+        SizedBox(height: AppSpacing.xs,),
+        CustomTextFieldWithLabel(
+          label: 'Description',
+          hint: 'Additional details about this location',
+          maxLines: 3,
+          keyboardType: TextInputType.multiline,
+        ),
+        SizedBox(height: AppSpacing.xs,),
+        CustomButtonFull(
+            textStyle: AppText.heading4Tertiary,
+            title: 'Create Location',
+            backgroundColor: AppColor.primary,
+            padding: EdgeInsets.zero,
+            onPressed: (){}
+        )
+      ],
     );
   }
 
