@@ -5,6 +5,7 @@ import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/utils/parsing_status_color.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
+import 'package:pov2/core/widget/custom_date_picker.dart';
 import 'package:pov2/core/widget/custom_dropdown.dart';
 import 'package:pov2/core/widget/custom_modal_dialog.dart';
 import 'package:pov2/core/widget/custom_normal_scaffold.dart';
@@ -410,6 +411,11 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
               selectedLocationValue = value;
             });
           },
+        ),
+        SizedBox(height: AppSpacing.xs,),
+        CustomDatePicker(
+            label: 'Date',
+            controller: TextEditingController()
         ),
         SizedBox(height: AppSpacing.xs,),
         CustomDropdownWithLabel(
