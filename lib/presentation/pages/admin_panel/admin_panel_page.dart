@@ -7,6 +7,7 @@ import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/core/widget/custom_normal_scaffold.dart';
 import 'package:pov2/data/services/location_data.dart';
+import 'package:pov2/data/services/users_data.dart';
 import 'package:pov2/data/services/visit_data.dart';
 import 'package:pov2/presentation/widgets/custom_card_body_resume.dart';
 import 'package:pov2/presentation/widgets/custom_card_header_resume.dart';
@@ -78,7 +79,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                         _resume(),
                         _schedule(),
                         _location(),
-                        Center(child: Text("Pengguna")),
+                        _users()
                       ],
                     ),
                   )
@@ -376,5 +377,80 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
         ]
       )
     );
+  }
+
+  Widget _users(){
+    return ListView(
+      children: [
+        SizedBox(height: AppSpacing.sm,),
+        Text(
+          'Pengguna',
+          style: AppText.heading2,
+        ),
+        SizedBox(height: AppSpacing.sm,),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColor.border, width: 1),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                  columnSpacing: 24,
+                  headingRowColor: WidgetStateProperty.all(AppColor.background),
+                  dividerThickness: 0.8,
+                  columns: const [
+                    DataColumn(label: Text("Nama", style: AppText.heading4Secondary,)),
+                    DataColumn(label: Text("Email", style: AppText.heading4Secondary)),
+                    DataColumn(label: Text("Peran", style: AppText.heading4Secondary)),
+                    DataColumn(label: Text("ID Karyawan", style: AppText.heading4Secondary)),
+                    DataColumn(label: Text("Status", style: AppText.heading4Secondary)),
+                    DataColumn(label: Text("bergabung", style: AppText.heading4Secondary)),
+                  ],
+                  rows: UsersData().data.map((e)=>DataRow(cells: _buildUsersCells(e))).toList()
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  List<DataCell> _buildUsersCells(Map<String, dynamic> data) {
+    return [
+      DataCell(Padding(
+        padding: const EdgeInsets.all(AppSpacing.xs),
+        child: Text(data["name"] ?? ""),
+      )),
+      DataCell(Padding(
+        padding: const EdgeInsets.all(AppSpacing.xs),
+        child: Text(data["email"] ?? ""),
+      )),
+      DataCell(Padding(
+        padding: const EdgeInsets.all(AppSpacing.xs),
+        child: Text(data["role"] ?? ""),
+      )),
+      DataCell(Padding(
+        padding: const EdgeInsets.all(AppSpacing.xs),
+        child: Text(data['id']),
+      )),
+      DataCell(Padding(
+          padding: const EdgeInsets.all(AppSpacing.xs),
+          child:
+          CustomHighlightDashboard(
+              title: data['status'],
+              fontColor: ParsingColor.cekColor(data['status'])[0],
+              containerColor: ParsingColor.cekColor(data['status'])[1]
+          )
+
+      )),
+      DataCell(Padding(
+        padding: const EdgeInsets.all(AppSpacing.xs),
+        child: Text(data['join']),
+      )),
+    ];
   }
 }
