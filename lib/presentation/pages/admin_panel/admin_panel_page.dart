@@ -6,9 +6,11 @@ import 'package:pov2/core/utils/parsing_status_color.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/core/widget/custom_normal_scaffold.dart';
+import 'package:pov2/data/services/location_data.dart';
 import 'package:pov2/data/services/visit_data.dart';
 import 'package:pov2/presentation/widgets/custom_card_body_resume.dart';
 import 'package:pov2/presentation/widgets/custom_card_header_resume.dart';
+import 'package:pov2/presentation/widgets/custom_card_location_admin.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 
 class AdminPanelPage extends StatefulWidget {
@@ -20,6 +22,8 @@ class AdminPanelPage extends StatefulWidget {
 
 class _AdminPanelPageState extends State<AdminPanelPage> {
   final List<Map<String, dynamic>> visitData = VisitData().taskData;
+  final List<Map<String, dynamic>> locationData = LocationData().data;
+
   @override
   Widget build(BuildContext context) {
     return CustomNormalScaffold(
@@ -73,7 +77,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                       children: [
                         _resume(),
                         _schedule(),
-                        Center(child: Text("Lokasi")),
+                        _location(),
                         Center(child: Text("Pengguna")),
                       ],
                     ),
@@ -329,4 +333,48 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
     ];
   }
 
+  Widget _location(){
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(height: AppSpacing.sm,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Lokasi',
+                style: AppText.heading2,
+              ),
+              CustomButton(
+                  textStyle: AppText.heading4Tertiary,
+                  title: 'Tambah Lokasi',
+                  backgroundColor: AppColor.accentCompletion,
+                  padding: EdgeInsets.all(AppSpacing.xxs),
+                  onPressed: (){},
+                  icon: Icons.add,
+                  iconColor: AppColor.textTertiary,
+              )
+            ],
+          ),
+          SizedBox(height: AppSpacing.sm,),
+          ListView(
+            shrinkWrap: true,
+            children: [
+              ...locationData.asMap().entries.map((entry){
+                final data = entry.value;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                  child: CustomCardLocationAdmin(
+                      id : entry.key,
+                      data: data
+                  ),
+                );
+              })
+
+            ],
+          )
+        ]
+      )
+    );
+  }
 }
