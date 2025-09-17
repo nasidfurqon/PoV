@@ -110,10 +110,22 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                   Expanded(
                     child: TabBarView(
                       children: [
-                        _resume(),
-                        _schedule(),
-                        _location(),
-                        _users()
+                        Padding(
+                          padding: const EdgeInsets.all(AppSpacing.xs),
+                          child: _resume(),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(AppSpacing.xs),
+                          child: _schedule(),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(AppSpacing.xs),
+                          child: _location(),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(AppSpacing.xs),
+                          child: _users(),
+                        ),
                       ],
                     ),
                   )
@@ -462,7 +474,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
               CustomButton(
                   textStyle: AppText.heading4Tertiary,
                   title: 'Tambah Lokasi',
-                  backgroundColor: AppColor.accentCompletion,
+                  backgroundColor: AppColor.primary,
                   padding: EdgeInsets.all(AppSpacing.xxs),
                   onPressed: (){
                     CustomModelDialog.show(

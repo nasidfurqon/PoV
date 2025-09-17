@@ -43,17 +43,22 @@ class CustomCardLocationAdmin extends StatelessWidget {
                   textStyle: AppText.caption
               ),
               SizedBox(height: AppSpacing.xs),
-              CustomHighlightDashboard(
-                  title: 'Geofence: ${data['geofence']}m',
-                  fontColor: AppColor.accentCompletion,
-                  containerColor: AppColor.onAccentCompletion
-              ),
-              SizedBox(height: AppSpacing.xs),
-              CustomHighlightDashboard(
-                  title: 'QR: ${data['code']}',
-                  fontColor: AppColor.accentMedium,
-                  containerColor: AppColor.onAccentMedium
-              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  CustomHighlightDashboard(
+                      title: 'Geofence: ${data['geofence']}m',
+                      fontColor: AppColor.accentCompletion,
+                      containerColor: AppColor.onAccentCompletion
+                  ),
+                  SizedBox(width: AppSpacing.xs),
+                  CustomHighlightDashboard(
+                      title: 'QR: ${data['code']}',
+                      fontColor: AppColor.accentMedium,
+                      containerColor: AppColor.onAccentMedium
+                  ),
+                ],
+              )
             ],
           ),
         )
