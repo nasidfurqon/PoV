@@ -39,7 +39,6 @@ class CustomTextField extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                   borderSide: BorderSide(color: AppColor.textSecondary)
               )
-
           ),
         )
       ],

@@ -10,6 +10,7 @@ import 'package:pov2/core/widget/custom_dropdown.dart';
 import 'package:pov2/core/widget/custom_modal_dialog.dart';
 import 'package:pov2/core/widget/custom_normal_scaffold.dart';
 import 'package:pov2/core/widget/custom_textfield.dart';
+import 'package:pov2/core/widget/custom_time_field.dart';
 import 'package:pov2/data/services/location_data.dart';
 import 'package:pov2/data/services/users_data.dart';
 import 'package:pov2/data/services/visit_data.dart';
@@ -415,7 +416,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
         ),
         SizedBox(height: AppSpacing.xs,),
         CustomDropdownWithLabel(
-          label: 'Assign To',
+          label: 'Location',
           items: locationDropdown,
           initialValue: '1' ?? '',
           onChanged: (value){
@@ -428,6 +429,24 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
         CustomDatePicker(
             label: 'Date',
             controller: TextEditingController()
+        ),
+        SizedBox(height: AppSpacing.xs,),
+        Row(
+          children: [
+            Expanded(
+              child: CustomTimeField(
+                  label: 'Start Time',
+                  controller: TextEditingController()
+              ),
+            ),
+            SizedBox(width: AppSpacing.xs,),
+            Expanded(
+              child: CustomTimeField(
+                  label: 'End Time',
+                  controller: TextEditingController()
+              ),
+            ),
+          ],
         ),
         SizedBox(height: AppSpacing.xs,),
         CustomDropdownWithLabel(
