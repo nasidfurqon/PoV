@@ -14,6 +14,17 @@ class CustomCardLocationAdmin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomCard(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppColor.onAccentCompletion,
+            AppColor.onAccentCompletion.withOpacity(0.4),
+            AppColor.onAccentCompletion.withOpacity(0.1),
+            Colors.transparent,
+          ],
+          stops: const [0.0, 0.1, 0.2, 0.3],
+        ),
         padding: EdgeInsets.zero,
         child: Padding(
           padding: EdgeInsets.all(AppSpacing.global),

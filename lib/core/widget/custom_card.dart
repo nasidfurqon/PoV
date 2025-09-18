@@ -8,9 +8,10 @@ class CustomCard extends StatelessWidget {
   final double? borderRadius;
   final double? height;
   final Color? color;
+  final Color? borderColor;
   final Gradient? gradient;
   final bool? isBoxShadow;
-  CustomCard({super.key,this.color, this.height, this.gradient, this.isBoxShadow = true,required this.padding, required this.child,  this.borderRadius});
+  CustomCard({super.key,this.color, this.borderColor, this.height, this.gradient, this.isBoxShadow = true,required this.padding, required this.child,  this.borderRadius});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,7 @@ class CustomCard extends StatelessWidget {
           color:  gradient == null ? (color ?? AppColor.background) : null,
           borderRadius: BorderRadius.circular(borderRadius ?? AppSpacing.radiusLg),
           border: Border.all(
-            color: AppColor.border,
+            color: borderColor ?? AppColor.border,
             width: (isBoxShadow == true) ?  1 : 0
           ),
           boxShadow: [BoxShadow(

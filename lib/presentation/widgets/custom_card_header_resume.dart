@@ -4,6 +4,8 @@ import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 
+import '../../config/theme/app_color.dart';
+
 class CustomCardHeaderResume extends StatelessWidget {
   final String title;
   final IconData icon;
@@ -17,6 +19,17 @@ class CustomCardHeaderResume extends StatelessWidget {
     return CustomCard(
         padding: EdgeInsets.zero,
         // height: 175,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            color.withOpacity(0.4),
+            color.withOpacity(0.1),
+            color.withOpacity(0.01),
+            Colors.transparent,
+          ],
+          stops: const [0.0, 0.1, 0.2, 0.3],
+        ),
         child: Padding(
           padding: EdgeInsets.all(AppSpacing.global),
           child: Column(

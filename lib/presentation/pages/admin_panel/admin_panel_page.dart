@@ -204,6 +204,17 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
   Widget _resume_schedule(){
     return CustomCard(
         padding: EdgeInsets.zero,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppColor.onAccentMedium,
+            AppColor.onAccentMedium.withOpacity(0.4),
+            AppColor.onAccentMedium.withOpacity(0.1),
+            Colors.transparent,
+          ],
+          stops: const [0.0, 0.1, 0.2, 0.3],
+        ),
         child: Padding(
           padding: EdgeInsets.all(AppSpacing.global),
           child: Column(
@@ -240,6 +251,17 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
 
   Widget _resume_new(){
     return CustomCard(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppColor.onAccentCompleted,
+            AppColor.onAccentCompleted.withOpacity(0.4),
+            AppColor.onAccentCompleted.withOpacity(0.1),
+            Colors.transparent,
+          ],
+          stops: const [0.0, 0.1, 0.2, 0.3],
+        ),
         padding: EdgeInsets.zero,
         child: Padding(
           padding: EdgeInsets.all(AppSpacing.global),

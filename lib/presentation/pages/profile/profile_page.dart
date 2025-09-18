@@ -57,7 +57,11 @@ import 'package:pov2/presentation/widgets/custom_row_icon.dart';
 
     Widget _header(){
       return CustomCard(
-          color: AppColor.background,
+          gradient: LinearGradient(
+            colors: [AppColor.onAccentHigh, AppColor.onAccentMedium],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
           padding: EdgeInsets.zero,
           child: Padding(
             padding: const EdgeInsets.all(AppSpacing.global),

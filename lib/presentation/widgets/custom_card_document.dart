@@ -66,7 +66,7 @@ class CustomCardDocument extends StatelessWidget {
                           color: AppColor.textPrimary,
                           width: 1
                         ),
-                        textStyle: AppText.captionPrimary,
+                        textStyle: AppText.heading5,
                         title: 'Lihat',
                         backgroundColor: AppColor.background,
                         padding: EdgeInsets.zero,
@@ -78,13 +78,13 @@ class CustomCardDocument extends StatelessWidget {
                   SizedBox(width: AppSpacing.xs,),
                   Expanded(
                     child: CustomButton(
-                      textStyle: AppText.captionTertiary,
+                      textStyle: AppText.heading5Tertiary,
                       title: 'Unduh',
                       backgroundColor: AppColor.primary,
                       padding: EdgeInsets.zero,
                       onPressed: (){},
                       icon: Icons.download_outlined,
-                      iconColor: AppColor.primary,
+                      iconColor: AppColor.textTertiary,
                     ),
                   )
                 ],
