@@ -15,6 +15,15 @@ class JobListPage extends StatefulWidget {
 
 class _JobListPageState extends State<JobListPage> {
   List<Map<String, dynamic>> jobList = VisitData().taskData;
+  late int onGoingCount = jobList
+      .where((item) => item['progress'] == 'Berlangsung')
+      .length;
+  late int waitingCount = jobList
+      .where((item) => item['progress'] == 'Menunggu')
+      .length;
+  late int finishCount = jobList
+      .where((item) => item['progress'] == 'Selesai')
+      .length;
 
   @override
   Widget build(BuildContext context) {
@@ -29,17 +38,17 @@ class _JobListPageState extends State<JobListPage> {
           child: ListView(
             children: [
               CustomHeaderCard(
-                  number: '1',
+                  number: waitingCount.toString(),
                   status: 'Menunggu'
               ),
               SizedBox(height: AppSpacing.sm,),
               CustomHeaderCard(
-                  number: '1',
+                  number: onGoingCount.toString(),
                   status: 'Berlangsung'
               ),
               SizedBox(height: AppSpacing.sm,),
               CustomHeaderCard(
-                  number: '1',
+                  number: finishCount.toString(),
                   status: 'Selesai'
               ),
               SizedBox(height: AppSpacing.sm,),

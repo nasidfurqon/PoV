@@ -150,7 +150,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                       title: 'Total Pengguna',
                       icon: Icons.person_outline,
                       color: AppColor.accentMedium,
-                      number: '4',
+                      number: userData.length.toString(),
                       description: 'Petugas lapangan aktif'
                   ),
                 ),
@@ -160,7 +160,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                       title: 'Lokasi',
                       icon: Icons.location_on_outlined,
                       color: AppColor.accentCompleted,
-                      number: '2',
+                      number: locationData.length.toString(),
                       description: 'Situs Terdaftar'
                   ),
                 ),

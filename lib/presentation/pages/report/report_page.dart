@@ -18,7 +18,10 @@ class ReportPage extends StatefulWidget {
 
 class _ReportPageState extends State<ReportPage> {
   final List<Map<String, dynamic>> reportData = ReportData().report;
-
+  late int totalVisit = reportData.fold(
+    0,
+        (sum, item) => sum + int.parse(item['totalVisit']),
+  );
   @override
   Widget build(BuildContext context) {
     return CustomNormalScaffold(
@@ -31,7 +34,7 @@ class _ReportPageState extends State<ReportPage> {
           padding: EdgeInsets.symmetric(horizontal:  AppSpacing.global),
           child: ListView(
             children: [
-              CustomHeaderCard(number: '257', status: 'Total Kunjungan'),
+              CustomHeaderCard(number: totalVisit.toString(), status: 'Total Kunjungan'),
               SizedBox(height: AppSpacing.sm,),
               CustomHeaderCard(number: '95%', status: 'Tingkat Kepatuhan'),
               SizedBox(height: AppSpacing.sm,),

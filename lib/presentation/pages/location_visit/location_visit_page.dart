@@ -16,6 +16,9 @@ class LocationVisitPage extends StatefulWidget {
 
 class _LocationVisitPageState extends State<LocationVisitPage> {
   List<Map<String, dynamic>> dataList = VisitData().taskData;
+  late int activeCount = dataList
+      .where((item) => item['statusVisit'] == 'Aktif')
+      .length;
   @override
   Widget build(BuildContext context) {
     return CustomNormalScaffold(
@@ -29,12 +32,12 @@ class _LocationVisitPageState extends State<LocationVisitPage> {
           child: ListView(
             children: [
               CustomHeaderCard(
-                  number: '1',
+                  number: dataList.length.toString(),
                   status: 'Total Lokasi'
               ),
               SizedBox(height: AppSpacing.sm,),
               CustomHeaderCard(
-                  number: '1',
+                  number: activeCount.toString(),
                   status: 'Aktif'
               ),
               SizedBox(height: AppSpacing.sm,),

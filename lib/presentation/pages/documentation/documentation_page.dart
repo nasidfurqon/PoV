@@ -15,6 +15,17 @@ class DocumentationPage extends StatefulWidget {
 
 class _DocumentationPageState extends State<DocumentationPage> {
   final List<Map<String, dynamic>> documentData = DocumentData().data;
+  late int fotoCount = documentData
+      .where((item) => item['type'] == 'JPG')
+      .length;
+
+  late int documentCount = documentData
+      .where((item) => item['type'] == 'PDF')
+      .length;
+
+  late int videoCount = documentData
+      .where((item) => item['type'] == 'MP4')
+      .length;
   @override
   Widget build(BuildContext context) {
     return CustomNormalScaffold(

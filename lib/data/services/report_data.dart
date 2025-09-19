@@ -20,7 +20,7 @@ class ReportData{
       "name": "Laporan Performa Field Officer",
       "period": "Januari 2024",
       "createdDate": "31/1/2024",
-      "totalVisit": "32",
+      "totalVisit": "31",
       "totalLocation": "8",
       "status": "Proses"
     }
