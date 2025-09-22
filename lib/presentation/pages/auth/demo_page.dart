@@ -46,7 +46,9 @@ class DemoPage extends StatelessWidget {
                     backgroundColor: AppColor.primary,
                     padding: EdgeInsets.zero,
                     onPressed: (){
-                      context.goNamed(AppRoutes.home.name);
+                      context.goNamed(AppRoutes.home.name, pathParameters: {
+                        'user': 'Administrator'
+                      });
                     }
                 ),
                 CustomButtonFull(
@@ -57,7 +59,9 @@ class DemoPage extends StatelessWidget {
                     backgroundColor: AppColor.accentHigh,
                     padding: EdgeInsets.zero,
                     onPressed: (){
-                      context.goNamed(AppRoutes.home.name);
+                      context.goNamed(AppRoutes.home.name, pathParameters: {
+                        'user': 'FO'
+                      });
                     }
                 ),
                 CustomButtonFull(

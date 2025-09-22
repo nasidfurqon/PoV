@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/presentation/pages/dashboard/dashboardPage.dart';
+import 'package:pov2/presentation/pages/dashboardFieldOperations/dashboard_field_operations_page.dart';
 import 'package:pov2/presentation/pages/history/history_page.dart';
 import 'package:pov2/presentation/pages/profile/profile_page.dart';
 import 'package:pov2/presentation/provider/bottom_nav_notifier.dart';
@@ -9,7 +10,8 @@ import '../config/theme/app_spacing.dart';
 import '../config/theme/app_color.dart';
 
 class MainPage extends ConsumerStatefulWidget {
-  const MainPage({super.key});
+  final String user;
+  const MainPage({super.key, required this.user});
 
   @override
   ConsumerState<MainPage> createState() => _MainPageState();
@@ -36,8 +38,11 @@ class _MainPageState extends ConsumerState<MainPage> {
             child: PageView(
               controller: bottomNav.controller,
               physics: const NeverScrollableScrollPhysics(),
-              children: const [
+              children: [
+                if(widget.user == 'Administrator')
                 DashboardPage(),
+                if(widget.user == 'FO')
+                  DashboardFieldOfficerPage(),
                 HistoryPage(),
                 ProfilePage()
               ],

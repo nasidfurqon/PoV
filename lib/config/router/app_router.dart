@@ -8,6 +8,7 @@ import 'package:pov2/presentation/pages/admin_panel/admin_panel_page.dart';
 import 'package:pov2/presentation/pages/auth/demo_page.dart';
 import 'package:pov2/presentation/pages/auth/login_page.dart';
 import 'package:pov2/presentation/pages/dashboard/dashboardPage.dart';
+import 'package:pov2/presentation/pages/dashboardFieldOperations/dashboard_field_operations_page.dart';
 import 'package:pov2/presentation/pages/documentation/documentation_page.dart';
 import 'package:pov2/presentation/pages/job_list/job_list_page.dart';
 import 'package:pov2/presentation/pages/location_visit/location_visit_page.dart';
@@ -42,6 +43,11 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) =>  DashboardPage()
     ),
     GoRoute(
+      path: RoutePath.dashboardFO,
+      name: AppRoutes.dashboardFO.name,
+      builder: (context, state) =>  DashboardFieldOfficerPage()
+    ),
+    GoRoute(
       path: RoutePath.visit,
       name: AppRoutes.visit.name,
       builder: (context, state) {
@@ -52,7 +58,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RoutePath.home,
       name: AppRoutes.home.name,
-      builder: (context, state) => MainPage()
+      builder: (context, state) {
+          final String? user = state.pathParameters['user'];
+          return MainPage(user: user ?? 'Administrator');
+      }
     ),
     GoRoute(
       path: RoutePath.jobList,
