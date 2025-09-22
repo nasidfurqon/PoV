@@ -13,6 +13,7 @@ import 'package:pov2/presentation/pages/documentation/documentation_page.dart';
 import 'package:pov2/presentation/pages/job_list/job_list_page.dart';
 import 'package:pov2/presentation/pages/location_visit/location_visit_page.dart';
 import 'package:pov2/presentation/pages/report/report_page.dart';
+import 'package:pov2/presentation/pages/settings/setting_page.dart';
 import 'package:pov2/presentation/pages/shimmer/splashPage.dart';
 import 'package:pov2/presentation/pages/visit_progres/visitProgresPage.dart';
 
@@ -87,6 +88,11 @@ final GoRouter appRouter = GoRouter(
       path: RoutePath.adminPanel,
       name: AppRoutes.adminPanel.name,
       builder: (context, state) => AdminPanelPage()
+    ),
+    GoRoute(
+      path: RoutePath.setting,
+      name: AppRoutes.setting.name,
+      builder: (context, state) => SettingPage()
     )
   ]
 );  

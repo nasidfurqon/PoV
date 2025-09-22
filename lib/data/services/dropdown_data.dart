@@ -23,4 +23,14 @@ class DropdownData{
     DropdownItemModel(id: "4", label: "Factory"),
     DropdownItemModel(id: "4", label: "Other  "),
   ];
+  static List<DropdownItemModel> languange = [
+    DropdownItemModel(id: "1", label: "Indonesia"),
+  ];
+  static List<DropdownItemModel> timeZone = [
+    DropdownItemModel(id: "1", label: "WIB (UTC+7)"),
+  ];
+
+  static List<DropdownItemModel> nullData = [
+    DropdownItemModel(id: "1", label: ""),
+  ];
 }

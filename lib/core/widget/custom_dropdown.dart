@@ -11,9 +11,11 @@ class CustomDropdown extends StatefulWidget {
   final void Function(String?) onChanged;
   final void Function(String?)? onSaved;
   final String? hint;
+  final String? title;
 
   const CustomDropdown({
     super.key,
+    this.title = '',
     required this.items,
     required this.initialValue,
     required this.onChanged,
@@ -74,7 +76,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
       selectedItemBuilder: (context) {
         return widget.items.map((item) {
           return Text(
-            item.label,
+            '${widget.title}${item.label}',
             style: AppText.highlightPrimary,
           );
         }).toList();

@@ -5,6 +5,7 @@ import 'package:pov2/presentation/pages/dashboard/dashboardPage.dart';
 import 'package:pov2/presentation/pages/dashboardFieldOperations/dashboard_field_operations_page.dart';
 import 'package:pov2/presentation/pages/history/history_page.dart';
 import 'package:pov2/presentation/pages/profile/profile_page.dart';
+import 'package:pov2/presentation/pages/settings/setting_page.dart';
 import 'package:pov2/presentation/provider/bottom_nav_notifier.dart';
 import '../config/theme/app_spacing.dart';
 import '../config/theme/app_color.dart';
@@ -44,7 +45,8 @@ class _MainPageState extends ConsumerState<MainPage> {
                 if(widget.user == 'FO')
                   DashboardFieldOfficerPage(),
                 HistoryPage(),
-                ProfilePage()
+                ProfilePage(),
+                SettingPage()
               ],
             ),
           ),
@@ -93,6 +95,8 @@ class _MainPageState extends ConsumerState<MainPage> {
                         icon: Icon(Icons.history_rounded), label: 'History'),
                     const BottomNavigationBarItem(
                         icon: Icon(Icons.person), label: 'Profile'),
+                    const BottomNavigationBarItem(
+                        icon: Icon(Icons.settings), label: 'Settings'),
                   ],
                 ),
               ),
