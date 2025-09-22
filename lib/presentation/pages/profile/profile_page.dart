@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pov2/config/router/app_routes.dart';
 import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
@@ -9,7 +10,7 @@ import 'package:pov2/core/widget/custom_scaffold.dart';
 import 'package:pov2/presentation/widgets/custom_header_card.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 import 'package:pov2/presentation/widgets/custom_row_icon.dart';
-
+import 'package:go_router/go_router.dart';
   class ProfilePage extends StatelessWidget {
     const ProfilePage({super.key});
 
@@ -28,7 +29,7 @@ import 'package:pov2/presentation/widgets/custom_row_icon.dart';
                   _personalInformation(),
                   SizedBox(height: AppSpacing.sm,),
                   CustomButtonFull(
-                      textStyle: AppText.captionTertiary,
+                      textStyle: AppText.heading5Tertiary,
                       title: 'Edit Profile',
                       backgroundColor: AppColor.primary,
                       padding: EdgeInsets.zero,
@@ -37,7 +38,7 @@ import 'package:pov2/presentation/widgets/custom_row_icon.dart';
                       icon: Icons.edit_note_outlined,
                   ),
                   CustomButtonFull(
-                    textStyle: AppText.captionPrimary,
+                    textStyle: AppText.heading5,
                     title: 'Ubah Password',
                     backgroundColor: AppColor.background,
                     padding: EdgeInsets.zero,
@@ -46,6 +47,17 @@ import 'package:pov2/presentation/widgets/custom_row_icon.dart';
                       color: AppColor.textPrimary,
                       width: 1
                     ),
+                  ),
+                  CustomButtonFull(
+                    textStyle: AppText.heading5Tertiary,
+                    title: 'Logout',
+                    icon: Icons.logout,
+                    iconColor: AppColor.textTertiary,
+                    backgroundColor: AppColor.primary,
+                    padding: EdgeInsets.zero,
+                    onPressed: (){
+                      context.goNamed(AppRoutes.login.name);
+                    },
                   ),
                   SizedBox(height: AppSpacing.xxxl)
                 ],
