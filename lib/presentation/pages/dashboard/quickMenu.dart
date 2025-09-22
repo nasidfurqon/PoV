@@ -11,12 +11,11 @@ import '../../../data/models/dashboard_model.dart';
 import 'package:go_router/go_router.dart';
 
 class QuickMenu extends StatefulWidget {
-  final String status;
   final List<MenuGroupModel> menuItems;
 
   QuickMenu({
     Key? key,
-    List<MenuGroupModel>? menuItems, required this.status,
+    List<MenuGroupModel>? menuItems
   })  : menuItems = menuItems ?? MenuGroupModel.generateMenu(),
         super(key: key);
 

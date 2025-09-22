@@ -5,6 +5,7 @@ import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/utils/format_date.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
+import 'package:pov2/core/widget/custom_dashboard_page.dart';
 import 'package:pov2/core/widget/custom_layout.dart';
 import 'package:pov2/core/widget/custom_scaffold.dart';
 import 'package:pov2/data/services/visit_data.dart';
@@ -24,86 +25,9 @@ class _DashboardPageState extends State<DashboardPage> {
   }).toList();
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
-      body: AppLayout(
-        child: Stack(
-          // crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(AppSpacing.global),
-              child: Column(
-                children: [
-                  _header(),
-                  SizedBox(height: AppSpacing.lg),
-                  QuickMenu(status: 'status'),
-                ],
-              ),
-            ),
-            DraggableScrollableActuator(
-              child: DraggableScrollableSheet(
-                initialChildSize: 0.65,
-                minChildSize: 0.65,
-                snap: true,
-                maxChildSize: 1,
-                snapSizes: const [0.65, 1],
-                builder: (context, scrollController){
-                  return CustomCard(
-                    padding: EdgeInsets.zero,
-                    child: Column(
-                          children: [
-                            Center(
-                              child: Container(
-                                width: 40,
-                                height: 7,
-                                margin: EdgeInsets.only(bottom: 12),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[400],
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            ),
-                            Expanded(child: _cardActivity(scrollController))
-                          ],
-                    )
-                  );
-                },
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _header() {
-    return Column(
-      children: [
-        SizedBox(height: AppSpacing.xs),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            ClipOval(
-              child: Image.asset(
-                'assets/icon.png',
-                width: 50,
-                height: 50,
-                fit: BoxFit.cover,
-              ),
-            ),
-            SizedBox(width: AppSpacing.lg),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('PoV Dashboard', style: AppText.headingTertirary),
-                Text(
-                  'Welcome back, Administrator',
-                  style: AppText.bodyTertiary,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
+    return CustomDashboard(
+        user: 'Administrator',
+        child: (controller) => _cardActivity(controller)
     );
   }
 
