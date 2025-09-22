@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pov2/core/widget/custom_dashboard_page.dart';
+import 'package:pov2/presentation/widgets/custom_header_card.dart';
 
 import '../../../config/theme/app_color.dart';
 import '../../../config/theme/app_spacing.dart';
@@ -34,6 +35,31 @@ class _DashboardFieldOfficerPageState extends State<DashboardFieldOfficerPage> {
       padding: const EdgeInsets.symmetric(horizontal:   AppSpacing.global),
       child: Column(
         children: [
+          Row(
+            children: [
+              Expanded(
+                child: CustomHeaderCard(
+                    number: '2',
+                    status: 'Completed'
+                ),
+              ),
+              SizedBox(width: AppSpacing.xs,),
+              Expanded(
+                child: CustomHeaderCard(
+                    number: '2',
+                    status: 'Scheduled'
+                ),
+              ),
+              SizedBox(width: AppSpacing.xs,),
+              Expanded(
+                child: CustomHeaderCard(
+                    number: '95%',
+                    status: 'PoV Score'
+                ),
+              )
+            ],
+          ),
+          SizedBox(height: AppSpacing.sm),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
