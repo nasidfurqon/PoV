@@ -133,7 +133,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             var pref = await SharedPreferences.getInstance();
                             if(responseLogin['success'] == true){
                               pref.setString('jwtToken', responseLogin['JWT']);
-                              GetService.jwtToken = responseLogin['JWT'];
                               Map<String, dynamic> decodedToken = JwtDecoder.decode(responseLogin['JWT']);
                               String userId = decodedToken['UserId'].toString();
                               context.goNamed(AppRoutes.home.name, pathParameters: {

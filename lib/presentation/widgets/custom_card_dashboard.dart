@@ -119,7 +119,7 @@ class CustomCardDashboard extends StatelessWidget {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Internal Server Error'), backgroundColor: AppColor.error,));
                 }
                 context.pushNamed(AppRoutes.visit.name, pathParameters: {
-                  'id': id.toString()
+                  'id':  id.toString()
                 });
               },
             ),

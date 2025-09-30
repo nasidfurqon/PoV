@@ -15,9 +15,12 @@ import 'package:pov2/data/services/visitStep_data.dart';
 import 'package:pov2/presentation/pages/visit_progres/visitCompletion.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pov2/presentation/widgets/custom_header_visit.dart';
-import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../../core/utils/camera_helper.dart';
+import '../../../data/models/mtLocation_model.dart';
+import '../../../data/models/trVisitationSchedule_model.dart';
+import '../../../data/services/get_service.dart';
+
 class VisitProgressPage extends StatefulWidget {
   final dynamic id;
   const VisitProgressPage({super.key, required this.id});
@@ -27,7 +30,6 @@ class VisitProgressPage extends StatefulWidget {
 }
 
 class _VisitProgressPageState extends State<VisitProgressPage> with TickerProviderStateMixin {
-  late Map<String, dynamic> visitData = VisitData().taskData[int.tryParse(widget.id )!];
   int currentStep = 1;
   final int totalSteps = 3;
   final List<Map<String, dynamic>> stepData = VisitStepData().stepData;
@@ -36,6 +38,8 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
   File? _capturedPhotos;
   Position? positioned = null;
   bool isValid = false;
+  MTLocationModel? locationData;
+  TRVisitationScheduleModel? visitationScheduleData;
 
   @override
   void initState(){
@@ -52,6 +56,20 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
       curve: Curves.easeInOut,
     ));
     _progressAnimationController.forward();
+    print('ID = ${widget.id }');
+    _loadData();
+
+  }
+
+  Future<void> _loadData() async {
+    TRVisitationScheduleModel? res = await GetService.getScheduleByID(widget.id) ;
+    setState(() {
+      visitationScheduleData = res;
+    });
+    MTLocationModel? resLoc = await GetService.getLocationbyID(visitationScheduleData?.mtLocationId) ;
+    setState(() {
+      locationData = resLoc;
+    });
   }
 
   @override
@@ -152,12 +170,12 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-                visitData['place'],
+                locationData?.name ?? '',
                 style: AppText.heading3
             ),
             SizedBox(height: AppSpacing.xs),
             Text(
-                visitData['street'],
+                locationData?.address ?? '',
                 style: AppText.caption
             ),
           ],
@@ -239,7 +257,7 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
   Widget _buildStepContent(Map<String, dynamic> stepData) {
     switch (currentStep) {
       case 1:
-        return _buildLocationVerificationContent(stepData);
+        return _buildLocationVerificationContent(stepData, locationData);
       case 2:
         return _buildPhotoDocumentationContent(stepData);
       case 3:
@@ -249,18 +267,18 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
     }
   }
 
-  Widget _buildLocationVerificationContent(Map<String, dynamic> data) {
+  Widget _buildLocationVerificationContent(Map<String, dynamic> currentLocation,MTLocationModel? data) {
     return Column(
       children: [
-        _buildInfoRow('Current Location', '${data['currentLocation']['lat']},${data['currentLocation']['long']} '),
+        _buildInfoRow('Current Location', '${currentLocation['currentLocation']['lat']},${currentLocation['currentLocation']['long']} '),
         const SizedBox(height: AppSpacing.sm),
-        _buildInfoRow('Accuracy', data['accuracy']),
+        _buildInfoRow('Accuracy', '-'),
         const SizedBox(height: AppSpacing.md),
         const Divider(),
         const SizedBox(height: AppSpacing.md),
-        _buildInfoRow('Target Location', '${data['targetLocation']['lat']},${data['targetLocation']['long']} '),
+        _buildInfoRow('Target Location', '${data?.latitude ?? '-'},${data?.longitude ?? '-'} '),
         const SizedBox(height: AppSpacing.sm),
-        _buildInfoRow('Geofence', data['geofence']),
+        _buildInfoRow('Geofence', ('${data?.geoFence}m' ?? '-') .toString()),
         const SizedBox(height: AppSpacing.md),
         Row(
           children: [
