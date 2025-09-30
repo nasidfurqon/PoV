@@ -10,11 +10,12 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/utils/parsing_status_color.dart';
 class CustomCardDashboard extends StatelessWidget {
-  final String place;
+  final dynamic place;
   final String status;
-  final String street;
-  final String city;
+  final dynamic street;
+  final String? city;
   final String hourfrom;
+  final String priority;
   final String hourTo;
   final String radius;
   final String description;
@@ -22,9 +23,10 @@ class CustomCardDashboard extends StatelessWidget {
   const CustomCardDashboard({
     super.key,
     required this.place,
+    required this.priority,
     required this.status,
     required this.street,
-    required this.city,
+     this.city,
     required this.hourfrom,
     required this.hourTo,
     required this.radius,
@@ -44,16 +46,46 @@ class CustomCardDashboard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                place is Future<String> ?
+                FutureBuilder<String?>(
+                  future: place as Future<String>,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Text("...");
+                    } else if (snapshot.hasError) {
+                      return const Text('');
+                    } else {
+                      return Text(
+                        snapshot.data!,
+                        style: AppText.heading3,
+                      );
+                    }
+                  },) :
                 Text(place, style: AppText.heading3),
-                CustomHighlightDashboard(title: status, fontColor: ParsingColor.cekColor(status)[0], containerColor: ParsingColor.cekColor(status)[1])
+                CustomHighlightDashboard(title: priority, fontColor: ParsingColor.cekColor(priority)[0], containerColor: ParsingColor.cekColor(priority)[1])
               ],
             ),
             SizedBox(height: AppSpacing.sm,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                street is Future<String> ?
+                FutureBuilder<String?>(
+                  future: street as Future<String>,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Text("...");
+                    } else if (snapshot.hasError) {
+                      return const Text('');
+                    } else {
+                      return Text(
+                        snapshot.data!,
+                        style: AppText.caption,
+                      );
+                    }
+                  },) :
                 Text('$street, $city', style: AppText.caption),
-                CustomHighlightDashboard(title: 'scheduled', fontColor: AppColor.textPrimary, containerColor: AppColor.border)
+                CustomHighlightDashboard(title: status, fontColor: ParsingColor.cekColor(status)[0], containerColor: ParsingColor.cekColor(status)[1])
 
               ],
             ),

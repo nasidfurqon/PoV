@@ -83,6 +83,7 @@ class _DashboardFieldOfficerPageState extends State<DashboardFieldOfficerPage> {
                 final data = visitUncompleted[index];
                 return CustomCardDashboard(
                     place: data['place'],
+                    priority: data['status'],
                     status: data['status'],
                     street: data['street'],
                     city: data['city'],
