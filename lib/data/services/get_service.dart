@@ -59,6 +59,32 @@ class GetService{
     }
   }
 
+  static Future<List<TRVisitationScheduleModel>> getListCompletedSchedule(dynamic id) async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              'http://${AppConfig.serverAddress}/api/filter/ScheduleCompleted/$id'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API RESPONSE LIST SCHEDULE COMPLETED CHECK: ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['data'];
+        return res.map<TRVisitationScheduleModel>((item) => TRVisitationScheduleModel.fromJson(item)).toList();
+      }
+      else{
+        return [];
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load list schedule completed, $e!");
+      return [];
+    }
+  }
+
   static Future<TRVisitationScheduleModel?> getScheduleByID(dynamic id) async{
     var pref = await SharedPreferences.getInstance();
     try{

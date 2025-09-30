@@ -87,6 +87,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     priority: data.priority ?? '',
                     place: GetService.getLocationbyID(data.mtLocationId).then((data)=>data?.name ?? ''),
                     status: data.status ?? '',
+                    scheduleData: data,
                     street: GetService.getLocationbyID(data.mtLocationId).then((data)=>data?.address ?? ''),
                     hourfrom: ParsingHelper.splitTimePost(data.startDateTime).toString(),
                     hourTo: ParsingHelper.splitTimePost(data.endDateTime).toString(),

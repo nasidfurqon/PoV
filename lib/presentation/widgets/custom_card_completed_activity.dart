@@ -7,7 +7,7 @@ import 'package:pov2/core/widget/custom_card.dart';
 import 'custom_highlight_dashboard.dart';
 
 class CustomCardCompletedActivity extends StatelessWidget {
-  final String place;
+  final dynamic place;
   final String date;
   final String time;
   final String score;
@@ -22,6 +22,21 @@ class CustomCardCompletedActivity extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              place is Future<String> ?
+              FutureBuilder<String?>(
+                future: place as Future<String>,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Text("...");
+                  } else if (snapshot.hasError) {
+                    return const Text('');
+                  } else {
+                    return Text(
+                      snapshot.data!,
+                      style: AppText.heading3,
+                    );
+                  }
+                },) :
               Text(
                 place,
                 style: AppText.heading3,

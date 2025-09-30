@@ -22,8 +22,11 @@ import 'package:pov2/presentation/widgets/custom_photo_dialog.dart';
 import 'package:pov2/presentation/widgets/custom_row_icon.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/widget/custom_progress_indicator.dart';
+import '../../../data/services/update_service.dart';
 import '../../../data/services/visit_data.dart';
 import '../../widgets/custom_header_visit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 class VisitCompletionPage extends StatefulWidget {
   final dynamic id;
 
@@ -557,8 +560,21 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () {
-              // context.goNamed(AppRoutes.dashboard.name);
+            onPressed: () async{
+              var pref = await SharedPreferences.getInstance();
+              var updateActStartDate = UpdateService.trVisitationSchedule(widget.id, {
+                'ActualEndDateTime': DateTime.now().toIso8601String(),
+                'Status': 'Completed'
+              });
+
+              if(updateActStartDate == false){
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Internal Server Error'), backgroundColor: AppColor.error,));
+              }
+
+              context.goNamed(AppRoutes.home.name, pathParameters: {
+                'user': 'Administrator',
+                'ID': pref.getString('userId') ?? ''
+              });
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,

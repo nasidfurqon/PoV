@@ -135,6 +135,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               pref.setString('jwtToken', responseLogin['JWT']);
                               Map<String, dynamic> decodedToken = JwtDecoder.decode(responseLogin['JWT']);
                               String userId = decodedToken['UserId'].toString();
+                              pref.setString('userId', userId);
                               context.goNamed(AppRoutes.home.name, pathParameters: {
                                 'user': 'Administrator',
                                 'ID': userId
