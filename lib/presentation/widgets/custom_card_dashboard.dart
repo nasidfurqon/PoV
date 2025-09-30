@@ -5,6 +5,7 @@ import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
+import 'package:pov2/data/services/update_service.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 import 'package:go_router/go_router.dart';
 
@@ -109,7 +110,14 @@ class CustomCardDashboard extends StatelessWidget {
               title: 'Start Visit',
               backgroundColor: AppColor.primary,
               padding: EdgeInsets.all(2),
-              onPressed: () {
+              onPressed: () async{
+                var updateActStartDate = UpdateService.trVisitationSchedule(id, {
+                  'ActualStartDateTime': DateTime.now().toIso8601String(),
+                });
+
+                if(updateActStartDate == false){
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Internal Server Error'), backgroundColor: AppColor.error,));
+                }
                 context.pushNamed(AppRoutes.visit.name, pathParameters: {
                   'id': id.toString()
                 });

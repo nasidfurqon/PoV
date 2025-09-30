@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
-import 'package:pov2/data/models/MTLocation_model.dart';
-import 'package:pov2/data/models/TRVisitationSchedule_model.dart';
+import 'package:pov2/data/models/mtLocation_model.dart';
+import 'package:pov2/data/models/trVisitationSchedule_model.dart';
 import '../../core/utils/config.dart';
 
 class GetService{
