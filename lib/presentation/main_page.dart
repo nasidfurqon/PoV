@@ -12,7 +12,8 @@ import '../config/theme/app_color.dart';
 
 class MainPage extends ConsumerStatefulWidget {
   final String user;
-  const MainPage({super.key, required this.user});
+  final dynamic ID;
+  const MainPage({super.key, required this.user, required this.ID});
 
   @override
   ConsumerState<MainPage> createState() => _MainPageState();
@@ -40,8 +41,8 @@ class _MainPageState extends ConsumerState<MainPage> {
               controller: bottomNav.controller,
               physics: const NeverScrollableScrollPhysics(),
               children: [
-                if(widget.user == 'Administrator')
-                DashboardPage(),
+                if(widget.user == 'Administrator' || widget.user == 'Supervisor')
+                DashboardPage(ID: widget.ID,),
                 if(widget.user == 'FO')
                   DashboardFieldOfficerPage(),
                 HistoryPage(),

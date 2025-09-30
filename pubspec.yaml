@@ -48,6 +48,8 @@ dev_dependencies:
   go_router: ^16.2.1
   intl: ^0.20.2
   image_picker: ^1.2.0
+  shared_preferences: ^2.5.3
+  jwt_decoder: ^2.0.1
   file_picker: ^10.3.2
   flutter_riverpod: ^2.6.1
   geolocator: ^14.0.2
@@ -57,6 +59,8 @@ dev_dependencies:
   url_launcher: ^6.3.2
   bootstrap_icons: ^1.11.3
   local_auth: ^2.3.0
+  flutter_dotenv: ^6.0.0
+  email_validator: ^3.0.0
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -74,6 +78,7 @@ flutter:
     - assets/person-logo.png
     - assets/place-logo.png
     - assets/clock-logo.png
+    - .env
 
   #   - images/a_dot_ham.jpeg
 

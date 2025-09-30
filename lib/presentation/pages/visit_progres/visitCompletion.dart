@@ -432,11 +432,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
               borderRadius: BorderRadius.circular(8),
               child: Container(
                 color: AppColor.primaryTransparent,
-                child: const Icon(
-                  Icons.image,
-                  size: 40,
-                  color: AppColor.primary,
-                ),
+                child: Image.asset('assets/patra_logo.png', fit: BoxFit.fill,)
               ),
             ),
           ),
@@ -463,7 +459,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
               fontWeight: FontWeight.bold,
               fontSize: 9,
               fontColor: Colors.white,
-              containerColor: AppColor.onAccentCompleted
+              containerColor: AppColor.accentCompleted
           )
         ),
       ],
@@ -562,7 +558,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
           ),
           ElevatedButton(
             onPressed: () {
-              context.goNamed(AppRoutes.dashboard.name);
+              // context.goNamed(AppRoutes.dashboard.name);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,

@@ -72,7 +72,9 @@ class DemoPage extends StatelessWidget {
                     backgroundColor: AppColor.textPrimary,
                     padding: EdgeInsets.zero,
                     onPressed: (){
-                      context.goNamed(AppRoutes.home.name);
+                      context.goNamed(AppRoutes.home.name, pathParameters: {
+                        'user': 'Supervisor'
+                      });
                     }
                 ),
                 SizedBox(

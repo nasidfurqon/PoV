@@ -41,7 +41,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RoutePath.dashboard,
       name: AppRoutes.dashboard.name,
-      builder: (context, state) =>  DashboardPage()
+        builder: (context, state) {
+            final dynamic ID = state.pathParameters['ID'];
+            return DashboardPage(ID: ID ?? 0);
+        }
     ),
     GoRoute(
       path: RoutePath.dashboardFO,
@@ -56,14 +59,15 @@ final GoRouter appRouter = GoRouter(
         return VisitProgressPage(id: id);
       }
     ),
-    GoRoute(
-      path: RoutePath.home,
-      name: AppRoutes.home.name,
-      builder: (context, state) {
-          final String? user = state.pathParameters['user'];
-          return MainPage(user: user ?? 'Administrator');
-      }
-    ),
+      GoRoute(
+        path: RoutePath.home,
+        name: AppRoutes.home.name,
+        builder: (context, state) {
+            final String? user = state.pathParameters['user'];
+            final dynamic ID = state.pathParameters['ID'];
+            return MainPage(user: user ?? 'Administrator', ID: ID ?? 0);
+        }
+      ),
     GoRoute(
       path: RoutePath.jobList,
       name: AppRoutes.jobList.name,

@@ -6,10 +6,11 @@ import 'package:pov2/config/theme/app_text.dart';
 
 class CustomTextField extends StatelessWidget {
   final String hint;
+  final ValueChanged<String>? onChanged;
   final TextInputType? keyboardType;
   final bool obscureText;
   final int? maxLines;
-  const CustomTextField({super.key,this.obscureText = false,required this.hint, this.maxLines, this.keyboardType});
+  const CustomTextField({super.key,this.onChanged, this.obscureText = false,required this.hint, this.maxLines, this.keyboardType});
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +41,11 @@ class CustomTextField extends StatelessWidget {
                   borderSide: BorderSide(color: AppColor.textSecondary)
               )
           ),
+          onChanged: (value){
+            if(onChanged != null){
+              return onChanged!(value);
+            }
+          },
         )
       ],
     );
@@ -50,10 +56,12 @@ class CustomTextFieldWithLabel extends StatelessWidget {
   final String label;
   final TextStyle? textStyle;
   final String hint;
-  final TextInputType? keyboardType; 
+  final TextInputType? keyboardType;
   final bool obscureText;
+  final Function(String)? onChanged;
+
   final int? maxLines;
-  const CustomTextFieldWithLabel({super.key, this.textStyle, this.maxLines, this.obscureText = false, required this.label, required this.hint, this.keyboardType});
+  const CustomTextFieldWithLabel({super.key,this.onChanged, this.textStyle, this.maxLines, this.obscureText = false, required this.label, required this.hint, this.keyboardType});
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +73,7 @@ class CustomTextFieldWithLabel extends StatelessWidget {
           style: textStyle ?? AppText.body,
         ),
         SizedBox(height: AppSpacing.xxs),
-        CustomTextField(hint: hint, maxLines: maxLines, keyboardType: keyboardType, obscureText: obscureText,)
+        CustomTextField(hint: hint, maxLines: maxLines, keyboardType: keyboardType, obscureText: obscureText, onChanged: onChanged,)
       ],
     );
   }

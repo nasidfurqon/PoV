@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:pov2/config/router/app_routes.dart';
@@ -12,14 +13,23 @@ import 'package:pov2/core/widget/custom_layout.dart';
 import 'package:pov2/core/widget/custom_scaffold.dart';
 import 'package:pov2/core/widget/custom_textfield.dart';
 import 'package:local_auth/local_auth.dart';
-class LoginPage extends StatefulWidget {
+import 'package:pov2/data/services/get_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:pov2/data/services/auth_service.dart';
+
+import '../../../data/models/login_model.dart';
+final loginProvider = StateNotifierProvider<LoginProvider, LoginModel>((ref) => LoginProvider());
+
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   final LocalAuthentication auth = LocalAuthentication();
   bool isBiometricAvailable = false;
 
@@ -31,10 +41,15 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _checkBiometricAvailable() async{
     bool available = await FingerprintHelper.checkAvailability(auth);
-    isBiometricAvailable = available;
+    setState(() {
+      isBiometricAvailable = available;
+    });
   }
   @override
   Widget build(BuildContext context) {
+    final loginNotifier = ref.read(loginProvider.notifier);
+    final state = ref.watch(loginProvider);
+
     return CustomAuth(
       child: Column(
         children: [
@@ -59,6 +74,9 @@ class _LoginPageState extends State<LoginPage> {
                   keyboardType: TextInputType.emailAddress,
                   label: "Email",
                   hint: "anda@pertamina.com",
+                  onChanged: (value) {
+                    loginNotifier.setUsername(value);
+                  },
                 ),
                 SizedBox(height: AppSpacing.md),
                 CustomTextFieldWithLabel(
@@ -66,6 +84,9 @@ class _LoginPageState extends State<LoginPage> {
                   label: "Password",
                   hint: "***",
                   obscureText: true,
+                  onChanged: (value) {
+                    loginNotifier.setPassword(value);
+                  },
                 ),
                 SizedBox(height: AppSpacing.md),
                 Row(
@@ -79,7 +100,62 @@ class _LoginPageState extends State<LoginPage> {
                           vertical: AppSpacing.xs,
                           horizontal: AppSpacing.md,
                         ),
-                        onPressed: () {},
+                        onPressed: () async{
+                          try{
+                            print('TES BUTTON LOGIN');
+                            if (state.email.isEmpty ||
+                                state.password.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Username and password required'),
+                                  backgroundColor: AppColor.error,
+                                ),
+                              );
+                              return;
+                            }
+
+                            if (!EmailValidator.validate(
+                                state.email)) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Invalid email format'),
+                                  backgroundColor: AppColor.error,
+                                ),
+                              );
+                              return;
+                            }
+                            print("STATE EMAIL : ${state.email}");
+                            print("STATE PASSWORD : ${state.password}");
+                            Map<String, dynamic> responseLogin = await AuthService.login(state.email, state.password);
+                            print('RESPONSE API LOGIN : $responseLogin');
+
+                            var pref = await SharedPreferences.getInstance();
+                            if(responseLogin['success'] == true){
+                              pref.setString('jwtToken', responseLogin['JWT']);
+                              GetService.jwtToken = responseLogin['JWT'];
+                              Map<String, dynamic> decodedToken = JwtDecoder.decode(responseLogin['JWT']);
+                              String userId = decodedToken['UserId'].toString();
+                              context.goNamed(AppRoutes.home.name, pathParameters: {
+                                'user': 'Administrator',
+                                'ID': userId
+                              });
+                            }
+                            else{
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(
+                                const SnackBar(
+                                  content: Text('Login Failed'),
+                                  backgroundColor: AppColor.error,
+                                ),
+                              );
+                            }
+                          }
+                          catch(e, stack){
+                            print('RESPONSE LOGIN GAGAL : $e');
+                            print('STACKTRACE: $stack');
+                          }
+                        },
                       ),
                     ),
                     SizedBox(width: AppSpacing.sm),

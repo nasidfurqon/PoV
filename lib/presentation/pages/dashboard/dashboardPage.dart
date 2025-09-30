@@ -12,21 +12,40 @@ import 'package:pov2/data/services/visit_data.dart';
 import 'package:pov2/presentation/pages/dashboard/quickMenu.dart';
 import 'package:pov2/presentation/widgets/custom_card_dashboard.dart';
 
+import '../../../data/services/get_service.dart';
+
 class DashboardPage extends StatefulWidget {
-  const DashboardPage({super.key});
+  final dynamic ID;
+  const DashboardPage({super.key, required this.ID});
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  String name = '';
   List<Map<String, dynamic>> visitUncompleted = VisitData().taskData.where((task){
     return task['isCompleted'] == false;
   }).toList();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadName();
+  }
+
+
+  Future<void> _loadName() async {
+    final res = await GetService.name(widget.ID);
+    setState(() {
+      name = res;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomDashboard(
-        user: 'Administrator',
+        user: name,
         child: (controller) => _cardActivity(controller)
     );
   }
