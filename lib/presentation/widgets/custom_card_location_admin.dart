@@ -3,12 +3,13 @@ import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/widget/custom_card.dart';
+import 'package:pov2/data/models/mtLocation_model.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 import 'package:pov2/presentation/widgets/custom_row_icon.dart';
 
 class CustomCardLocationAdmin extends StatelessWidget {
   final dynamic id;
-  final Map<String, dynamic> data;
+  final MTLocationModel data;
   const CustomCardLocationAdmin({super.key, required this.id, required this.data});
 
   @override
@@ -32,25 +33,25 @@ class CustomCardLocationAdmin extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                data['place'],
+                data.name ?? '',
                 style: AppText.heading3,
               ),
               SizedBox(height: AppSpacing.xxs),
               Text(
-                data['type'],
+                (data.mtLocationTypeId ?? '').toString(),
                 style: AppText.caption,
               ),
               Divider(),
               SizedBox(height: AppSpacing.xs),
               Text(
-                '${data['street']}, ${data['city']}',
+                '${data.address}',
                 style: AppText.caption,
               ),
               SizedBox(height: AppSpacing.xs),
               CustomRowIcon(
                   icon: Icons.location_on_outlined,
                   color: AppColor.accentCompletion,
-                  title: data['location'],
+                  title: '${data.latitude}, ${data.longitude}',
                   textStyle: AppText.caption
               ),
               SizedBox(height: AppSpacing.xs),
@@ -58,13 +59,13 @@ class CustomCardLocationAdmin extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   CustomHighlightDashboard(
-                      title: 'Geofence: ${data['geofence']}m',
+                      title: 'Geofence: ${data.geoFence}m',
                       fontColor: AppColor.accentCompletion,
                       containerColor: AppColor.onAccentCompletion
                   ),
                   SizedBox(width: AppSpacing.xs),
                   CustomHighlightDashboard(
-                      title: 'QR: ${data['code']}',
+                      title: 'Code: ${data.plantCode}',
                       fontColor: AppColor.accentMedium,
                       containerColor: AppColor.onAccentMedium
                   ),

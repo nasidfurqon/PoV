@@ -6,7 +6,6 @@ import 'package:pov2/data/models/trVisitationSchedule_model.dart';
 import '../../core/utils/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 class GetService{
-
   static Future<String> name(dynamic id) async{
     var pref = await SharedPreferences.getInstance();
     try{

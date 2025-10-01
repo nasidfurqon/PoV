@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/widget/custom_normal_scaffold.dart';
+import 'package:pov2/data/models/mtLocation_model.dart';
+import 'package:pov2/data/services/count_service.dart';
 import 'package:pov2/data/services/visit_data.dart';
 import 'package:pov2/presentation/widgets/custom_card_location_visit.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/custom_header_card.dart';
 
 class LocationVisitPage extends StatefulWidget {
@@ -16,9 +18,27 @@ class LocationVisitPage extends StatefulWidget {
 
 class _LocationVisitPageState extends State<LocationVisitPage> {
   List<Map<String, dynamic>> dataList = VisitData().taskData;
-  late int activeCount = dataList
-      .where((item) => item['statusVisit'] == 'Aktif')
-      .length;
+  int activeCount = 0;
+  int totCount = 0;
+  late SharedPreferences pref;
+  List<MTLocationModel> listLocation = [];
+
+  @override
+  void initState(){
+    super.initState();
+    _loadCountData();
+  }
+
+  Future<void> _loadCountData() async{
+    pref = await SharedPreferences.getInstance();
+    int cntActive = await CountService.countActiveLocation(pref.getString('userId'));
+    int cnt = await  CountService.countLocation(pref.getString('userId'));
+    setState(() {
+      activeCount = cntActive;
+      totCount = cnt;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomNormalScaffold(

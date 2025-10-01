@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
+import 'package:pov2/core/utils/parsing_helper.dart';
 import 'package:pov2/core/utils/parsing_status_color.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
@@ -11,6 +12,10 @@ import 'package:pov2/core/widget/custom_modal_dialog.dart';
 import 'package:pov2/core/widget/custom_normal_scaffold.dart';
 import 'package:pov2/core/widget/custom_textfield.dart';
 import 'package:pov2/core/widget/custom_time_field.dart';
+import 'package:pov2/data/models/mtLocation_model.dart';
+import 'package:pov2/data/models/mtUser_model.dart';
+import 'package:pov2/data/services/get_admin_service.dart';
+import 'package:pov2/data/services/get_service.dart';
 import 'package:pov2/data/services/location_data.dart';
 import 'package:pov2/data/services/users_data.dart';
 import 'package:pov2/data/services/visit_data.dart';
@@ -18,10 +23,10 @@ import 'package:pov2/presentation/widgets/custom_card_body_resume.dart';
 import 'package:pov2/presentation/widgets/custom_card_header_resume.dart';
 import 'package:pov2/presentation/widgets/custom_card_location_admin.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
-
+import '../../../data/models/trVisitationSchedule_model.dart';
 import '../../../data/models/dropdown_model.dart';
 import '../../../data/services/dropdown_data.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 class AdminPanelPage extends StatefulWidget {
   const AdminPanelPage({super.key});
 
@@ -30,12 +35,13 @@ class AdminPanelPage extends StatefulWidget {
 }
 
 class _AdminPanelPageState extends State<AdminPanelPage> {
-  final List<Map<String, dynamic>> visitData = VisitData().taskData;
-  final List<Map<String, dynamic>> locationData = LocationData().data;
-  final List<Map<String, dynamic>> userData = UsersData().data;
+  List<TRVisitationScheduleModel> scheduleData = [];
+  List<TRVisitationScheduleModel> visitedData = [];
+  List<MTLocationModel> locationData = [];
+  List<MTUserModel> userData = [];
   final List<String> person = UsersData().data.map((e) => e['name'] as String).toList();
-  late final List<String> location = locationData.map((e) => e['place'] as String).toList();
-
+  // late final List<String> location = locationData.map((e) => e['place'] as String).toList();
+  late SharedPreferences pref;
   late final List<DropdownItemModel> personDropdown = person.asMap().entries.map((entry) {
     final index = entry.key;
     final name = entry.value;
@@ -45,21 +51,39 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
     );
   }).toList();
 
-  late final List<DropdownItemModel> locationDropdown = location.asMap().entries.map((entry) {
-    final index = entry.key;
-    final name = entry.value;
-    return DropdownItemModel(
-      id: (index + 1).toString(),
-      label: name,
-    );
-  }).toList();
-
+  // late final List<DropdownItemModel> locationDropdown = location.asMap().entries.map((entry) {
+  //   final index = entry.key;
+  //   final name = entry.value;
+  //   return DropdownItemModel(
+  //     id: (index + 1).toString(),
+  //     label: name,
+  //   );
+  // }).toList();
 
   String? selectedAssignValue;
   String? selectedLocationValue;
   String? selectedPriorityValue;
   String? selectedTypeLocationValue;
 
+  @override
+  void initState(){
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async{
+    pref = await SharedPreferences.getInstance();
+    List<TRVisitationScheduleModel> res = await GetAdminService.getListScheduleToday();
+    List<TRVisitationScheduleModel> resSche = await GetAdminService.getListSchedule();
+    List<MTLocationModel> loc = await GetAdminService.getListLocation();
+    List<MTUserModel> user = await GetAdminService.getListUser();
+    setState(() {
+      scheduleData = res  ;
+      visitedData = resSche;
+      locationData = loc;
+      userData = user;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return CustomNormalScaffold(
@@ -233,11 +257,18 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                 height: 200,
                 child: ListView(
                   children: [
-                    ...visitData.asMap().entries.map((entry){
+                    ...scheduleData.asMap().entries.map((entry){
                       final data = entry.value;
                       return Padding(
                         padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                        child: CustomCardBodyResume(id: entry.key, data: data),
+                        child: CustomCardBodyResume(
+                          id: entry.key,
+                          score: 0,
+                          hourFrom: ParsingHelper.splitTimePost(data.startDateTime),
+                          status: data.status ?? '', 
+                          name: GetService.getLocationbyID(data.mtLocationId).then((data)=>data?.name),
+                          person: GetService.name(data.mtAssignedUserId),
+                        ),
                       );
                     })
                   ],
@@ -281,11 +312,19 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                 height: 200,
                 child: ListView(
                   children: [
-                    ...visitData.asMap().entries.map((entry){
+                    ...[].asMap().entries.map((entry){
                       final data = entry.value;
                       return Padding(
                         padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                        child: CustomCardBodyResume(id: entry.key, data: data, isNewActivity: true,),
+                        child: CustomCardBodyResume(
+                          id: entry.key,
+                          isNewActivity: true,
+                          score: 0,
+                          name: null,
+                          person: null,
+                          hourFrom: '',
+                          status: '',
+                        ),
                       );
                     })
                   ],
@@ -362,7 +401,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                   DataColumn(label: Text("Prioritas", style: AppText.heading4Secondary)),
                   DataColumn(label: Text("Status", style: AppText.heading4Secondary)),
                 ],
-                rows: VisitData().taskData.map((e)=>DataRow(cells: _buildScheduleVisitCells(e))).toList()
+                rows: visitedData.map((e)=>DataRow(cells: _buildScheduleVisitCells(e))).toList()
               ),
             ),
           ),
@@ -371,7 +410,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
     );
   }
 
-  List<DataCell> _buildScheduleVisitCells(Map<String, dynamic> data) {
+  List<DataCell> _buildScheduleVisitCells(TRVisitationScheduleModel data) {
     return [
       DataCell(
         Padding(
@@ -379,44 +418,76 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                data["place"] ?? ""
-              ),
-              Text(
-                '${data["street"]}, ${data['city']}',
-                style: AppText.caption,
-              ),
+              FutureBuilder<MTLocationModel?>(
+                future: GetService.getLocationbyID(data.mtLocationId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Text("...");
+                  } else if (snapshot.hasError) {
+                    return const Text('');
+                  } else {
+                    return Text(
+                      snapshot.data?.name ?? ''
+                    );
+                  }
+                },),
+              FutureBuilder<MTLocationModel?>(
+                future: GetService.getLocationbyID(data.mtLocationId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Text("...");
+                  } else if (snapshot.hasError) {
+                    return const Text('');
+                  } else {
+                    return Text(
+                        snapshot.data?.address ?? '',
+                      style: AppText.caption,
+                    );
+                  }
+                },),
             ],
           ),
         ),
       ),
       DataCell(Padding(
         padding: const EdgeInsets.all(AppSpacing.xs),
-        child: Text(data["person"] ?? ""),
+        child: FutureBuilder<String?>(
+          future: GetService.name(data.mtAssignedUserId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Text("...");
+            } else if (snapshot.hasError) {
+              return const Text('');
+            } else {
+              return Text(
+                snapshot.data ?? '',
+              );
+            }
+          },),
       )),
       DataCell(Padding(
         padding: const EdgeInsets.all(AppSpacing.xs),
-        child: Text(data["deadline"] ?? ""),
+        child: Text(ParsingHelper.splitTimePre(data.endDateTime) ?? ""),
       )),
       DataCell(Padding(
         padding: const EdgeInsets.all(AppSpacing.xs),
-        child: Text('${data["hourFrom"]}-${data['hourTo']}' ?? ""),
+        child: Text('${ParsingHelper.splitTimePost(data.startDateTime)}-${ParsingHelper.splitTimePost(data.endDateTime)}' ?? ""),
       )),
       DataCell(Padding(
         padding: const EdgeInsets.all(AppSpacing.xs),
         child:
           CustomHighlightDashboard(
-              title: data['status'],
-              fontColor: ParsingColor.cekColor(data['status'])[0],
-              containerColor: ParsingColor.cekColor(data['status'])[1]
+              title: data.priority ?? '',
+              fontColor: ParsingColor.cekColor(data.priority ?? '')[0],
+              containerColor: ParsingColor.cekColor(data.priority ?? '')[1]
           )
       )),
       DataCell(Padding(
         padding: const EdgeInsets.all(AppSpacing.xs),
         child: CustomHighlightDashboard(
-            title: data['statusJadwal'],
-            fontColor: ParsingColor.cekColor(data['statusJadwal'])[0],
-            containerColor: ParsingColor.cekColor(data['statusJadwal'])[1]
+            title: data.status ?? '',
+            fontColor: ParsingColor.cekColor(data.status ?? '')[0],
+            containerColor: ParsingColor.cekColor(data.status ?? '')[1]
         )
       )),
     ];
@@ -439,7 +510,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
         SizedBox(height: AppSpacing.xs,),
         CustomDropdownWithLabel(
           label: 'Location',
-          items: locationDropdown,
+          items: [],
           initialValue: '1' ?? '',
           onChanged: (value){
             setState(() {
@@ -663,7 +734,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                     DataColumn(label: Text("Status", style: AppText.heading4Secondary)),
                     DataColumn(label: Text("bergabung", style: AppText.heading4Secondary)),
                   ],
-                  rows: UsersData().data.map((e)=>DataRow(cells: _buildUsersCells(e))).toList()
+                  rows: userData.map((e)=>DataRow(cells: _buildUsersCells(e))).toList()
               ),
             ),
           ),
@@ -672,37 +743,37 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
     );
   }
 
-  List<DataCell> _buildUsersCells(Map<String, dynamic> data) {
+  List<DataCell> _buildUsersCells(MTUserModel data) {
     return [
       DataCell(Padding(
         padding: const EdgeInsets.all(AppSpacing.xs),
-        child: Text(data["name"] ?? ""),
+        child: Text(data.fullName ?? ""),
       )),
       DataCell(Padding(
         padding: const EdgeInsets.all(AppSpacing.xs),
-        child: Text(data["email"] ?? ""),
+        child: Text(data.email ?? ""),
       )),
       DataCell(Padding(
         padding: const EdgeInsets.all(AppSpacing.xs),
-        child: Text(data["role"] ?? ""),
+        child: Text((data.mtUserLevelId ?? "").toString()),
       )),
       DataCell(Padding(
         padding: const EdgeInsets.all(AppSpacing.xs),
-        child: Text(data['id']),
+        child: Text(data.employeeId ?? ''),
       )),
       DataCell(Padding(
           padding: const EdgeInsets.all(AppSpacing.xs),
           child:
           CustomHighlightDashboard(
-              title: data['status'],
-              fontColor: ParsingColor.cekColor(data['status'])[0],
-              containerColor: ParsingColor.cekColor(data['status'])[1]
+              title: (data.isActive ?? '').toString(),
+              fontColor: ParsingColor.cekColor((data.isActive ?? '').toString())[0],
+              containerColor: ParsingColor.cekColor((data.isActive ?? '').toString())[1]
           )
 
       )),
       DataCell(Padding(
         padding: const EdgeInsets.all(AppSpacing.xs),
-        child: Text(data['join']),
+        child: Text(ParsingHelper.splitTimePre(data.createdDateTime)),
       )),
     ];
   }

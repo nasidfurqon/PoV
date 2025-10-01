@@ -3,13 +3,20 @@ import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/utils/parsing_status_color.dart';
 import 'package:pov2/core/widget/custom_card.dart';
+import 'package:pov2/data/models/trVisitationSchedule_model.dart';
+import 'package:pov2/data/services/get_service.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 
 class CustomCardBodyResume extends StatelessWidget {
   final dynamic id;
-  final Map<String, dynamic> data;
+  final dynamic name;
+  final dynamic person;
+  final String hourFrom;
+  final String? actEndDateTime;
   final bool? isNewActivity;
-  const CustomCardBodyResume({super.key, this.isNewActivity = false, required this.id, required this.data});
+  final double score;
+  final String status;
+  const CustomCardBodyResume({super.key, this.isNewActivity = false, required this.score, required this.id, required this.name, required this.person, required this.hourFrom, this.actEndDateTime, required this.status});
 
   @override
   Widget build(BuildContext context) {
@@ -23,18 +30,63 @@ class CustomCardBodyResume extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  name is Future<String?> ?
+                  FutureBuilder<String?>(
+                    future: name as Future<String?>,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Text("...");
+                      } else if (snapshot.hasError) {
+                        return const Text('');
+                      } else {
+                        return Text(
+                          snapshot.data!,
+                          style: AppText.heading3,
+                        );
+                      }
+                    },) :
                   Text(
-                    data['place'],
+                    name,
                     style: AppText.heading5,
                   ),
                   if(isNewActivity == false)
-                  Text(
-                    '${data['person']} \u2022 ${data['hourFrom']}',
+                    person is Future<String?> ?
+                    FutureBuilder<String?>(
+                      future: person as Future<String?>,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Text("...");
+                        } else if (snapshot.hasError) {
+                          return const Text('');
+                        } else {
+                          return Text(
+                            snapshot.data!,
+                            style: AppText.heading3,
+                          );
+                        }
+                      },) :
+                    Text(
+                    '${person} \u2022 ${hourFrom}',
                     style: AppText.caption,
                   ),
                   if(isNewActivity == true)
+                    person is Future<String?> ?
+                    FutureBuilder<String?>(
+                      future: person as Future<String?>,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Text("...");
+                        } else if (snapshot.hasError) {
+                          return const Text('');
+                        } else {
+                          return Text(
+                            snapshot.data!,
+                            style: AppText.heading3,
+                          );
+                        }
+                      },) :
                     Text(
-                        '${data['person']} \u2022 ${data['deadline']}',
+                        '${person} \u2022 ${actEndDateTime}',
                       style: AppText.caption,
                     )
                 ],
@@ -44,16 +96,16 @@ class CustomCardBodyResume extends StatelessWidget {
                 children: [
                   if(isNewActivity == true)
                     CustomHighlightDashboard(
-                        title: '${data['score']}/100',
+                        title: '${score}/100',
                         fontColor: ParsingColor.cekColor('score')[0],
                         containerColor:  ParsingColor.cekColor('score')[1]
                     ),
                   if(isNewActivity == true)
                     SizedBox(height: AppSpacing.xs,),
                   CustomHighlightDashboard(
-                      title: data['statusJadwal'],
-                      fontColor: ParsingColor.cekColor(data['statusJadwal'])[0],
-                      containerColor:  ParsingColor.cekColor(data['statusJadwal'])[1]
+                      title: status,
+                      fontColor: ParsingColor.cekColor(status)[0],
+                      containerColor:  ParsingColor.cekColor(status)[1]
                   ),
                 ],
               )
