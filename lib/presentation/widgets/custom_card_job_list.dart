@@ -12,11 +12,11 @@ import '../../core/widget/custom_button.dart';
 
 class CustomCardJobList extends StatelessWidget {
   final String id;
-  final String place;
+  final dynamic place;
   final String progress;
   final String status;
   final String deadline;
-  final String visitor;
+  final dynamic visitor;
   final String description;
   const CustomCardJobList({super.key, required this.id, required this.place, required this.progress, required this.status, required this.deadline, required this.visitor, required this.description});
 
@@ -32,6 +32,21 @@ class CustomCardJobList extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  place is Future<String?> ?
+                  FutureBuilder<String?>(
+                    future: place as Future<String?>,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Text("...");
+                      } else if (snapshot.hasError) {
+                        return const Text('');
+                      } else {
+                        return Text(
+                          snapshot.data!,
+                          style: AppText.heading3,
+                        );
+                      }
+                    },) :
                   Text(
                     place,
                     style: AppText.heading3,

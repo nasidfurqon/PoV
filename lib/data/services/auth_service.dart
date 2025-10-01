@@ -7,7 +7,7 @@ import '../../core/utils/config.dart';
 class AuthService{
   static Future<Map<String, dynamic>> login(String email, String password) async {
     final url = Uri.parse('http://${AppConfig.serverAddress}/api/login');
-
+    print("CEK LOGIN");
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -17,6 +17,7 @@ class AuthService{
       },
     );
     final body = response.body.isNotEmpty ? jsonDecode(response.body) : {};
+    print("RESPONSE API LOGIN : $body");
     if (response.statusCode == 200) {
       return {
         'success': true,

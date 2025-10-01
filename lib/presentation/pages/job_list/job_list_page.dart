@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
+import 'package:pov2/core/utils/parsing_helper.dart';
 import 'package:pov2/core/widget/custom_normal_scaffold.dart';
+import 'package:pov2/data/models/trVisitationSchedule_model.dart';
+import 'package:pov2/data/services/count_service.dart';
 import 'package:pov2/data/services/visit_data.dart';
 import 'package:pov2/presentation/widgets/custom_card_job_list.dart';
 import 'package:pov2/presentation/widgets/custom_header_card.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../data/services/get_service.dart';
 class JobListPage extends StatefulWidget {
   const JobListPage({super.key});
 
@@ -14,16 +19,41 @@ class JobListPage extends StatefulWidget {
 }
 
 class _JobListPageState extends State<JobListPage> {
-  List<Map<String, dynamic>> jobList = VisitData().taskData;
-  late int onGoingCount = jobList
-      .where((item) => item['progress'] == 'Berlangsung')
-      .length;
-  late int waitingCount = jobList
-      .where((item) => item['progress'] == 'Menunggu')
-      .length;
-  late int finishCount = jobList
-      .where((item) => item['progress'] == 'Selesai')
-      .length;
+  int onGoingCount = 0;
+  int waitingCount =0;
+  int finishCount = 0;
+  List<TRVisitationScheduleModel> listSchedule = [];
+  late SharedPreferences pref;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadListSchedule();
+    _getCountData();
+  }
+
+  Future<void> _loadListSchedule() async{
+    pref = await SharedPreferences.getInstance();
+    dynamic userId = pref.getString('userId');
+    List<TRVisitationScheduleModel> res = await GetService.getListSchedule(userId);
+    setState(() {
+      listSchedule = res  ;
+    });
+  }
+  
+  Future<void> _getCountData() async{
+    pref = await SharedPreferences.getInstance();
+    dynamic userId = pref.getString('userId');
+    int cntOnGoing = await CountService.countStatus('Ongoing', userId);
+    int cntWaiting = await CountService.countStatus('Scheduled', userId);
+    int cntFinish = await CountService.countStatus('Completed', userId);
+    setState(() {
+      onGoingCount = cntOnGoing;
+      waitingCount = cntWaiting;
+      finishCount = cntFinish;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,19 +82,19 @@ class _JobListPageState extends State<JobListPage> {
                   status: 'Selesai'
               ),
               SizedBox(height: AppSpacing.sm,),
-              ...jobList.asMap().entries.map((entry){
+              ...listSchedule.asMap().entries.map((entry){
                 final index = entry.key;
                 final data = entry.value;
                 return Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                   child: CustomCardJobList(
                       id: index.toString(),
-                      place: data['place'],
-                      progress: data['progress'],
-                      status: data['status'],
-                      deadline: data['deadline'],
-                      visitor: data['visitor'],
-                      description: data['description']
+                      place: GetService.getLocationbyID(data.mtLocationId).then((data)=>data?.name),
+                      progress: data.status ?? '-',
+                      status: data.priority ?? '-',
+                      deadline: ParsingHelper.splitTimePre(data.startDateTime),
+                      visitor: GetService.name(pref.getString('userId')),
+                      description: data.visitationDescription ?? '-'
                   ),
                 );
               })
