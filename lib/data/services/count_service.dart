@@ -82,17 +82,17 @@ class CountService{
     }
   }
 
-  static Future<int> countAdminActiveLocation(dynamic id) async{
+  static Future<int> countAdminLocation() async{
     var pref = await SharedPreferences.getInstance();
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/countAdmin/MTLocation/$id'),
+              'http://${AppConfig.serverAddress}/api/countAdmin/MTLocation'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
 
-      print("API COUNT Active LOCATION RESPONSE CHECK : ${response.body} from user $id");
+      print("API COUNT LOCATION RESPONSE CHECK : ${response.body}");
       if(response.statusCode == 200){
         final data = jsonDecode(response.body);
         final res = data['data'];
@@ -108,17 +108,17 @@ class CountService{
     }
   }
 
-  static Future<int> countAdminActiveLocationActive(dynamic id) async{
+  static Future<int> countAdminActiveLocationActive() async{
     var pref = await SharedPreferences.getInstance();
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/countAdmin/MTLocationActive/$id'),
+              'http://${AppConfig.serverAddress}/api/countAdmin/MTLocationActive'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
 
-      print("API COUNT Active LOCATION RESPONSE CHECK : ${response.body} from user $id");
+      print("API COUNT Active LOCATION RESPONSE CHECK : ${response.body}");
       if(response.statusCode == 200){
         final data = jsonDecode(response.body);
         final res = data['data'];
@@ -134,7 +134,7 @@ class CountService{
     }
   }
 
-  static Future<int> countAdminUser(dynamic id) async{
+  static Future<int> countAdminUser() async{
     var pref = await SharedPreferences.getInstance();
     try{
       Response response = await get(
@@ -144,7 +144,7 @@ class CountService{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
 
-      print("API COUNT Active LOCATION RESPONSE CHECK : ${response.body} from user $id");
+      print("API COUNT Active USER RESPONSE CHECK : ${response.body}");
       if(response.statusCode == 200){
         final data = jsonDecode(response.body);
         final res = data['data'];
@@ -156,6 +156,58 @@ class CountService{
     }
     catch(e){
       print("API RESPONSE FAILED: Failed to load count active location, $e!");
+      return 0;
+    }
+  }
+
+  static Future<int> countAdminScheduleToday() async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              'http://${AppConfig.serverAddress}/api/countAdmin/ScheduleToday'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API COUNT SCHEDULE TODAY RESPONSE CHECK : ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['data'];
+        return res;
+      }
+      else{
+        return 0;
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load count schedule today, $e!");
+      return 0;
+    }
+  }
+
+  static Future<int> countAdminScheduleTodayCompleted() async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              'http://${AppConfig.serverAddress}/api/countAdmin/ScheduleTodayCompleted'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API COUNT SCHEDULE TODAY COMPLETED RESPONSE CHECK : ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['data'];
+        return res;
+      }
+      else{
+        return 0;
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load count schedule today, $e!");
       return 0;
     }
   }

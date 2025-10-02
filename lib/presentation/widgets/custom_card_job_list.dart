@@ -74,7 +74,7 @@ class CustomCardJobList extends StatelessWidget {
                 style: AppText.caption,
               ),
               SizedBox(height: AppSpacing.sm,),
-              if(!(progress == 'Selesai'))
+              if(!(progress == 'Completed'))
               CustomButtonFull(
                 icon: Icons.check_circle_outline,
                 textStyle: AppText.heading3Tertiary,

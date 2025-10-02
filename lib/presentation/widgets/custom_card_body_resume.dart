@@ -41,7 +41,7 @@ class CustomCardBodyResume extends StatelessWidget {
                       } else {
                         return Text(
                           snapshot.data!,
-                          style: AppText.heading3,
+                          style: AppText.heading5,
                         );
                       }
                     },) :
@@ -60,8 +60,8 @@ class CustomCardBodyResume extends StatelessWidget {
                           return const Text('');
                         } else {
                           return Text(
-                            snapshot.data!,
-                            style: AppText.heading3,
+                            '${snapshot.data!}  \u2022 ${hourFrom}',
+                            style: AppText.caption
                           );
                         }
                       },) :
@@ -80,8 +80,8 @@ class CustomCardBodyResume extends StatelessWidget {
                           return const Text('');
                         } else {
                           return Text(
-                            snapshot.data!,
-                            style: AppText.heading3,
+                            '${snapshot.data} \u2022 ${actEndDateTime}',
+                            style: AppText.caption,
                           );
                         }
                       },) :

@@ -34,6 +34,32 @@ class GetAdminService{
     }
   }
 
+  static Future<List<TRVisitationScheduleModel>> getListScheduleTodayCompleted() async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              'http://${AppConfig.serverAddress}/api/filterAdmin/ScheduleTodayCompleted'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API RESPONSE LIST SCHEDULE TODAY Completed CHECK: ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['data'];
+        return res.map<TRVisitationScheduleModel>((item) => TRVisitationScheduleModel.fromJson(item)).toList();
+      }
+      else{
+        return [];
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load list schedule completed today, $e!");
+      return [];
+    }
+  }
+
   static Future<List<TRVisitationScheduleModel>> getListSchedule() async{
     var pref = await SharedPreferences.getInstance();
     try{

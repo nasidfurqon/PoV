@@ -14,6 +14,7 @@ import 'package:pov2/core/widget/custom_textfield.dart';
 import 'package:pov2/core/widget/custom_time_field.dart';
 import 'package:pov2/data/models/mtLocation_model.dart';
 import 'package:pov2/data/models/mtUser_model.dart';
+import 'package:pov2/data/services/count_service.dart';
 import 'package:pov2/data/services/get_admin_service.dart';
 import 'package:pov2/data/services/get_service.dart';
 import 'package:pov2/data/services/location_data.dart';
@@ -36,6 +37,7 @@ class AdminPanelPage extends StatefulWidget {
 
 class _AdminPanelPageState extends State<AdminPanelPage> {
   List<TRVisitationScheduleModel> scheduleData = [];
+  List<TRVisitationScheduleModel> scheduleCompletedData = [];
   List<TRVisitationScheduleModel> visitedData = [];
   List<MTLocationModel> locationData = [];
   List<MTUserModel> userData = [];
@@ -51,6 +53,10 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
     );
   }).toList();
 
+  int cntUser = 0;
+  int cntLocation = 0;
+  int cntVisitationToday = 0;
+  int cntVisitationTodayCompleted = 0;
   // late final List<DropdownItemModel> locationDropdown = location.asMap().entries.map((entry) {
   //   final index = entry.key;
   //   final name = entry.value;
@@ -69,16 +75,31 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
   void initState(){
     super.initState();
     _loadData();
+    _loadCountData();
   }
 
+  Future<void> _loadCountData() async{
+    int temp1 = await CountService.countAdminUser();
+    int temp2 = await CountService.countAdminLocation();
+    int temp3 = await CountService.countAdminScheduleToday();
+    int temp4 = await CountService.countAdminScheduleTodayCompleted();
+    setState(() {
+      cntUser = temp1;
+      cntLocation = temp2 ;
+      cntVisitationToday = temp3;
+      cntVisitationTodayCompleted = temp4;
+    });
+  }
   Future<void> _loadData() async{
     pref = await SharedPreferences.getInstance();
     List<TRVisitationScheduleModel> res = await GetAdminService.getListScheduleToday();
+    List<TRVisitationScheduleModel> resComp = await GetAdminService.getListScheduleTodayCompleted();
     List<TRVisitationScheduleModel> resSche = await GetAdminService.getListSchedule();
     List<MTLocationModel> loc = await GetAdminService.getListLocation();
     List<MTUserModel> user = await GetAdminService.getListUser();
     setState(() {
       scheduleData = res  ;
+      scheduleCompletedData = resComp;
       visitedData = resSche;
       locationData = loc;
       userData = user;
@@ -174,7 +195,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                       title: 'Total Pengguna',
                       icon: Icons.person_outline,
                       color: AppColor.accentMedium,
-                      number: userData.length.toString(),
+                      number: cntUser.toString(),
                       description: 'Petugas lapangan aktif'
                   ),
                 ),
@@ -184,7 +205,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                       title: 'Lokasi',
                       icon: Icons.location_on_outlined,
                       color: AppColor.accentCompleted,
-                      number: locationData.length.toString(),
+                      number: cntLocation.toString(),
                       description: 'Situs Terdaftar'
                   ),
                 ),
@@ -199,7 +220,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                     title: 'Kunjungan Hari Ini',
                     icon: Icons.date_range_rounded,
                     color: AppColor.accentCompletion,
-                    number: '1/2',
+                    number: '${cntVisitationTodayCompleted}/${cntVisitationToday}',
                     description: 'Selesai/Terjadwal'
                 ),
               ),
@@ -312,18 +333,19 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                 height: 200,
                 child: ListView(
                   children: [
-                    ...[].asMap().entries.map((entry){
+                    ...scheduleCompletedData.asMap().entries.map((entry){
                       final data = entry.value;
                       return Padding(
                         padding: const EdgeInsets.only(bottom: AppSpacing.xs),
                         child: CustomCardBodyResume(
                           id: entry.key,
-                          isNewActivity: true,
                           score: 0,
-                          name: null,
-                          person: null,
-                          hourFrom: '',
-                          status: '',
+                          isNewActivity: true,
+                          hourFrom: ParsingHelper.splitTimePost(data.startDateTime),
+                          status: data.status ?? '',
+                          actEndDateTime: ParsingHelper.splitTimePre(data.actualEndDateTime),
+                          name: GetService.getLocationbyID(data.mtLocationId).then((data)=>data?.name),
+                          person: GetService.name(data.mtAssignedUserId),
                         ),
                       );
                     })
