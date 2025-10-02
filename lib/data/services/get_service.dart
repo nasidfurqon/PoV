@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:pov2/data/models/mtLocationType_model.dart';
 import 'package:pov2/data/models/mtLocation_model.dart';
 import 'package:pov2/data/models/trVisitationSchedule_model.dart';
 import '../../core/utils/config.dart';
@@ -158,6 +159,58 @@ class GetService{
     }
     catch(e){
       print("API RESPONSE FAILED: Failed to load location data, $e!");
+      return null;
+    }
+  }
+
+  static Future<List<MTLocationModel>> getListLocation() async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              'http://${AppConfig.serverAddress}/api/list/MTLocation'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API RESPONSE LIST LOCATION CHECK: ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['MTLocation'];
+        return res.map<MTLocationModel>((item) => MTLocationModel.fromJson(item)).toList();
+      }
+      else{
+        return [];
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load list location , $e!");
+      return [];
+    }
+  }
+
+  static Future<MTLocationTypeModel?> getLocationType(dynamic id) async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              'http://${AppConfig.serverAddress}/api/view/MTLocationType/$id'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API RESPONSE LOCATION TYPE CHECK: ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['TableVar'];
+        return MTLocationTypeModel.fromJson(res);
+      }
+      else{
+        return null;
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load location type, $e!");
       return null;
     }
   }

@@ -8,9 +8,9 @@ class MTLocationModel {
   final String? address;
   final String? latitude;
   final String? longitude;
-  final bool? status;
   final int? geoFence;
   final int? createdByUserId;
+  final bool? isActive;
   final String? createdDateTime;
   final int? lastUpdatedByUserId;
   final String? lastUpdatedDateTime;
@@ -20,10 +20,10 @@ class MTLocationModel {
     this.mtLocationTypeId,
     this.plantCode,
     this.name,
+    this.isActive,
     this.address,
     this.latitude,
     this.longitude,
-    this.status,
     this.geoFence,
     this.createdByUserId,
     this.createdDateTime,
@@ -39,8 +39,8 @@ class MTLocationModel {
       name: data['Name'],
       address: data['Address'],
       latitude: data['Latitude'],
+      isActive:ParsingHelper.parseBool(data['IsActive']),
       longitude: data['Longitude'],
-      status: ParsingHelper.parseBool(data['Status']),
       geoFence: ParsingHelper.parseInt(data['GeoFence']),
       createdByUserId: ParsingHelper.parseInt(data['CreatedByUserID']),
       createdDateTime: data['CreatedDateTime'] != null ? ParsingHelper.splitTimePre(data['CreatedDateTime']) : null,

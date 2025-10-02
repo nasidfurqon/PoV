@@ -4,6 +4,7 @@ import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/widget/custom_normal_scaffold.dart';
 import 'package:pov2/data/models/mtLocation_model.dart';
 import 'package:pov2/data/services/count_service.dart';
+import 'package:pov2/data/services/get_service.dart';
 import 'package:pov2/data/services/visit_data.dart';
 import 'package:pov2/presentation/widgets/custom_card_location_visit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,15 +18,15 @@ class LocationVisitPage extends StatefulWidget {
 }
 
 class _LocationVisitPageState extends State<LocationVisitPage> {
-  List<Map<String, dynamic>> dataList = VisitData().taskData;
   int activeCount = 0;
   int totCount = 0;
   late SharedPreferences pref;
-  List<MTLocationModel> listLocation = [];
+  List<MTLocationModel?> listLocation = [];
 
   @override
   void initState(){
     super.initState();
+    _loadListLocation();
     _loadCountData();
   }
 
@@ -39,6 +40,12 @@ class _LocationVisitPageState extends State<LocationVisitPage> {
     });
   }
 
+  Future<void> _loadListLocation() async{
+    List<MTLocationModel?> listLoc = await GetService.getListLocation();
+    setState(() {
+      listLocation = listLoc;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return CustomNormalScaffold(
@@ -52,7 +59,7 @@ class _LocationVisitPageState extends State<LocationVisitPage> {
           child: ListView(
             children: [
               CustomHeaderCard(
-                  number: dataList.length.toString(),
+                  number: totCount.toString(),
                   status: 'Total Lokasi'
               ),
               SizedBox(height: AppSpacing.sm,),
@@ -61,7 +68,7 @@ class _LocationVisitPageState extends State<LocationVisitPage> {
                   status: 'Aktif'
               ),
               SizedBox(height: AppSpacing.sm,),
-              ...dataList.asMap().entries.map((entry){
+              ...listLocation.asMap().entries.map((entry){
                 final index = entry.key;
                 final data = entry.value;
                 return Padding(
