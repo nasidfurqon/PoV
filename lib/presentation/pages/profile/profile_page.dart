@@ -3,16 +3,46 @@ import 'package:pov2/config/router/app_routes.dart';
 import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
+import 'package:pov2/core/utils/parsing_helper.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/core/widget/custom_layout.dart';
 import 'package:pov2/core/widget/custom_scaffold.dart';
+import 'package:pov2/data/models/mtUserPosition_model.dart';
+import 'package:pov2/data/models/mtUser_model.dart';
+import 'package:pov2/data/services/get_service.dart';
 import 'package:pov2/presentation/widgets/custom_header_card.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 import 'package:pov2/presentation/widgets/custom_row_icon.dart';
 import 'package:go_router/go_router.dart';
-  class ProfilePage extends StatelessWidget {
+import 'package:shared_preferences/shared_preferences.dart';
+  class ProfilePage extends StatefulWidget {
     const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+    MTUserModel? userData;
+    MTUserPositionModel? userPositionData;
+
+    late SharedPreferences pref;
+    @override
+    void initState(){
+      super.initState();
+      _loadData();
+    }
+
+    Future<void> _loadData() async{
+      pref = await SharedPreferences.getInstance();
+      MTUserModel? data = await GetService.getUser(pref.getString('userId'));
+      MTUserPositionModel? posData = await GetService.getUserPosition(data?.mtUserPositionId);
+      setState(() {
+        userData = data;
+        userPositionData = posData;
+      });
+    }
 
     @override
     Widget build(BuildContext context) {
@@ -100,7 +130,7 @@ import 'package:go_router/go_router.dart';
                       ),
                       SizedBox(height: AppSpacing.xs),
                       Text(
-                        'PTM-2024-001',
+                        userData?.employeeId ?? '',
                         style: AppText.bodySecondary,
                       ),
                       SizedBox(height: AppSpacing.xs),
@@ -132,7 +162,7 @@ import 'package:go_router/go_router.dart';
         ],
       );
     }
-  
+
     Widget _personalInformation(){
       return CustomCard(
           padding: EdgeInsets.zero,
@@ -149,14 +179,14 @@ import 'package:go_router/go_router.dart';
                 CustomRowIcon(
                     icon: Icons.email_outlined,
                     color: AppColor.textSecondary,
-                    title: 'Email: admin@gmail.com',
+                    title: 'Email: ${userData?.email ?? ''}',
                     textStyle: AppText.caption
                 ),
                 SizedBox(height: AppSpacing.xs,),
                 CustomRowIcon(
                     icon: Icons.phone_outlined,
                     color: AppColor.textSecondary,
-                    title: 'Telephone: +6200001010',
+                    title: 'Telephone: ${userData?.email}',
                     textStyle: AppText.caption
                 ),
                 SizedBox(height: AppSpacing.xs,),
@@ -170,14 +200,14 @@ import 'package:go_router/go_router.dart';
                 CustomRowIcon(
                     icon: Icons.date_range_outlined,
                     color: AppColor.textSecondary,
-                    title: 'Bergabung: 15/6/2024',
+                    title: 'Bergabung: ${ParsingHelper.splitTimePre(userData?.createdDateTime)}',
                     textStyle: AppText.caption
                 ),
                 SizedBox(height: AppSpacing.xs,),
                 CustomRowIcon(
                     icon: Icons.military_tech_outlined,
                     color: AppColor.textSecondary,
-                    title: 'Departemen: Operasional',
+                    title: 'Departemen: ${userPositionData?.organizationName}',
                     textStyle: AppText.caption
                 ),
               ],
@@ -185,4 +215,4 @@ import 'package:go_router/go_router.dart';
           )
       );
     }
-  }
+}
