@@ -9,8 +9,9 @@ class CustomTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final TextInputType? keyboardType;
   final bool obscureText;
+  final TextEditingController? controller;
   final int? maxLines;
-  const CustomTextField({super.key,this.onChanged, this.obscureText = false,required this.hint, this.maxLines, this.keyboardType});
+  const CustomTextField({super.key,this.onChanged, this.controller, this.obscureText = false,required this.hint, this.maxLines, this.keyboardType});
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +47,7 @@ class CustomTextField extends StatelessWidget {
               return onChanged!(value);
             }
           },
+          controller: controller,
         )
       ],
     );
@@ -58,10 +60,11 @@ class CustomTextFieldWithLabel extends StatelessWidget {
   final String hint;
   final TextInputType? keyboardType;
   final bool obscureText;
+  final TextEditingController? controller;
   final Function(String)? onChanged;
 
   final int? maxLines;
-  const CustomTextFieldWithLabel({super.key,this.onChanged, this.textStyle, this.maxLines, this.obscureText = false, required this.label, required this.hint, this.keyboardType});
+  const CustomTextFieldWithLabel({super.key,this.onChanged, this.controller, this.textStyle, this.maxLines, this.obscureText = false, required this.label, required this.hint, this.keyboardType});
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +76,7 @@ class CustomTextFieldWithLabel extends StatelessWidget {
           style: textStyle ?? AppText.body,
         ),
         SizedBox(height: AppSpacing.xxs),
-        CustomTextField(hint: hint, maxLines: maxLines, keyboardType: keyboardType, obscureText: obscureText, onChanged: onChanged,)
+        CustomTextField(hint: hint, maxLines: maxLines, controller: controller,keyboardType: keyboardType, obscureText: obscureText, onChanged: onChanged,)
       ],
     );
   }

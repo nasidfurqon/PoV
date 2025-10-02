@@ -10,10 +10,10 @@ class DropdownData{
   ];
 
   static List<DropdownItemModel> priorityData = [
-    DropdownItemModel(id: "1", label: "Low"),
-    DropdownItemModel(id: "2", label: "Normal"),
-    DropdownItemModel(id: "3", label: "High"),
-    DropdownItemModel(id: "4", label: "Urgent"),
+    DropdownItemModel(id: "Low", label: "Low"),
+    DropdownItemModel(id: "Normal", label: "Normal"),
+    DropdownItemModel(id: "High", label: "High"),
+    DropdownItemModel(id: "Urgent", label: "Urgent"),
   ];
 
   static List<DropdownItemModel> typeLocation = [

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:pov2/data/models/mtLocationType_model.dart';
 import 'package:pov2/data/models/mtLocation_model.dart';
 import 'package:pov2/data/models/mtUser_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -108,6 +109,32 @@ class GetAdminService{
     }
     catch(e){
       print("API RESPONSE FAILED: Failed to load list location, $e!");
+      return [];
+    }
+  }
+
+  static Future<List<MTLocationTypeModel>> getListLocationType() async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              'http://${AppConfig.serverAddress}/api/list/MTLocationType'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API RESPONSE LIST Location TYPE CHECK: ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['MTLocationType'];
+        return res.map<MTLocationTypeModel>((item) => MTLocationTypeModel.fromJson(item)).toList();
+      }
+      else{
+        return [];
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load list location type, $e!");
       return [];
     }
   }

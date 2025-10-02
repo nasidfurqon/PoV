@@ -3,7 +3,9 @@ import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/widget/custom_card.dart';
+import 'package:pov2/data/models/mtLocationType_model.dart';
 import 'package:pov2/data/models/mtLocation_model.dart';
+import 'package:pov2/data/services/get_service.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 import 'package:pov2/presentation/widgets/custom_row_icon.dart';
 
@@ -37,10 +39,20 @@ class CustomCardLocationAdmin extends StatelessWidget {
                 style: AppText.heading3,
               ),
               SizedBox(height: AppSpacing.xxs),
-              Text(
-                (data.mtLocationTypeId ?? '').toString(),
-                style: AppText.caption,
-              ),
+              FutureBuilder<MTLocationTypeModel?>(
+                future: GetService.getLocationType(data.mtLocationTypeId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Text("...");
+                  } else if (snapshot.hasError) {
+                    return const Text('');
+                  } else {
+                    return Text(
+                      snapshot.data?.name ?? '',
+                      style: AppText.caption,
+                    );
+                  }
+                },),
               Divider(),
               SizedBox(height: AppSpacing.xs),
               Text(

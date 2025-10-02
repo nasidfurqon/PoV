@@ -5,7 +5,7 @@ import 'package:pov2/config/theme/app_spacing.dart';
 
 import '../../config/theme/app_text.dart';
 
-class CustomDatePicker extends StatefulWidget{
+class CustomDateTimePicker extends StatefulWidget{
   final String label;
   final bool? isRequired;
   final bool? isEnabled;
@@ -13,15 +13,15 @@ class CustomDatePicker extends StatefulWidget{
   final TextStyle? textStyle;
   final TextEditingController controller;
 
-  const CustomDatePicker({
+  const CustomDateTimePicker({
     super.key, required this.label, this.firstDate, this.textStyle, this.isEnabled, required this.controller, this.isRequired
   });
 
   @override
-  State<CustomDatePicker> createState() => _CustomDatePicker();
+  State<CustomDateTimePicker> createState() => _CustomDateTimePicker();
 }
 
-class _CustomDatePicker extends State<CustomDatePicker>{
+class _CustomDateTimePicker extends State<CustomDateTimePicker>{
   Future<void> _selectDate(BuildContext context) async{
     DateTime initialDate = DateTime.now();
     if(widget.controller!.text.isNotEmpty){
@@ -39,9 +39,25 @@ class _CustomDatePicker extends State<CustomDatePicker>{
         lastDate: DateTime(3000)
     );
     if(pickedDate != null){
-      setState(() {
-        widget.controller!.text = DateFormat('yyyy-MM-dd').format(pickedDate);
-      });
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(initialDate),
+      );
+
+      if (pickedTime != null) {
+        final DateTime fullDateTime = DateTime(
+          pickedDate.year,
+          pickedDate.month,
+          pickedDate.day,
+          pickedTime.hour,
+          pickedTime.minute,
+        );
+
+        setState(() {
+          widget.controller.text =
+              DateFormat('yyyy-MM-dd HH:mm:ss').format(fullDateTime);
+        });
+      }
     }
   }
 
@@ -73,32 +89,32 @@ class _CustomDatePicker extends State<CustomDatePicker>{
         ) ,
         const SizedBox(height: AppSpacing.xxs),
         TextField(
-            enabled: widget.isEnabled != false,
-            // enabled: true,
-            controller: widget.controller,
-            readOnly: true,
-            style: AppText.captionPrimary,
-            onTap: () => _selectDate(context),
-            decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.edit_calendar, size: 18,),
-                hintStyle: AppText.caption,
-                contentPadding: EdgeInsets.all(AppSpacing.sm),
-                filled: true,
-                fillColor: AppColor.background,
-                focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                    borderSide: BorderSide(color: AppColor.primary, width: 1.5)
-                ),
-                enabledBorder: OutlineInputBorder(
+          enabled: widget.isEnabled != false,
+          // enabled: true,
+          controller: widget.controller,
+          readOnly: true,
+          style: AppText.captionPrimary,
+          onTap: () => _selectDate(context),
+          decoration: InputDecoration(
+              prefixIcon: const Icon(Icons.edit_calendar, size: 18,),
+              hintStyle: AppText.caption,
+              contentPadding: EdgeInsets.all(AppSpacing.sm),
+              filled: true,
+              fillColor: AppColor.background,
+              focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                  borderSide: BorderSide(color: AppColor.border),
-                ),
-                disabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                    borderSide: BorderSide(color: AppColor.textSecondary)
-                )
+                  borderSide: BorderSide(color: AppColor.primary, width: 1.5)
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                borderSide: BorderSide(color: AppColor.border),
+              ),
+              disabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                  borderSide: BorderSide(color: AppColor.textSecondary)
+              )
 
-            ),
+          ),
         )
       ],
     );
