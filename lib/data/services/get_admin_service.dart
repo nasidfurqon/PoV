@@ -117,7 +117,7 @@ class GetAdminService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/list/MTUser'),
+              'http://${AppConfig.serverAddress}/api/filterAdmin/listUser'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -125,7 +125,7 @@ class GetAdminService{
       print("API RESPONSE LIST user CHECK: ${response.body}");
       if(response.statusCode == 200){
         final data = jsonDecode(response.body);
-        final res = data['MTUser'];
+        final res = data['data'];
         return res.map<MTUserModel>((item) => MTUserModel.fromJson(item)).toList();
       }
       else{

@@ -787,7 +787,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
           padding: const EdgeInsets.all(AppSpacing.xs),
           child:
           CustomHighlightDashboard(
-              title: (data.isActive ?? '').toString(),
+              title: (data.isActive == true  ? 'Aktif' : 'Non Active').toString(),
               fontColor: ParsingColor.cekColor((data.isActive ?? '').toString())[0],
               containerColor: ParsingColor.cekColor((data.isActive ?? '').toString())[1]
           )

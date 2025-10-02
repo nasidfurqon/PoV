@@ -31,16 +31,16 @@ class MTUserModel {
 
   factory MTUserModel.fromJson(Map<String, dynamic> data) {
     return MTUserModel(
-      id: data['ID'],
+      id: ParsingHelper.parseInt(data['ID'])!,
       mtUserLevelId: ParsingHelper.parseInt(data['MTUserLevelID']),
       mtUserPositionId: ParsingHelper.parseInt(data['MTUserPositionID']),
       userName: data['UserName'],
       email: data['Email'],
       fullName: data['FullName'],
-      employeeId: data['EmployeeID'],
+      employeeId: data['EmployeeID'].toString(),
       createdByUserId: ParsingHelper.parseInt(data['CreatedByUserID']),
       createdDateTime: data['CreatedDateTime'] != null ? ParsingHelper.splitTimePre(data['CreatedDateTime']) : null,
-      isActive:ParsingHelper.parseBool(data['isActive']),
+      isActive:ParsingHelper.parseBool(data['IsActive']),
       lastUpdatedByUserId: ParsingHelper.parseInt(data['LastUpdatedByUserID']),
       lastUpdatedDateTime: data['LastUpdatedDateTime'] != null ? ParsingHelper.splitTimePre(data['LastUpdatedDateTime']) : null,
     );
