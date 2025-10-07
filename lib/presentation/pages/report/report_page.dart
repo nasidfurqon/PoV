@@ -5,6 +5,7 @@ import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/core/widget/custom_normal_scaffold.dart';
+import 'package:pov2/data/services/count_service.dart';
 import 'package:pov2/data/services/report_data.dart';
 import 'package:pov2/presentation/widgets/custom_card_report.dart';
 import 'package:pov2/presentation/widgets/custom_header_card.dart';
@@ -18,10 +19,20 @@ class ReportPage extends StatefulWidget {
 
 class _ReportPageState extends State<ReportPage> {
   final List<Map<String, dynamic>> reportData = ReportData().report;
-  late int totalVisit = reportData.fold(
-    0,
-        (sum, item) => sum + int.parse(item['totalVisit']),
-  );
+  int totalVisit = 0;
+
+  @override
+  void initState(){
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async{
+    var temp = await CountService.countTotalVisitation();
+    setState(() {
+      totalVisit = temp;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return CustomNormalScaffold(

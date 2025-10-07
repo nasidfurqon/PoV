@@ -10,6 +10,7 @@ import 'package:pov2/core/widget/custom_layout.dart';
 import 'package:pov2/core/widget/custom_scaffold.dart';
 import 'package:pov2/data/models/mtUserPosition_model.dart';
 import 'package:pov2/data/models/mtUser_model.dart';
+import 'package:pov2/data/services/count_service.dart';
 import 'package:pov2/data/services/get_service.dart';
 import 'package:pov2/presentation/widgets/custom_header_card.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
@@ -25,6 +26,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class _ProfilePageState extends State<ProfilePage> {
     MTUserModel? userData;
+    int completedVisitation = 0;
+    int totalVisitation = 0;
     MTUserPositionModel? userPositionData;
 
     late SharedPreferences pref;
@@ -38,9 +41,13 @@ class _ProfilePageState extends State<ProfilePage> {
       pref = await SharedPreferences.getInstance();
       MTUserModel? data = await GetService.getUser(pref.getString('userId'));
       MTUserPositionModel? posData = await GetService.getUserPosition(data?.mtUserPositionId);
+      var temp = await CountService.countStatus('Completed', pref.getString('userId'));
+      var temp2 = await CountService.countTotalVisitation();
       setState(() {
         userData = data;
         userPositionData = posData;
+        completedVisitation = temp;
+        totalVisitation = temp2;
       });
     }
 
@@ -154,9 +161,9 @@ class _ProfilePageState extends State<ProfilePage> {
     Widget _card(){
       return Column(
         children: [
-          CustomHeaderCard(number: '45', status: 'Total Kunjungan'),
+          CustomHeaderCard(number: totalVisitation.toString(), status: 'Total Kunjungan'),
           SizedBox(height: AppSpacing.sm,),
-          CustomHeaderCard(number: '45', status: 'Tugas Selesai'),
+          CustomHeaderCard(number: completedVisitation.toString(), status: 'Tugas Selesai'),
           SizedBox(height: AppSpacing.sm,),
           CustomHeaderCard(number: '4.5', status: 'Rating'),
         ],

@@ -82,6 +82,33 @@ class CountService{
     }
   }
 
+  static Future<int> countTotalVisitation() async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              'http://${AppConfig.serverAddress}/api/count/TotalVisitation/${pref.getString('userId').toString()}'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API COUNT TOTAL VISITATION RESPONSE CHECK : ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['data'];
+        return res;
+      }
+      else{
+        return 0;
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load count total visitation, $e!");
+      return 0;
+    }
+  }
+
+  // ADMIN
   static Future<int> countAdminLocation() async{
     var pref = await SharedPreferences.getInstance();
     try{
@@ -208,6 +235,32 @@ class CountService{
     }
     catch(e){
       print("API RESPONSE FAILED: Failed to load count schedule today, $e!");
+      return 0;
+    }
+  }
+
+  static Future<int> countAdminTotalVisitation() async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              'http://${AppConfig.serverAddress}/api/countAdmin/TotalVisitation'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API COUNT TOTAL VISITATION RESPONSE CHECK : ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['data'];
+        return res;
+      }
+      else{
+        return 0;
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load count total visitation, $e!");
       return 0;
     }
   }

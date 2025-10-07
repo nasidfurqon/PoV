@@ -45,7 +45,7 @@ class _JobListPageState extends State<JobListPage> {
   Future<void> _getCountData() async{
     pref = await SharedPreferences.getInstance();
     dynamic userId = pref.getString('userId');
-    int cntOnGoing = await CountService.countStatus('Ongoing', userId);
+    int cntOnGoing = await CountService.countStatus('OnProgress', userId);
     int cntWaiting = await CountService.countStatus('Scheduled', userId);
     int cntFinish = await CountService.countStatus('Completed', userId);
     setState(() {
