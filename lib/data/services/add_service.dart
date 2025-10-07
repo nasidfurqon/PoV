@@ -9,7 +9,7 @@ class AddService {
     try {
       Response response = await post(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/add/TRVisitationSchedule'),
+              '${AppConfig.serverAddress}/api/add/TRVisitationSchedule'),
           headers: {
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}'
           },
@@ -34,7 +34,7 @@ class AddService {
     try {
       Response response = await post(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/add/MTLocation'),
+              '${AppConfig.serverAddress}/api/add/MTLocation'),
           headers: {
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}'
           },

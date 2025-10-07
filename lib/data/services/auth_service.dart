@@ -6,7 +6,7 @@ import '../../core/utils/config.dart';
 
 class AuthService{
   static Future<Map<String, dynamic>> login(String email, String password) async {
-    final url = Uri.parse('http://${AppConfig.serverAddress}/api/login');
+    final url = Uri.parse('${AppConfig.serverAddress}/api/login');
     print("CEK LOGIN");
     final response = await http.post(
       url,

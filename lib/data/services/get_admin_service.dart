@@ -14,7 +14,7 @@ class GetAdminService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/filterAdmin/ScheduleToday'),
+              '${AppConfig.serverAddress}/api/filterAdmin/ScheduleToday'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -40,7 +40,7 @@ class GetAdminService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/filterAdmin/ScheduleTodayCompleted'),
+              '${AppConfig.serverAddress}/api/filterAdmin/ScheduleTodayCompleted'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -66,7 +66,7 @@ class GetAdminService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/list/TRVisitationSchedule'),
+              '${AppConfig.serverAddress}/api/list/TRVisitationSchedule'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -92,7 +92,7 @@ class GetAdminService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/list/MTLocation'),
+              '${AppConfig.serverAddress}/api/list/MTLocation'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -118,7 +118,7 @@ class GetAdminService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/list/MTLocationType'),
+              '${AppConfig.serverAddress}/api/list/MTLocationType'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -144,7 +144,7 @@ class GetAdminService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/filterAdmin/listUser'),
+              '${AppConfig.serverAddress}/api/filterAdmin/listUser'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });

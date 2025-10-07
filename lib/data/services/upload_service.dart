@@ -10,7 +10,7 @@ class  UploadService{
     try {
       var request = http.MultipartRequest(
         "POST",
-        Uri.parse("http://${AppConfig.serverAddress}/api/uploadEvidence/EvidenceFile"),
+        Uri.parse("${AppConfig.serverAddress}/api/uploadEvidence/EvidenceFile"),
       );
 
       request.headers['Authorization'] = 'Bearer ${pref.getString('jwtToken')}';
@@ -47,7 +47,7 @@ class  UploadService{
     try {
       var request = http.MultipartRequest(
         "POST",
-        Uri.parse("http://${AppConfig.serverAddress}/api/uploadEvidence/SelfieFile"),
+        Uri.parse("${AppConfig.serverAddress}/api/uploadEvidence/SelfieFile"),
       );
       request.headers['Authorization'] = 'Bearer ${pref.getString('jwtToken')}';
       request.fields['ScheduleID'] = data['TRVisitationScheduleID'].toString();

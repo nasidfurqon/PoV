@@ -9,7 +9,7 @@ class CountService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/count/TRVisitationSchedule/Status/$status/$id'),
+              '${AppConfig.serverAddress}/api/count/TRVisitationSchedule/Status/$status/$id'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -35,7 +35,7 @@ class CountService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/count/MTLocation/$id'),
+              '${AppConfig.serverAddress}/api/count/MTLocation/$id'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -61,7 +61,7 @@ class CountService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/count/MTLocationActive/$id'),
+              '${AppConfig.serverAddress}/api/count/MTLocationActive/$id'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -87,7 +87,7 @@ class CountService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/count/TotalVisitation/${pref.getString('userId').toString()}'),
+              '${AppConfig.serverAddress}/api/count/TotalVisitation/${pref.getString('userId').toString()}'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -114,7 +114,7 @@ class CountService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/countAdmin/MTLocation'),
+              '${AppConfig.serverAddress}/api/countAdmin/MTLocation'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -140,7 +140,7 @@ class CountService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/countAdmin/MTLocationActive'),
+              '${AppConfig.serverAddress}/api/countAdmin/MTLocationActive'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -166,7 +166,7 @@ class CountService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/countAdmin/User/Active'),
+              '${AppConfig.serverAddress}/api/countAdmin/User/Active'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -192,7 +192,7 @@ class CountService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/countAdmin/ScheduleToday'),
+              '${AppConfig.serverAddress}/api/countAdmin/ScheduleToday'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -218,7 +218,7 @@ class CountService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/countAdmin/ScheduleTodayCompleted'),
+              '${AppConfig.serverAddress}/api/countAdmin/ScheduleTodayCompleted'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -244,7 +244,7 @@ class CountService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/countAdmin/TotalVisitation'),
+              '${AppConfig.serverAddress}/api/countAdmin/TotalVisitation'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });

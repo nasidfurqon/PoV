@@ -14,7 +14,7 @@ class GetService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/view/MTUser/$id'),
+              '${AppConfig.serverAddress}/api/view/MTUser/$id'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -40,7 +40,7 @@ class GetService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/filter/ScheduleToday/$id'),
+              '${AppConfig.serverAddress}/api/filter/ScheduleToday/$id'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -66,7 +66,7 @@ class GetService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/filter/ScheduleCompleted/$id'),
+              '${AppConfig.serverAddress}/api/filter/ScheduleCompleted/$id'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -92,7 +92,7 @@ class GetService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/filter/TRVisitationSchedule/MTAssignedUserID/$id'),
+              '${AppConfig.serverAddress}/api/filter/TRVisitationSchedule/MTAssignedUserID/$id'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -118,7 +118,7 @@ class GetService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/view/TRVisitationSchedule/$id'),
+              '${AppConfig.serverAddress}/api/view/TRVisitationSchedule/$id'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -144,7 +144,7 @@ class GetService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/view/MTLocation/$id'),
+              '${AppConfig.serverAddress}/api/view/MTLocation/$id'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -170,7 +170,7 @@ class GetService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/list/MTLocation'),
+              '${AppConfig.serverAddress}/api/list/MTLocation'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -196,7 +196,7 @@ class GetService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/view/MTLocationType/$id'),
+              '${AppConfig.serverAddress}/api/view/MTLocationType/$id'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -222,7 +222,7 @@ class GetService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/view/MTUser/$id'),
+              '${AppConfig.serverAddress}/api/view/MTUser/$id'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });
@@ -248,7 +248,7 @@ class GetService{
     try{
       Response response = await get(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/view/MTUserPosition/$id'),
+              '${AppConfig.serverAddress}/api/view/MTUserPosition/$id'),
           headers: <String, String>{
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
           });

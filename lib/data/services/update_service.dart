@@ -11,7 +11,7 @@ class UpdateService {
     try {
       Response response = await post(
           Uri.parse(
-              'http://${AppConfig.serverAddress}/api/edit/TRVisitationSchedule/${ID}'),
+              '${AppConfig.serverAddress}/api/edit/TRVisitationSchedule/${ID}'),
           headers: {
             'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}'
           },
