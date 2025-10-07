@@ -10,6 +10,7 @@ import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/core/widget/custom_normal_scaffold.dart';
 import 'package:pov2/core/widget/custom_photo_preview.dart';
 import 'package:pov2/core/widget/custom_progress_indicator.dart';
+import 'package:pov2/data/services/upload_service.dart';
 import 'package:pov2/data/services/visit_data.dart';
 import 'package:pov2/data/services/visitStep_data.dart';
 import 'package:pov2/presentation/pages/visit_progres/visitCompletion.dart';
@@ -58,10 +59,10 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
     _progressAnimationController.forward();
     print('ID = ${widget.id }');
     _loadData();
-
   }
 
   Future<void> _loadData() async {
+    print('VISIT PROGRESS CHECK SCHE ID = ${widget.id }');
     TRVisitationScheduleModel? res = await GetService.getScheduleByID(widget.id) ;
     setState(() {
       visitationScheduleData = res;
@@ -100,7 +101,6 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
     if(file != null){
       setState(() {
         _capturedPhotos = file;
-
       });
     }
   }
@@ -392,8 +392,18 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
                   title: 'Next Step',
                   backgroundColor: AppColor.primary,
                   padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
-                  onPressed: (){
-                    _nextStep();
+                  onPressed: () async{
+                    Map<String, dynamic> upload = {
+                      'TRVisitationScheduleID': widget.id,
+                      'File': _capturedPhotos
+                    };
+                    var check = await UploadService.selfieFile(upload);
+                    if(check == false){
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed upload selfie photo'), backgroundColor: AppColor.error,));
+                    }
+                    else{
+                      _nextStep();
+                    }
                   }
               ),
             )

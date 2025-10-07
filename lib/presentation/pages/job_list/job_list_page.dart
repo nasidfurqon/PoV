@@ -83,12 +83,11 @@ class _JobListPageState extends State<JobListPage> {
               ),
               SizedBox(height: AppSpacing.sm,),
               ...listSchedule.asMap().entries.map((entry){
-                final index = entry.key;
                 final data = entry.value;
                 return Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                   child: CustomCardJobList(
-                      id: index.toString(),
+                      id: data.id.toString(),
                       place: GetService.getLocationbyID(data.mtLocationId).then((data)=>data?.name),
                       progress: data.status ?? '-',
                       status: data.priority ?? '-',

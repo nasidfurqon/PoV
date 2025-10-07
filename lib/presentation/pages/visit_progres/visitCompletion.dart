@@ -15,16 +15,23 @@ import 'package:pov2/core/widget/custom_file_preview.dart';
 import 'package:pov2/core/widget/custom_photo_preview.dart';
 import 'package:pov2/core/widget/custom_textfield.dart';
 import 'package:pov2/data/models/file_watermark_model.dart';
+import 'package:pov2/data/models/mtUser_model.dart';
+import 'package:pov2/data/models/trVisitationScheduleEvidence_model.dart';
 import 'package:pov2/data/services/dropdown_data.dart';
+import 'package:pov2/data/services/upload_service.dart';
 import 'package:pov2/data/services/visitStep_data.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 import 'package:pov2/presentation/widgets/custom_photo_dialog.dart';
 import 'package:pov2/presentation/widgets/custom_row_icon.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/widget/custom_progress_indicator.dart';
+import '../../../data/models/mtLocation_model.dart';
+import '../../../data/models/trVisitationSchedule_model.dart';
+import '../../../data/services/get_service.dart';
 import '../../../data/services/update_service.dart';
 import '../../../data/services/visit_data.dart';
 import '../../widgets/custom_header_visit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class VisitCompletionPage extends StatefulWidget {
@@ -41,8 +48,8 @@ class VisitCompletionPage extends StatefulWidget {
 }
 
 class _VisitCompletionPageState extends State<VisitCompletionPage> {
-  late Map<String, dynamic> visitData = VisitData().taskData[int.tryParse(widget.id )!];
-  late List<Map<String, dynamic>> visitStepData = VisitStepData().stepData;
+  // late Map<String, dynamic> visitData = VisitData().taskData[int.tryParse(widget.id )!];
+  // late List<Map<String, dynamic>> visitStepData = VisitStepData().stepData;
   final TextEditingController _notesController = TextEditingController();
   File? _capturedPhotos;
   PlatformFile? _uploadedDocuments;
@@ -50,6 +57,12 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
   String? documentTimeUploaded;
   final _formKey = GlobalKey<FormState>();
   String? selectedValue;
+  MTLocationModel? locationData;
+  TRVisitationScheduleModel? visitationScheduleData;
+  MTUserModel? userData;
+  late SharedPreferences pref;
+  TRVisitationScheduleEvidenceModel? evidenceData;
+  late Map<String, TextEditingController> photoControllers;
 
   final List<Map<String, dynamic>> photoEvidence = [
     {
@@ -72,12 +85,56 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
     },
   ];
 
+
+  @override
+  void initState(){
+    super.initState();
+    _loadData();
+    photoControllers = {};
+    Future.microtask((){
+      setState(() {
+        evidenceData = TRVisitationScheduleEvidenceModel();
+        _initializeControllers(evidenceData);
+      });
+    });
+  }
+
+
+  void _initializeControllers(TRVisitationScheduleEvidenceModel? evidenceData) {
+    final fields = [
+      'TRVisitationScheduleID',
+      'EvidenceType',
+      'AttachmentType',
+      'Attachment',
+      'Remark',
+      'CreatedByUserID'
+    ];
+
+    for (var field in fields) {
+      photoControllers[field] ??= TextEditingController();
+      photoControllers[field]!.text = evidenceData?.toJson()[field] ?? '';
+    }
+  }
   @override
   void dispose() {
     _notesController.dispose();
     super.dispose();
   }
 
+  Future<void> _loadData() async {
+    pref = await SharedPreferences.getInstance();
+    print('VISIT PROGRESS CHECK SCHE ID = ${widget.id }');
+    TRVisitationScheduleModel? res = await GetService.getScheduleByID(widget.id);
+    MTUserModel? resUser = await GetService.getUser(pref.getString('userId'));
+    setState(() {
+      visitationScheduleData = res;
+      userData = resUser;
+    });
+    MTLocationModel? resLoc = await GetService.getLocationbyID(visitationScheduleData?.mtLocationId) ;
+    setState(() {
+      locationData = resLoc;
+    });
+  }
   Future<void> _takePhoto() async{
     CustomProgressIndicator.showUploadingDialog(context);
     final file = await CameraHelper.takePhoto();
@@ -87,10 +144,10 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
       final watermarkedPhoto = await FileHelper.addTextandLogoWatermark(
         file,
         [
-          FileWatermarkModel(assetLogo: "assets/place-logo.png", text: visitData['place']),
+          FileWatermarkModel(assetLogo: "assets/place-logo.png", text: locationData?.name ?? ''),
           FileWatermarkModel(assetLogo: "assets/clock-logo.png", text: timeNow),
-          FileWatermarkModel(assetLogo: "assets/place-logo.png", text: "${visitStepData[0]['currentLocation']['lat']}, ${visitStepData[0]['currentLocation']['long']}"),
-          FileWatermarkModel(assetLogo: "assets/person-logo.png", text: "undefined"),
+          FileWatermarkModel(assetLogo: "assets/place-logo.png", text: "${locationData?.latitude}, ${locationData?.longitude}"),
+          FileWatermarkModel(assetLogo: "assets/person-logo.png", text: userData?.fullName ?? ''),
         ],
       );
       setState(() {
@@ -116,10 +173,10 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
       final watermarkedPhoto = await FileHelper.addTextandLogoWatermark(
           file,
           [
-            FileWatermarkModel(assetLogo: "assets/place-logo.png", text: visitData['place']),
+            FileWatermarkModel(assetLogo: "assets/place-logo.png", text: locationData?.name ?? ''),
             FileWatermarkModel(assetLogo: "assets/clock-logo.png", text: timeNow),
-            FileWatermarkModel(assetLogo: "assets/place-logo.png", text: "${visitStepData[0]['currentLocation']['lat']}, ${visitStepData[0]['currentLocation']['long']}"),
-            FileWatermarkModel(assetLogo: "assets/person-logo.png", text: "undefined"),
+            FileWatermarkModel(assetLogo: "assets/place-logo.png", text: "${locationData?.latitude}, ${locationData?.longitude}"),
+            FileWatermarkModel(assetLogo: "assets/person-logo.png", text: userData?.fullName ?? '')
           ],
       );
       setState(() {
@@ -237,11 +294,10 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
                     label: 'Photo Type',
                     textStyle: AppText.heading5,
                     items: DropdownData.photoType,
-                    initialValue: '1' ?? '',
+                    initialValue: 'General Evidence' ?? '',
                     onChanged: (value){
-                      setState(() {
-                        selectedValue = value;
-                      });
+                      photoControllers['EvidenceType']?.text = value!;
+                      print('PHOTO TYPE CHECK ${photoControllers['EvidenceType']?.text}');
                     },
                   ),
                   SizedBox(height: AppSpacing.sm),
@@ -250,6 +306,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
                       label: 'Description',
                       maxLines: 4,
                       keyboardType: TextInputType.multiline,
+                      controller: photoControllers['Remark'],
                       hint: 'Describe what this photo shows...'
                   ),
                   SizedBox(height: AppSpacing.sm),
@@ -265,7 +322,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
                               style: AppText.heading4,
                             ),
                             SizedBox(height: AppSpacing.sm),
-                            CustomRowIcon(icon:  Icons.location_on_outlined,color:  AppColor.textSecondary,title:  visitData['place'], textStyle:  AppText.heading6Secondary),
+                            CustomRowIcon(icon:  Icons.location_on_outlined,color:  AppColor.textSecondary,title:  locationData?.name, textStyle:  AppText.heading6Secondary),
                             SizedBox(height: AppSpacing.xs),
                             CustomRowIcon(icon:  Icons.access_time_outlined, color:  AppColor.textSecondary, title:  imageTimeUploaded!,textStyle:  AppText.heading6Secondary),
                             SizedBox(height: AppSpacing.sm),
@@ -286,7 +343,22 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
                             title: 'Save Photo',
                             backgroundColor: AppColor.primary,
                             padding: EdgeInsets.all(AppSpacing.xs),
-                            onPressed: (){}
+                            onPressed: () async{
+                              photoControllers['AttachmentType']?.text = 'Photo';
+                              photoControllers['TRVisitationScheduleID']?.text = widget.id;
+                              Map<String, dynamic> updateData = {
+                                for(var entry in photoControllers.entries) entry.key: entry.value.text == '' ? null : entry.value.text,
+                                'Attachment': _capturedPhotos
+                              };
+                              // updatedData = ref.read(crewCertificateProvider).information;
+                              final data = TRVisitationScheduleEvidenceModel.convertToModel(TRVisitationScheduleEvidenceModel(), updateData);
+                              print("CEK UPDATE = ${updateData}");
+                              bool cek = await UploadService.evidenceFile(updateData);
+                              print('HASIL UPLOAD EVIDENCE PHOTO $cek');
+                              if(cek == false){
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed upload evidence photo'), backgroundColor: AppColor.error,));
+                              }
+                            }
                         ),
                       ),
                       SizedBox(width: AppSpacing.xs),
@@ -324,8 +396,10 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
             CustomHeader2Visit(icon: Icons.description_outlined, title: 'Document Upload', description: 'Upload supporting documents like reports, forms, or certificates'),
             const SizedBox(height: AppSpacing.md),
             CustomFilePreview(file : _uploadedDocuments),
+            if(_uploadedDocuments == null)
             Center(
-              child: Column(
+              child:
+              Column(
                 children: [
                   CustomButton(
                       icon: Icons.upload_file,
@@ -347,6 +421,63 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
                 ],
               ),
             ),
+            if(_uploadedDocuments != null)
+              Column(
+                children: [
+                  SizedBox(height: AppSpacing.sm),
+                  CustomTextFieldWithLabel(
+                      textStyle: AppText.heading5,
+                      label: 'Description',
+                      maxLines: 4,
+                      keyboardType: TextInputType.multiline,
+                      controller: photoControllers['Remark'],
+                      hint: 'Describe what this photo shows...'
+                  ),
+                  SizedBox(height: AppSpacing.sm),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: CustomButton(
+                            textStyle: AppText.heading4Tertiary,
+                            title: 'Save Document',
+                            backgroundColor: AppColor.primary,
+                            padding: EdgeInsets.all(AppSpacing.xs),
+                            onPressed: () async{
+                              photoControllers['AttachmentType']?.text = 'Document';
+                              photoControllers['TRVisitationScheduleID']?.text = widget.id;
+                              Map<String, dynamic> updateData = {
+                                for(var entry in photoControllers.entries) entry.key: entry.value.text == '' ? null : entry.value.text,
+                                'Attachment': _uploadedDocuments
+                              };
+                              // updatedData = ref.read(crewCertificateProvider).information;
+                              final data = TRVisitationScheduleEvidenceModel.convertToModel(TRVisitationScheduleEvidenceModel(), updateData);
+                              print("CEK UPDATE = ${updateData}");
+                              bool cek = await UploadService.evidenceFile(updateData);
+                              print('HASIL UPLOAD EVIDENCE DOCUMENT $cek');
+                              if(cek == false){
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed upload evidence document'), backgroundColor: AppColor.error,));
+                              }
+                            }
+                        ),
+                      ),
+                      SizedBox(width: AppSpacing.xs),
+                      Expanded(
+                        flex: 1,
+                        child: CustomButton(
+                            textStyle: AppText.heading4,
+                            title: 'Discard',
+                            backgroundColor: AppColor.background,
+                            padding: EdgeInsets.all(AppSpacing.xs),
+                            onPressed: (){
+                              _discardPhoto();
+                            }
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              )
           ],
         ),
       ),

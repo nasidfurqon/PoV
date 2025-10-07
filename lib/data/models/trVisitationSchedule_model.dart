@@ -42,6 +42,13 @@ class TRVisitationScheduleModel {
   });
 
   factory TRVisitationScheduleModel.fromJson(Map<String, dynamic> data) {
+    var photo = '';
+    if(data['FacePhotoEvidence'] is String){
+      photo = data['FacePhotoEvidence'];
+    }
+    else{
+      photo = data['FacePhotoEvidence']['name'];
+    }
     return TRVisitationScheduleModel(
       id: ParsingHelper.parseInt(data['ID']) ?? 0,
       mtAssignedUserId: (data['MTAssignedUserID']).toString(),
@@ -54,7 +61,7 @@ class TRVisitationScheduleModel {
       actualEndDateTime: data['ActualEndDateTime'] != null ? (data['ActualEndDateTime']) : null,
       priority: data['Priority'],
       status: data['Status'],
-      facePhotoEvidence: data['FacePhotoEvidence'],
+      facePhotoEvidence: photo,
       assignedUserAckDateTime: data['AssignedUserAckDateTime'] != null ? ParsingHelper.splitTimePre(data['AssignedUserAckDateTime']) : null,
       assignedUserRemark: data['AssignedUserRemark'],
       createdByUserId: (data['CreatedByUserID']).toString(),
