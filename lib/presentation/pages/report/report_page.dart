@@ -5,7 +5,11 @@ import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/core/widget/custom_normal_scaffold.dart';
+import 'package:pov2/data/models/report_model.dart';
+import 'package:pov2/data/models/trVisitationSchedule_model.dart';
 import 'package:pov2/data/services/count_service.dart';
+import 'package:pov2/data/services/get_admin_service.dart';
+import 'package:pov2/data/services/get_service.dart';
 import 'package:pov2/data/services/report_data.dart';
 import 'package:pov2/presentation/widgets/custom_card_report.dart';
 import 'package:pov2/presentation/widgets/custom_header_card.dart';
@@ -18,8 +22,11 @@ class ReportPage extends StatefulWidget {
 }
 
 class _ReportPageState extends State<ReportPage> {
-  final List<Map<String, dynamic>> reportData = ReportData().report;
+  // final List<Map<String, dynamic>> reportData = ReportData().report;
   int totalVisit = 0;
+  int totalCompleteVisit= 0;
+  double percentage = 0.0;
+  List<ReportModel> reportData = [];
 
   @override
   void initState(){
@@ -28,11 +35,18 @@ class _ReportPageState extends State<ReportPage> {
   }
 
   Future<void> _loadData() async{
-    var temp = await CountService.countTotalVisitation();
+    var temp = await CountService.countAdminTotalVisitation();
+    var temp1 = await CountService.countAdminTotalVisitationCompleted();
+    var temp3 = (temp1/temp)*100;
+    List<ReportModel> temp2 = await GetAdminService.getListReport();
     setState(() {
       totalVisit = temp;
+      totalCompleteVisit = temp1;
+      percentage = temp3;
+      reportData = temp2;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return CustomNormalScaffold(
@@ -47,7 +61,7 @@ class _ReportPageState extends State<ReportPage> {
             children: [
               CustomHeaderCard(number: totalVisit.toString(), status: 'Total Kunjungan'),
               SizedBox(height: AppSpacing.sm,),
-              CustomHeaderCard(number: '95%', status: 'Tingkat Kepatuhan'),
+              CustomHeaderCard(number: '${percentage}%', status: 'Tingkat Kepatuhan'),
               SizedBox(height: AppSpacing.sm,),
               _newReport(),
               SizedBox(height: AppSpacing.sm,),
@@ -56,7 +70,7 @@ class _ReportPageState extends State<ReportPage> {
                 final data = entry.value;
                 return Padding(
                     padding: EdgeInsets.only(bottom: AppSpacing.sm),
-                    child: CustomCardReport(id: index,data : data));
+                    child: CustomCardReport(id: index, data : data));
               })
             ],
           ),

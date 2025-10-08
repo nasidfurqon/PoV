@@ -264,4 +264,30 @@ class CountService{
       return 0;
     }
   }
+
+  static Future<int> countAdminTotalVisitationCompleted() async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              '${AppConfig.serverAddress}/api/countAdmin/TotalVisitationCompleted'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API COUNT TOTAL VISITATION COMPLETED RESPONSE CHECK : ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['data'];
+        return res;
+      }
+      else{
+        return 0;
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load count total visitation completed, $e!");
+      return 0;
+    }
+  }
 }

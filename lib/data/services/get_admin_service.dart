@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:pov2/data/models/mtLocationType_model.dart';
 import 'package:pov2/data/models/mtLocation_model.dart';
 import 'package:pov2/data/models/mtUser_model.dart';
+import 'package:pov2/data/models/report_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/utils/config.dart';
 import '../models/trVisitationSchedule_model.dart';
@@ -161,6 +162,32 @@ class GetAdminService{
     }
     catch(e){
       print("API RESPONSE FAILED: Failed to load list user, $e!");
+      return [];
+    }
+  }
+
+  static Future<List<ReportModel>> getListReport() async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              '${AppConfig.serverAddress}/api/filterAdmin/Report'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API RESPONSE LIST REPORT CHECK: ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['data'];
+        return res.map<ReportModel>((item) => ReportModel.fromJson(item)).toList();
+      }
+      else{
+        return [];
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load list report, $e!");
       return [];
     }
   }
