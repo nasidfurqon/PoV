@@ -1,8 +1,12 @@
 import 'dart:convert';
 
+import 'package:pov2/data/models/trVisitationScheduleEvidence_model.dart';
+import 'package:pov2/data/services/get_admin_service.dart';
+import 'package:pov2/data/services/get_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart';
 import '../../core/utils/config.dart';
+import '../../core/utils/file_helper.dart';
 class CountService{
   static Future<int> countStatus(String status, dynamic id) async{
     var pref = await SharedPreferences.getInstance();
@@ -284,6 +288,22 @@ class CountService{
       else{
         return 0;
       }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load count total visitation completed, $e!");
+      return 0;
+    }
+  }
+
+  static Future<int> countAdminTotalDocument(String type) async{
+    try{
+      List<TRVisitationScheduleEvidenceModel> listEvidence = await GetAdminService.getListEvidence();
+      int total = listEvidence.where((evidence) {
+        final kategori = FileHelper.getCategory(evidence.attachment ?? "");
+        return kategori.toLowerCase() == type.toLowerCase();
+      }).length;
+
+      return total;
     }
     catch(e){
       print("API RESPONSE FAILED: Failed to load count total visitation completed, $e!");

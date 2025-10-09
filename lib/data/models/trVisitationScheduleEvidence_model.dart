@@ -26,12 +26,19 @@ class TRVisitationScheduleEvidenceModel {
   });
 
   factory TRVisitationScheduleEvidenceModel.fromJson(Map<String, dynamic> data) {
+    var evidence = '';
+    if(data['FacePhotoEvidence'] is String){
+      evidence = data['Attachment'];
+    }
+    else{
+      evidence = data['Attachment']['name'];
+    }
     return TRVisitationScheduleEvidenceModel(
       id: ParsingHelper.parseInt(data['ID']) ?? 0,
       trVisitationScheduleId: ParsingHelper.parseInt(data['TRVisitationScheduleID']),
       evidenceType: data['EvidenceType'],
       attachmentType: data['AttachmentType'],
-      attachment: data['Attachment'],
+      attachment: evidence,
       remark: data['Remark'],
       createdByUserId: ParsingHelper.parseInt(data['CreatedByUserID']),
       createdDateTime: data['CreatedDateTime'] != null ? ParsingHelper.splitTimePre(data['CreatedDateTime']) : null,

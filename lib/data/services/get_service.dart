@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:pov2/data/models/documentation_model.dart';
 import 'package:pov2/data/models/mtLocationType_model.dart';
 import 'package:pov2/data/models/mtLocation_model.dart';
 import 'package:pov2/data/models/mtUserPosition_model.dart';
@@ -265,6 +266,58 @@ class GetService{
     }
     catch(e){
       print("API RESPONSE FAILED: Failed to load user position data, $e!");
+      return null;
+    }
+  }
+
+  static Future<MTLocationModel?> getLocationByScheduleID(dynamic id) async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              '${AppConfig.serverAddress}/api/filter/MTLocationByScheID/$id'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API RESPONSE LOCATION BY SCHEDULE CHECK: ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['data'];
+        return MTLocationModel.fromJson(res);
+      }
+      else{
+        return null;
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load location by schedule data, $e!");
+      return null;
+    }
+  }
+
+  static Future<DocumentationModel?> getDocumentationByScheduleID(dynamic id, String type) async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              '${AppConfig.serverAddress}/api/filter/documentationData/$id/$type'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API RESPONSE DOCUMENTATION BY SCHEDULE CHECK: ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['data'];
+        return DocumentationModel.fromJson(res);
+      }
+      else{
+        return null;
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load documentations by schedule data, $e!");
       return null;
     }
   }

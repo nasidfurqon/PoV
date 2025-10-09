@@ -114,4 +114,19 @@ class FileHelper {
 
     return newFile;
   }
+
+  static String getCategory(String fileName) {
+    if (fileName.isEmpty) return "Lainnya";
+
+    final ext = fileName.split('.').last.toLowerCase();
+
+    const fotoExt = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+    const dokumenExt = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt'];
+    const videoExt = ['mp4', 'avi', 'mov', 'mkv', 'wmv', 'flv'];
+
+    if (fotoExt.contains(ext)) return 'Foto';
+    if (dokumenExt.contains(ext)) return 'Dokumen';
+    if (videoExt.contains(ext)) return 'Video';
+    return 'Lainnya';
+  }
 }

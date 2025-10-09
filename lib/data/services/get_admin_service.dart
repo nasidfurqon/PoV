@@ -1,11 +1,14 @@
 import 'dart:convert';
 
+import 'package:pov2/data/models/documentation_model.dart';
 import 'package:pov2/data/models/mtLocationType_model.dart';
 import 'package:pov2/data/models/mtLocation_model.dart';
 import 'package:pov2/data/models/mtUser_model.dart';
 import 'package:pov2/data/models/report_model.dart';
+import 'package:pov2/data/models/trVisitationScheduleEvidence_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/utils/config.dart';
+import '../../core/utils/file_helper.dart';
 import '../models/trVisitationSchedule_model.dart';
 import 'package:http/http.dart';
 
@@ -188,6 +191,76 @@ class GetAdminService{
     }
     catch(e){
       print("API RESPONSE FAILED: Failed to load list report, $e!");
+      return [];
+    }
+  }
+
+  static Future<List<TRVisitationScheduleEvidenceModel>> getListEvidence() async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              '${AppConfig.serverAddress}/api/list/TRVisitationScheduleEvidence'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API RESPONSE LIST TRVisitationScheduleEvidenceModel CHECK: ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['TRVisitationScheduleEvidence'];
+        return res.map<TRVisitationScheduleEvidenceModel>((item) => TRVisitationScheduleEvidenceModel.fromJson(item)).toList();
+      }
+      else{
+        return [];
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load list visitation schedule model, $e!");
+      return [];
+    }
+  }
+
+  static Future<Map<String, List<TRVisitationScheduleEvidenceModel>>> getEvidenceByCategoryAndSchedule() async{
+    final Map<String, List<TRVisitationScheduleEvidenceModel>> grouped = {};
+    List<TRVisitationScheduleEvidenceModel> data = await GetAdminService.getListEvidence();
+
+    for (var item in data) {
+      final category = FileHelper.getCategory(item.attachment ?? "");
+      final scheduleId = item.trVisitationScheduleId ?? "";
+
+      final key = "$scheduleId-$category";
+
+      if (!grouped.containsKey(key)) {
+        grouped[key] = [];
+      }
+      grouped[key]!.add(item);
+    }
+    return grouped;
+  }
+
+  static Future<List<DocumentationModel>> getListDocumentation() async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              '${AppConfig.serverAddress}/api/filterAdmin/documentationDataAll'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API RESPONSE LIST DOCUMENTATION CHECK: ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['data'];
+        return res.map<DocumentationModel>((item) => DocumentationModel.fromJson(item)).toList();
+      }
+      else{
+        return [];
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load list documentation model, $e!");
       return [];
     }
   }
