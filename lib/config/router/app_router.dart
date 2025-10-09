@@ -9,6 +9,7 @@ import 'package:pov2/presentation/pages/auth/demo_page.dart';
 import 'package:pov2/presentation/pages/auth/login_page.dart';
 import 'package:pov2/presentation/pages/dashboard/dashboardPage.dart';
 import 'package:pov2/presentation/pages/dashboardFieldOperations/dashboard_field_operations_page.dart';
+import 'package:pov2/presentation/pages/documentation/documentation_detail_page.dart';
 import 'package:pov2/presentation/pages/documentation/documentation_page.dart';
 import 'package:pov2/presentation/pages/job_list/job_list_page.dart';
 import 'package:pov2/presentation/pages/location_visit/location_visit_page.dart';
@@ -97,6 +98,15 @@ final GoRouter appRouter = GoRouter(
       path: RoutePath.setting,
       name: AppRoutes.setting.name,
       builder: (context, state) => SettingPage()
+    ),
+    GoRoute(
+      path: RoutePath.documentationDetail,
+      name: AppRoutes.documentationDetail.name,
+      builder: (context, state) {
+        final dynamic ID = state.pathParameters['ID'].toString();
+        final String type = state.pathParameters['type'].toString();
+        return DocumentationDetailPage(id: ID ?? '0', type: type,);
+      }
     )
   ]
 );  

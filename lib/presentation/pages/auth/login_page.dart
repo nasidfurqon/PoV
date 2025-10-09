@@ -13,6 +13,7 @@ import 'package:pov2/core/widget/custom_layout.dart';
 import 'package:pov2/core/widget/custom_scaffold.dart';
 import 'package:pov2/core/widget/custom_textfield.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:pov2/data/models/mtUser_model.dart';
 import 'package:pov2/data/services/get_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -137,6 +138,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               String userId = decodedToken['UserId'].toString();
                               print("USER ID USER LOGIN : $userId");
                               pref.setString('userId', userId);
+                              MTUserModel? userData =  await GetService.getUser(userId);
+                              print("EMPLOYEE ID AFTER LOGIN = ${userData!.employeeId.toString()}");
+                              pref.setString('employeeId', userData.employeeId.toString());
                               context.goNamed(AppRoutes.home.name, pathParameters: {
                                 'user': 'Administrator',
                                 'ID': userId

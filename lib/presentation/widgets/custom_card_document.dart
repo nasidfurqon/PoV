@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pov2/config/router/app_router.dart';
+import 'package:pov2/config/router/app_routes.dart';
 import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
@@ -9,7 +11,7 @@ import 'package:pov2/data/models/documentation_model.dart';
 import 'package:pov2/data/models/trVisitationScheduleEvidence_model.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 import 'package:pov2/presentation/widgets/custom_row_icon.dart';
-
+import 'package:go_router/go_router.dart';
 class CustomCardDocument extends StatelessWidget {
   final dynamic id;
   final DocumentationModel data;
@@ -97,7 +99,12 @@ class CustomCardDocument extends StatelessWidget {
                       title: 'Lihat',
                       backgroundColor: AppColor.background,
                       padding: EdgeInsets.zero,
-                      onPressed: () {},
+                      onPressed: () {
+                        context.pushNamed(AppRoutes.documentationDetail.name, pathParameters: {
+                          "ID": data.scheduleId.toString(),
+                          "type": data.type.toString()
+                        });
+                      },
                       icon: Icons.remove_red_eye_outlined,
                       iconColor: AppColor.textPrimary,
                     ),

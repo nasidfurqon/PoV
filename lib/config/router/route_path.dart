@@ -12,4 +12,5 @@ class RoutePath {
   static const String adminPanel = '/adminPanel';
   static const String dashboardFO = '/dashboardFO';
   static const String setting = '/setting';
+  static const String documentationDetail = '/documentation/documentationDetail/:ID/:type';
 }
