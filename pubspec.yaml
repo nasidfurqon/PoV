@@ -56,6 +56,8 @@ dev_dependencies:
   image: ^4.5.4
   image_editor: ^1.6.0
   dropdown_button2: ^2.3.9
+  syncfusion_flutter_pdfviewer: ^31.1.23
+  pdfx: ^2.9.2
   url_launcher: ^6.3.2
   bootstrap_icons: ^1.11.3
   local_auth: ^2.3.0
