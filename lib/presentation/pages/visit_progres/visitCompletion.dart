@@ -63,7 +63,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
   late SharedPreferences pref;
   TRVisitationScheduleEvidenceModel? evidenceData;
   late Map<String, TextEditingController> photoControllers;
-  late TextEditingController schedControllers;
+  TextEditingController? schedControllers;
 
   final List<Map<String, dynamic>> photoEvidence = [
     {
@@ -116,7 +116,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
       photoControllers[field]!.text = evidenceData?.toJson()[field] ?? '';
     }
     schedControllers = TextEditingController();
-    schedControllers.text = '';
+    schedControllers?.text = '';
   }
   @override
   void dispose() {
@@ -697,9 +697,9 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
           ElevatedButton(
             onPressed: () async{
               var pref = await SharedPreferences.getInstance();
-              print('CEK VISIT NOTES = ${ schedControllers.text}');
+              print('CEK VISIT NOTES = ${ schedControllers?.text}');
               var updateActStartDate = UpdateService.trVisitationSchedule(widget.id, {
-                'AssignedUserRemark' : schedControllers.text,
+                'AssignedUserRemark' : schedControllers?.text,
                 'ActualEndDateTime': DateTime.now().toIso8601String(),
                 'Status': 'Completed'
               });

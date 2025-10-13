@@ -4,14 +4,49 @@ import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class SplashPage extends StatelessWidget {
   const SplashPage({super.key});
 
+  bool _isTokenValid(String? token){
+    if(token == null || token.trim().isEmpty) return false;
+    final parts = token.split('.');
+    return parts.length == 3;
+  }
+
   @override
   Widget build(BuildContext context) {
-    Future.delayed(const Duration(seconds: 1), () {
-      context.goNamed(AppRoutes.login.name);
+    Future.delayed(const Duration(seconds: 1), () async{
+      var pref = await SharedPreferences.getInstance();
+      var jwt =  pref.getString('jwtToken');
+      var userId = await pref.getString('userId');
+      final isValid = _isTokenValid(jwt);
+      if(isValid){
+        try{
+          final isExpired = JwtDecoder.isExpired(jwt!);
+          print('SHIMMER CHECK : IS EXPIRED = $isExpired');
+          if(!isExpired){
+            if(context.mounted){
+              context.goNamed(AppRoutes.home.name, pathParameters: {
+                'user': 'Administrator',
+                'ID': userId ?? ''
+              });
+            }
+          }
+          return;
+        }
+        catch(e){
+          print('JWT ERROR: $e');
+        }
+      }
+      await pref.remove('jwtToken');
+      if(context.mounted){
+        if(context.mounted){
+          context.goNamed(AppRoutes.login.name);
+        }
+      }
     });
     return Scaffold(
       backgroundColor: AppColor.primary,
