@@ -19,9 +19,11 @@ import 'package:go_router/go_router.dart';
 import 'package:pov2/presentation/widgets/custom_header_visit.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../../core/utils/camera_helper.dart';
+import '../../../core/utils/config.dart';
 import '../../../data/models/mtLocation_model.dart';
 import '../../../data/models/trVisitationSchedule_model.dart';
 import '../../../data/services/get_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class VisitProgressPage extends StatefulWidget {
   final dynamic id;
@@ -40,8 +42,11 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
   late Animation<double> _progressAnimation;
   File? _capturedPhotos;
   Position? positioned = null;
+  SharedPreferences? pref;
   bool isValid = false;
   MTLocationModel? locationData;
+  String? imageUrl;
+  String? employeeId;
   TRVisitationScheduleModel? visitationScheduleData;
   @override
   void initState(){
@@ -63,10 +68,13 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
   }
 
   Future<void> _loadData() async {
+    pref = await SharedPreferences.getInstance();
     print('VISIT PROGRESS CHECK SCHE ID = ${widget.scheduleData?.trVisitationScheduleID }');
     TRVisitationScheduleModel? res = await GetService.getScheduleByID(widget.scheduleData?.trVisitationScheduleID) ;
     setState(() {
       visitationScheduleData = res;
+      employeeId = pref?.getString('employeeId');
+      imageUrl = "${AppConfig.serverAddress}/uploads/user/${employeeId}/${visitationScheduleData?.facePhotoEvidence}";
     });
     MTLocationModel? resLoc = await GetService.getLocationbyID(visitationScheduleData?.mtLocationId) ;
     setState(() {
@@ -341,7 +349,7 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
     return Column(
       children: [
 
-        if(_capturedPhotos == null)
+        if(_capturedPhotos == null && (visitationScheduleData?.facePhotoEvidence == null || visitationScheduleData!.facePhotoEvidence!.isEmpty))
           CustomCard(
             padding: EdgeInsets.zero,
             child: Padding(
@@ -358,10 +366,26 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
               ),
             ),
           ),
+        if(visitationScheduleData?.facePhotoEvidence != null && visitationScheduleData!.facePhotoEvidence!.isNotEmpty)
+          Image.network(
+            imageUrl!,
+            fit: BoxFit.fitWidth,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(
+                child: CircularProgressIndicator(
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                      (loadingProgress.expectedTotalBytes ?? 1)
+                      : null,
+                ),
+              );
+            },
+          ),
         CustomPhotoPreview(photo: _capturedPhotos),
         const SizedBox(height: AppSpacing.md),
         // Action Button
-        if(visitationScheduleData?.facePhotoEvidence != null)
+        if(visitationScheduleData?.facePhotoEvidence != null  && visitationScheduleData!.facePhotoEvidence!.isNotEmpty)
           CustomButtonFull(
               textStyle: AppText.heading4Tertiary,
               title: 'Continue Progress',
@@ -371,7 +395,7 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
                 _nextStep();
               }
           ),
-        if(_capturedPhotos == null && visitationScheduleData?.facePhotoEvidence == null)
+        if(_capturedPhotos == null && (visitationScheduleData?.facePhotoEvidence == null || visitationScheduleData!.facePhotoEvidence!.isEmpty))
         CustomButtonFull(
             textStyle: AppText.heading4Tertiary,
             title: 'Take Selfie',
