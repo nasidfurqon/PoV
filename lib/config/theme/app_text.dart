@@ -48,6 +48,12 @@ class AppText {
     color: AppColor.textPrimary,
   );
 
+  static const TextStyle heading3Primary = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w600,
+    color: AppColor.primary,
+  );
+
   static const TextStyle heading3Tertiary = TextStyle(
       fontSize: 18,
       fontWeight: FontWeight.w600,

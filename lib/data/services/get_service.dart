@@ -27,7 +27,7 @@ class GetService{
       if(response.statusCode == 200){
         final data = jsonDecode(response.body);
         final res = data['TableVar'];
-        return res['UserName'];
+        return res['FullName'];
       }
       else{
         return '';

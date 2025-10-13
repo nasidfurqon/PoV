@@ -13,6 +13,7 @@ import 'package:pov2/core/widget/custom_modal_dialog.dart';
 import 'package:pov2/core/widget/custom_normal_scaffold.dart';
 import 'package:pov2/core/widget/custom_textfield.dart';
 import 'package:pov2/core/widget/custom_time_field.dart';
+import 'package:pov2/data/models/jobList_model.dart';
 import 'package:pov2/data/models/mtLocationType_model.dart';
 import 'package:pov2/data/models/mtLocation_model.dart';
 import 'package:pov2/data/models/mtUser_model.dart';
@@ -40,7 +41,7 @@ class AdminPanelPage extends StatefulWidget {
 }
 
 class _AdminPanelPageState extends State<AdminPanelPage> {
-  List<TRVisitationScheduleModel> scheduleData = [];
+  List<JobListModel> scheduleData = [];
   List<TRVisitationScheduleModel> scheduleCompletedData = [];
   List<TRVisitationScheduleModel> visitedData = [];
   List<MTLocationTypeModel> locationTypeData = [];
@@ -123,7 +124,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
   }
   Future<void> _loadData() async{
     pref = await SharedPreferences.getInstance();
-    List<TRVisitationScheduleModel> res = await GetAdminService.getListScheduleToday();
+    List<JobListModel> res = await GetAdminService.getListJobToday();
     List<TRVisitationScheduleModel> resComp = await GetAdminService.getListScheduleTodayCompleted();
     List<TRVisitationScheduleModel> resSche = await GetAdminService.getListSchedule();
     List<MTLocationTypeModel> resType = await GetAdminService.getListLocationType();
@@ -358,9 +359,9 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                           id: entry.key,
                           score: 0,
                           hourFrom: ParsingHelper.splitTimePost(data.startDateTime),
-                          status: data.status ?? '', 
-                          name: GetService.getLocationbyID(data.mtLocationId).then((data)=>data?.name),
-                          person: GetService.name(data.mtAssignedUserId),
+                          status: data.scheduleStatus ?? '',
+                          name: data.locationName,
+                          person: data.fullName,
                         ),
                       );
                     })

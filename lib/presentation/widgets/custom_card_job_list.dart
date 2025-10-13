@@ -60,9 +60,14 @@ class CustomCardJobList extends StatelessWidget {
               if(!((scheduleData.scheduleStatus ?? '') == 'Completed'))
               CustomButtonFull(
                 icon: Icons.check_circle_outline,
-                textStyle: AppText.heading3Tertiary,
+                iconColor: scheduleData.actualStartDateTime == '' || scheduleData.actualStartDateTime == null ? AppColor.textTertiary : AppColor.primary,
+                textStyle: scheduleData.actualStartDateTime == '' || scheduleData.actualStartDateTime == null ? AppText.heading3Tertiary: AppText.heading3Primary,
                 title: scheduleData.actualStartDateTime == '' || scheduleData.actualStartDateTime == null ? 'Start Visit' : 'Continue Visit',
-                backgroundColor: AppColor.primary,
+                borderSide: BorderSide(
+                  width: scheduleData.actualStartDateTime == '' || scheduleData.actualStartDateTime == null ? 0: 1,
+                  color: AppColor.primary
+                ),
+                backgroundColor:scheduleData.actualStartDateTime == '' || scheduleData.actualStartDateTime == null ? AppColor.primary : AppColor.textTertiary,
                 padding: EdgeInsets.all(2),
                 onPressed: () async {
                   if(scheduleData.actualStartDateTime == '' || scheduleData.actualStartDateTime == null){
