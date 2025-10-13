@@ -313,16 +313,6 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
 
         const SizedBox(height: AppSpacing.md),
         // Action Button
-        // if(visitationScheduleData?.facePhotoEvidence != null || visitationScheduleData?.facePhotoEvidence != '')
-        // CustomButtonFull(
-        //   textStyle: AppText.heading4Tertiary,
-        //   title: 'Already CheckIn',
-        //   backgroundColor: AppColor.primary,
-        //   padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
-        //   onPressed: (){
-        //     _nextStep();
-        //   }
-        // ),
         if(positioned == null)
         CustomButtonFull(
             textStyle: AppText.heading4Tertiary,
@@ -371,7 +361,17 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
         CustomPhotoPreview(photo: _capturedPhotos),
         const SizedBox(height: AppSpacing.md),
         // Action Button
-        if(_capturedPhotos == null)
+        if(visitationScheduleData?.facePhotoEvidence != null)
+          CustomButtonFull(
+              textStyle: AppText.heading4Tertiary,
+              title: 'Continue Progress',
+              backgroundColor: AppColor.primary,
+              padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
+              onPressed: (){
+                _nextStep();
+              }
+          ),
+        if(_capturedPhotos == null && visitationScheduleData?.facePhotoEvidence == null)
         CustomButtonFull(
             textStyle: AppText.heading4Tertiary,
             title: 'Take Selfie',
