@@ -10,6 +10,7 @@ import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/core/widget/custom_normal_scaffold.dart';
 import 'package:pov2/core/widget/custom_photo_preview.dart';
 import 'package:pov2/core/widget/custom_progress_indicator.dart';
+import 'package:pov2/data/models/jobList_model.dart';
 import 'package:pov2/data/services/upload_service.dart';
 import 'package:pov2/data/services/visit_data.dart';
 import 'package:pov2/data/services/visitStep_data.dart';
@@ -24,7 +25,8 @@ import '../../../data/services/get_service.dart';
 
 class VisitProgressPage extends StatefulWidget {
   final dynamic id;
-  const VisitProgressPage({super.key, required this.id});
+  final JobListModel? scheduleData;
+  const VisitProgressPage({super.key, required this.id, required this.scheduleData});
 
   @override
   State<VisitProgressPage> createState() => _VisitProgressPageState();
@@ -41,7 +43,6 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
   bool isValid = false;
   MTLocationModel? locationData;
   TRVisitationScheduleModel? visitationScheduleData;
-
   @override
   void initState(){
     super.initState();
@@ -57,13 +58,13 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
       curve: Curves.easeInOut,
     ));
     _progressAnimationController.forward();
-    print('ID = ${widget.id }');
+    print('ID = ${widget.scheduleData?.trVisitationScheduleID }');
     _loadData();
   }
 
   Future<void> _loadData() async {
-    print('VISIT PROGRESS CHECK SCHE ID = ${widget.id }');
-    TRVisitationScheduleModel? res = await GetService.getScheduleByID(widget.id) ;
+    print('VISIT PROGRESS CHECK SCHE ID = ${widget.scheduleData?.trVisitationScheduleID }');
+    TRVisitationScheduleModel? res = await GetService.getScheduleByID(widget.scheduleData?.trVisitationScheduleID) ;
     setState(() {
       visitationScheduleData = res;
     });
@@ -159,7 +160,7 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
               // Progress Card
               SizedBox(height: AppSpacing.lg),
               if(currentStep == 3)
-                VisitCompletionPage(id: widget.id)
+                VisitCompletionPage(id: widget.scheduleData?.trVisitationScheduleID)
               else
                 _body(currentStepData)
             ],
@@ -170,12 +171,12 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-                locationData?.name ?? '',
+                widget.scheduleData?.locationName ?? '',
                 style: AppText.heading3
             ),
             SizedBox(height: AppSpacing.xs),
             Text(
-                locationData?.address ?? '',
+                widget.scheduleData?.locationAddress ?? '',
                 style: AppText.caption
             ),
           ],
@@ -235,7 +236,7 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
       ),
     );
   }
-  
+
   Widget _body(dynamic currentStepData){
     return CustomCard(
         color: Colors.white,
@@ -276,9 +277,9 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
         const SizedBox(height: AppSpacing.md),
         const Divider(),
         const SizedBox(height: AppSpacing.md),
-        _buildInfoRow('Target Location', '${data?.latitude ?? '-'},${data?.longitude ?? '-'} '),
+        _buildInfoRow('Target Location', '${widget.scheduleData?.latitude ?? '-'},${widget.scheduleData?.longitude ?? '-'} '),
         const SizedBox(height: AppSpacing.sm),
-        _buildInfoRow('Geofence', ('${data?.geoFence}m' ?? '-') .toString()),
+        _buildInfoRow('Geofence', ('${widget.scheduleData?.geofence}m' ?? '-') .toString()),
         const SizedBox(height: AppSpacing.md),
         Row(
           children: [
@@ -312,6 +313,16 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
 
         const SizedBox(height: AppSpacing.md),
         // Action Button
+        // if(visitationScheduleData?.facePhotoEvidence != null || visitationScheduleData?.facePhotoEvidence != '')
+        // CustomButtonFull(
+        //   textStyle: AppText.heading4Tertiary,
+        //   title: 'Already CheckIn',
+        //   backgroundColor: AppColor.primary,
+        //   padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
+        //   onPressed: (){
+        //     _nextStep();
+        //   }
+        // ),
         if(positioned == null)
         CustomButtonFull(
             textStyle: AppText.heading4Tertiary,
@@ -394,7 +405,7 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
                   padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
                   onPressed: () async{
                     Map<String, dynamic> upload = {
-                      'TRVisitationScheduleID': widget.id,
+                      'TRVisitationScheduleID': widget.scheduleData?.trVisitationScheduleID,
                       'File': _capturedPhotos
                     };
                     var check = await UploadService.selfieFile(upload);

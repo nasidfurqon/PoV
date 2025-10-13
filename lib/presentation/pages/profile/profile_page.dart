@@ -29,6 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
     int completedVisitation = 0;
     int totalVisitation = 0;
     MTUserPositionModel? userPositionData;
+    bool isLoading = true;
 
     late SharedPreferences pref;
     @override
@@ -48,6 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
         userPositionData = posData;
         completedVisitation = temp;
         totalVisitation = temp2;
+        isLoading = false;
       });
     }
 
@@ -57,7 +59,8 @@ class _ProfilePageState extends State<ProfilePage> {
         body: AppLayout(
             child: Padding(
               padding: EdgeInsets.all(AppSpacing.global),
-              child: ListView(
+              child: isLoading ?
+              Center(child: CircularProgressIndicator()) : ListView(
                 children: [
                   _header(),
                   SizedBox(height: AppSpacing.sm,),

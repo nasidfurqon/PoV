@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pov2/config/router/app_routes.dart';
 import 'package:pov2/config/router/route_path.dart';
+import 'package:pov2/data/models/jobList_model.dart';
 import 'package:pov2/presentation/main_page.dart';
 import 'package:pov2/presentation/pages/admin_panel/admin_panel_page.dart';
 import 'package:pov2/presentation/pages/auth/demo_page.dart';
@@ -17,6 +18,9 @@ import 'package:pov2/presentation/pages/report/report_page.dart';
 import 'package:pov2/presentation/pages/settings/setting_page.dart';
 import 'package:pov2/presentation/pages/shimmer/splashPage.dart';
 import 'package:pov2/presentation/pages/visit_progres/visitProgresPage.dart';
+
+import '../../data/models/mtLocation_model.dart';
+import '../../data/models/trVisitationSchedule_model.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -57,7 +61,9 @@ final GoRouter appRouter = GoRouter(
       name: AppRoutes.visit.name,
       builder: (context, state) {
         final String? id = state.pathParameters['id'];
-        return VisitProgressPage(id: id);
+        final JobListModel? scheduleData = state.extra as JobListModel?;
+
+        return VisitProgressPage(id: id, scheduleData: scheduleData,);
       }
     ),
       GoRoute(

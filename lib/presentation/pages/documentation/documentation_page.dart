@@ -10,6 +10,8 @@ import 'package:pov2/data/services/get_admin_service.dart';
 import 'package:pov2/presentation/widgets/custom_card_document.dart';
 import 'package:pov2/presentation/widgets/custom_header_card.dart';
 
+import '../../../core/widget/custom_progress_indicator.dart';
+
 class DocumentationPage extends StatefulWidget {
   const DocumentationPage({super.key});
 
@@ -23,7 +25,7 @@ class _DocumentationPageState extends State<DocumentationPage> {
   int photoCount = 0;
   int documentCount = 0;
   int videoCount = 0;
-
+  bool isLoading = true;
   @override
   void initState(){
     super.initState();
@@ -42,6 +44,7 @@ class _DocumentationPageState extends State<DocumentationPage> {
       videoCount = temp3;
       documentData = temp4;
       documentationData = temp5;
+      isLoading = false;
     });
 
     print('CEK DOCUMENT DATA IN DOCUMENTATION PAGE = ${documentationData}');
@@ -57,7 +60,8 @@ class _DocumentationPageState extends State<DocumentationPage> {
         ),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.global),
-          child: ListView(
+          child: isLoading ? Center(child: CircularProgressIndicator(),) :documentationData.isEmpty ?
+          CustomProgressIndicator.showInformation(context, 'Tidak ada tugas', 'Info'): ListView(
             children: [
               CustomHeaderCard(number: photoCount.toString(), status: 'Foto'),
               SizedBox(height: AppSpacing.sm,),

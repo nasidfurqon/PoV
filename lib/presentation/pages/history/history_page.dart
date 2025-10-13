@@ -3,6 +3,7 @@ import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/utils/parsing_helper.dart';
 import 'package:pov2/core/widget/custom_layout.dart';
+import 'package:pov2/core/widget/custom_progress_indicator.dart';
 import 'package:pov2/core/widget/custom_scaffold.dart';
 import 'package:pov2/presentation/widgets/custom_card_completed_activity.dart';
 
@@ -35,11 +36,6 @@ class _HistoryPageState extends State<HistoryPage> {
   }
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> visitUncompleted = VisitData().taskData.where((task){
-      return task['isCompleted'] == true;
-    }).toList();
-
-    final data = visitUncompleted[0];
     return CustomScaffold(
       body: AppLayout(
           child: Padding(

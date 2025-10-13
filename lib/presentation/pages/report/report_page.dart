@@ -14,6 +14,8 @@ import 'package:pov2/data/services/report_data.dart';
 import 'package:pov2/presentation/widgets/custom_card_report.dart';
 import 'package:pov2/presentation/widgets/custom_header_card.dart';
 
+import '../../../core/widget/custom_progress_indicator.dart';
+
 class ReportPage extends StatefulWidget {
   const ReportPage({super.key});
 
@@ -27,7 +29,7 @@ class _ReportPageState extends State<ReportPage> {
   int totalCompleteVisit= 0;
   double percentage = 0.0;
   List<ReportModel> reportData = [];
-
+  bool isLoading= true;
   @override
   void initState(){
     super.initState();
@@ -44,6 +46,7 @@ class _ReportPageState extends State<ReportPage> {
       totalCompleteVisit = temp1;
       percentage = temp3;
       reportData = temp2;
+      isLoading = false;
     });
   }
 
@@ -57,7 +60,8 @@ class _ReportPageState extends State<ReportPage> {
         ),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal:  AppSpacing.global),
-          child: ListView(
+          child: isLoading ? Center(child: CircularProgressIndicator(),) : reportData.isEmpty ?
+          CustomProgressIndicator.showInformation(context, 'Tidak ada laporan', 'Info'): ListView(
             children: [
               CustomHeaderCard(number: totalVisit.toString(), status: 'Total Kunjungan'),
               SizedBox(height: AppSpacing.sm,),

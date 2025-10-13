@@ -42,12 +42,13 @@ class TRVisitationScheduleModel {
   });
 
   factory TRVisitationScheduleModel.fromJson(Map<String, dynamic> data) {
+    var face = data['FacePhotoEvidence'];
     var photo = '';
-    if(data['FacePhotoEvidence'] is String){
-      photo = data['FacePhotoEvidence'];
-    }
-    else{
-      photo = data['FacePhotoEvidence']['name'];
+
+    if (face is String) {
+      photo = face;
+    } else if (face is Map && face['name'] != null) {
+      photo = face['name'];
     }
     return TRVisitationScheduleModel(
       id: ParsingHelper.parseInt(data['ID']) ?? 0,

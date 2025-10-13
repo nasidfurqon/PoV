@@ -3,6 +3,8 @@ import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/utils/parsing_helper.dart';
 import 'package:pov2/core/widget/custom_normal_scaffold.dart';
+import 'package:pov2/core/widget/custom_progress_indicator.dart';
+import 'package:pov2/data/models/jobList_model.dart';
 import 'package:pov2/data/models/trVisitationSchedule_model.dart';
 import 'package:pov2/data/services/count_service.dart';
 import 'package:pov2/data/services/visit_data.dart';
@@ -22,27 +24,18 @@ class _JobListPageState extends State<JobListPage> {
   int onGoingCount = 0;
   int waitingCount =0;
   int finishCount = 0;
-  List<TRVisitationScheduleModel> listSchedule = [];
+  List<JobListModel> listSchedule = [];
   late SharedPreferences pref;
+  bool isLoading = true;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _loadListSchedule();
-    _getCountData();
+    _loadData();
   }
 
-  Future<void> _loadListSchedule() async{
-    pref = await SharedPreferences.getInstance();
-    dynamic userId = pref.getString('userId');
-    List<TRVisitationScheduleModel> res = await GetService.getListSchedule(userId);
-    setState(() {
-      listSchedule = res  ;
-    });
-  }
-  
-  Future<void> _getCountData() async{
+  Future<void> _loadData() async{
     pref = await SharedPreferences.getInstance();
     dynamic userId = pref.getString('userId');
     int cntOnGoing = await CountService.countStatus('OnProgress', userId);
@@ -53,8 +46,14 @@ class _JobListPageState extends State<JobListPage> {
       waitingCount = cntWaiting;
       finishCount = cntFinish;
     });
-  }
 
+    List<JobListModel> res = await GetService.getListJob(userId);
+    setState(() {
+      listSchedule = res  ;
+      isLoading = false;
+    });
+
+  }
   @override
   Widget build(BuildContext context) {
     return CustomNormalScaffold(
@@ -65,7 +64,9 @@ class _JobListPageState extends State<JobListPage> {
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.global),
-          child: ListView(
+          child: isLoading ? Center(child: CircularProgressIndicator(),) :listSchedule.isEmpty ?
+              CustomProgressIndicator.showInformation(context, 'Tidak ada tugas', 'Info'):
+          ListView(
             children: [
               CustomHeaderCard(
                   number: waitingCount.toString(),
@@ -87,13 +88,7 @@ class _JobListPageState extends State<JobListPage> {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                   child: CustomCardJobList(
-                      id: data.id.toString(),
-                      place: GetService.getLocationbyID(data.mtLocationId).then((data)=>data?.name),
-                      progress: data.status ?? '-',
-                      status: data.priority ?? '-',
-                      deadline: ParsingHelper.splitTimePre(data.startDateTime),
-                      visitor: GetService.name(pref.getString('userId')),
-                      description: data.visitationDescription ?? '-'
+                    scheduleData: data,
                   ),
                 );
               })

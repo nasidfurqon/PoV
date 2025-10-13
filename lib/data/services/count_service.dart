@@ -295,6 +295,58 @@ class CountService{
     }
   }
 
+  static Future<int> countAdminTotalVisitationCurrentMonth() async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              '${AppConfig.serverAddress}/api/countAdmin/TotalVisitationCurrentMonth'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API COUNT TOTAL VISITATION RESPONSE CHECK : ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['data'];
+        return res;
+      }
+      else{
+        return 0;
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load count total visitation, $e!");
+      return 0;
+    }
+  }
+
+  static Future<int> countAdminTotalVisitationCurrentMonthCompleted() async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              '${AppConfig.serverAddress}/api/countAdmin/TotalVisitationCompletedCurrentMonth'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API COUNT TOTAL VISITATION COMPLETED RESPONSE CHECK : ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['data'];
+        return res;
+      }
+      else{
+        return 0;
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load count total visitation completed, $e!");
+      return 0;
+    }
+  }
+
   static Future<int> countAdminTotalDocument(String type) async{
     try{
       List<TRVisitationScheduleEvidenceModel> listEvidence = await GetAdminService.getListEvidence();

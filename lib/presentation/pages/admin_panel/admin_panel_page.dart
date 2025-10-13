@@ -27,6 +27,7 @@ import 'package:pov2/presentation/widgets/custom_card_body_resume.dart';
 import 'package:pov2/presentation/widgets/custom_card_header_resume.dart';
 import 'package:pov2/presentation/widgets/custom_card_location_admin.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
+import '../../../core/widget/custom_progress_indicator.dart';
 import '../../../data/models/trVisitationSchedule_model.dart';
 import '../../../data/models/dropdown_model.dart';
 import '../../../data/services/dropdown_data.dart';
@@ -57,12 +58,14 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
   int cntLocation = 0;
   int cntVisitationToday = 0;
   int cntVisitationTodayCompleted = 0;
-
+  int cntTotalVisit = 0;
+  int cntTotalCompleteVisit = 0;
+  double povScore = 0;
   String? selectedAssignValue;
   String? selectedLocationValue;
   String? selectedPriorityValue;
   String? selectedTypeLocationValue;
-
+  bool isLoading = true;
   @override
   void initState(){
     super.initState();
@@ -106,11 +109,16 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
     int temp2 = await CountService.countAdminLocation();
     int temp3 = await CountService.countAdminScheduleToday();
     int temp4 = await CountService.countAdminScheduleTodayCompleted();
+    int cnt1 = await CountService.countAdminTotalVisitationCurrentMonth();
+    int cnt2 = await CountService.countAdminTotalVisitationCurrentMonthCompleted();
     setState(() {
       cntUser = temp1;
       cntLocation = temp2 ;
       cntVisitationToday = temp3;
       cntVisitationTodayCompleted = temp4;
+      cntTotalVisit = cnt1;
+      cntTotalCompleteVisit = cnt2;
+      povScore = (cntTotalCompleteVisit / cntTotalVisit) * 100;
     });
   }
   Future<void> _loadData() async{
@@ -128,6 +136,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
       locationData = loc;
       locationTypeData = resType;
       userData = user;
+      isLoading = false;
     });
 
     List<DropdownItemModel> temp1 = userData.asMap().entries.map((entry) {
@@ -174,7 +183,8 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
         ),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.global),
-          child: DefaultTabController(
+          child: isLoading ? Center(child: CircularProgressIndicator(),):
+          DefaultTabController(
               length: 4,
               child: Column(
                 children: [
@@ -289,7 +299,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                     title: 'Rata-rata Skor PoV',
                     icon: Icons.trending_up,
                     color: AppColor.accentHigh,
-                    number: '92/100',
+                    number: '${povScore.toStringAsFixed(2)}/100',
                     description: 'Bulan ini'
                 ),
               )
@@ -335,7 +345,10 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
               Divider(),
               SizedBox(
                 height: 200,
-                child: ListView(
+                child:
+                scheduleData.isEmpty ?
+                CustomProgressIndicator.showInformation(context, 'Tidak ada jadwal', 'Info') :
+                ListView(
                   children: [
                     ...scheduleData.asMap().entries.map((entry){
                       final data = entry.value;
@@ -390,7 +403,9 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
               Divider(),
               SizedBox(
                 height: 200,
-                child: ListView(
+                child: scheduleCompletedData.isEmpty ?
+                CustomProgressIndicator.showInformation(context, 'Tidak ada aktifitas terbaru', 'Info') :
+                ListView(
                   children: [
                     ...scheduleCompletedData.asMap().entries.map((entry){
                       final data = entry.value;
@@ -460,6 +475,8 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
           ],
         ),
         SizedBox(height: AppSpacing.sm,),
+        if(visitedData.isEmpty)
+          CustomProgressIndicator.showInformation(context, 'Tidak ada jadwal kunjungan', 'Info'),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -734,6 +751,8 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
           //     })
           //   ],
           // ),
+          if(locationData.isEmpty)
+            CustomProgressIndicator.showInformation(context, 'Tidak ada lokasi terdaftar', 'Info'),
           Column(
             children: [
               ...locationData.asMap().entries.map((entry) {
@@ -851,6 +870,8 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
           style: AppText.heading2,
         ),
         SizedBox(height: AppSpacing.sm,),
+        if(userData.isEmpty)
+          CustomProgressIndicator.showInformation(context, 'Tidak ada pengguna', 'Info'),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,

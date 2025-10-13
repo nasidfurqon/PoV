@@ -8,6 +8,7 @@ import 'package:pov2/data/services/get_service.dart';
 import 'package:pov2/data/services/visit_data.dart';
 import 'package:pov2/presentation/widgets/custom_card_location_visit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/widget/custom_progress_indicator.dart';
 import '../../widgets/custom_header_card.dart';
 
 class LocationVisitPage extends StatefulWidget {
@@ -22,7 +23,7 @@ class _LocationVisitPageState extends State<LocationVisitPage> {
   int totCount = 0;
   late SharedPreferences pref;
   List<MTLocationModel?> listLocation = [];
-
+  bool isLoading = true;
   @override
   void initState(){
     super.initState();
@@ -37,6 +38,7 @@ class _LocationVisitPageState extends State<LocationVisitPage> {
     setState(() {
       activeCount = cntActive;
       totCount = cnt;
+      isLoading = false;
     });
   }
 
@@ -56,7 +58,9 @@ class _LocationVisitPageState extends State<LocationVisitPage> {
         ),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.global),
-          child: ListView(
+          child: isLoading ? Center(child: CircularProgressIndicator(),) : listLocation.isEmpty ?
+          CustomProgressIndicator.showInformation(context, 'Tidak ada lokasi terdaftar', 'Info'):
+          ListView(
             children: [
               CustomHeaderCard(
                   number: totCount.toString(),

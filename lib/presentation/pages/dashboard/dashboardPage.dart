@@ -8,7 +8,9 @@ import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/core/widget/custom_dashboard_page.dart';
 import 'package:pov2/core/widget/custom_layout.dart';
+import 'package:pov2/core/widget/custom_progress_indicator.dart';
 import 'package:pov2/core/widget/custom_scaffold.dart';
+import 'package:pov2/data/models/jobList_model.dart';
 import 'package:pov2/data/models/mtLocation_model.dart';
 import 'package:pov2/data/models/trVisitationSchedule_model.dart';
 import 'package:pov2/data/services/visit_data.dart';
@@ -26,7 +28,9 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   String name = '';
-  List<TRVisitationScheduleModel> listSchedule = [];
+  List<JobListModel> listSchedule = [];
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -43,9 +47,10 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Future<void> _loadListSchedule() async{
-    List<TRVisitationScheduleModel> res = await GetService.getListScheduleToday(widget.ID);
+    List<JobListModel> res = await GetService.getListJobToday(widget.ID);
     setState(() {
       listSchedule = res  ;
+      isLoading = false;
     });
   }
 
@@ -78,22 +83,17 @@ class _DashboardPageState extends State<DashboardPage> {
             ],
           ),
           SizedBox(height: AppSpacing.global),
+          if(isLoading)
+            Center(child: CircularProgressIndicator(),),
+          if(listSchedule.isEmpty && !isLoading)
+          CustomProgressIndicator.showInformation(context, 'Tidak ada jadwal', 'Info'),
           Expanded(
             child: ListView.separated(
                 controller: controller,
                 itemBuilder: (BuildContext context, int index){
                   final data = listSchedule[index];
                   return CustomCardDashboard(
-                    priority: data.priority ?? '',
-                    place: GetService.getLocationbyID(data.mtLocationId).then((data)=>data?.name ?? ''),
-                    status: data.status ?? '',
                     scheduleData: data,
-                    street: GetService.getLocationbyID(data.mtLocationId).then((data)=>data?.address ?? ''),
-                    hourfrom: ParsingHelper.splitTimePost(data.startDateTime).toString(),
-                    hourTo: ParsingHelper.splitTimePost(data.endDateTime).toString(),
-                    radius: data.mtLocationId.toString(),
-                    description: data.visitationDescription ?? '-',
-                    id: data.id
                   );
                 },
                 separatorBuilder: (BuildContext context, int index) {

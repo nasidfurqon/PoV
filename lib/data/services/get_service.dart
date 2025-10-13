@@ -7,8 +7,11 @@ import 'package:pov2/data/models/mtLocation_model.dart';
 import 'package:pov2/data/models/mtUserPosition_model.dart';
 import 'package:pov2/data/models/mtUser_model.dart';
 import 'package:pov2/data/models/trVisitationSchedule_model.dart';
+import 'package:pov2/presentation/pages/job_list/job_list_page.dart';
 import '../../core/utils/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../models/jobList_model.dart';
 class GetService{
   static Future<String> name(dynamic id) async{
     var pref = await SharedPreferences.getInstance();
@@ -110,6 +113,111 @@ class GetService{
     }
     catch(e){
       print("API RESPONSE FAILED: Failed to load list schedule , $e!");
+      return [];
+    }
+  }
+
+
+  static Future<List<JobListModel>> getListJob(dynamic id) async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              '${AppConfig.serverAddress}/api/filter/JobList/$id'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API RESPONSE LIST JOB CHECK: ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['data'];
+        return res.map<JobListModel>((item) => JobListModel.fromJson(item)).toList();
+      }
+      else{
+        return [];
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load list job , $e!");
+      return [];
+    }
+  }
+
+  static Future<List<JobListModel>> getListJobCompleted(dynamic id) async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              '${AppConfig.serverAddress}/api/filter/JobListCompleted/$id'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API RESPONSE LIST JOB COMPLETED CHECK: ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['data'];
+        return res.map<JobListModel>((item) => JobListModel.fromJson(item)).toList();
+      }
+      else{
+        return [];
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load list completed job , $e!");
+      return [];
+    }
+  }
+
+  static Future<List<JobListModel>> getListJobToday(dynamic id) async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              '${AppConfig.serverAddress}/api/filter/JobListToday/$id'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API RESPONSE LIST JOB TODAY CHECK: ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['data'];
+        return res.map<JobListModel>((item) => JobListModel.fromJson(item)).toList();
+      }
+      else{
+        return [];
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load list job today , $e!");
+      return [];
+    }
+  }
+
+  static Future<List<JobListModel>> getListJobTodayCompleted(dynamic id) async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              '${AppConfig.serverAddress}/api/filter/JobListTodayCompleted/$id'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API RESPONSE LIST JOB TODAY COMPLETED CHECK: ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['data'];
+        return res.map<JobListModel>((item) => JobListModel.fromJson(item)).toList();
+      }
+      else{
+        return [];
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load list job today completed , $e!");
       return [];
     }
   }

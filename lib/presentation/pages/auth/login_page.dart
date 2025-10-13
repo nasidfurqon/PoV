@@ -10,6 +10,7 @@ import 'package:pov2/core/widget/custom_auth.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/core/widget/custom_layout.dart';
+import 'package:pov2/core/widget/custom_progress_indicator.dart';
 import 'package:pov2/core/widget/custom_scaffold.dart';
 import 'package:pov2/core/widget/custom_textfield.dart';
 import 'package:local_auth/local_auth.dart';
@@ -126,6 +127,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               );
                               return;
                             }
+                            CustomProgressIndicator.showLoadingDialog(context);
                             print("STATE EMAIL : ${state.email}");
                             print("STATE PASSWORD : ${state.password}");
                             Map<String, dynamic> responseLogin = await AuthService.login(state.email, state.password);
@@ -141,12 +143,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               MTUserModel? userData =  await GetService.getUser(userId);
                               print("EMPLOYEE ID AFTER LOGIN = ${userData!.employeeId.toString()}");
                               pref.setString('employeeId', userData.employeeId.toString());
+                              CustomProgressIndicator.hideLoading();
                               context.goNamed(AppRoutes.home.name, pathParameters: {
                                 'user': 'Administrator',
                                 'ID': userId
                               });
                             }
                             else{
+                              CustomProgressIndicator.hideLoading();
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(
                                 const SnackBar(
@@ -157,6 +161,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             }
                           }
                           catch(e, stack){
+                            CustomProgressIndicator.hideLoading();
                             print('RESPONSE LOGIN GAGAL : $e');
                             print('STACKTRACE: $stack');
                           }

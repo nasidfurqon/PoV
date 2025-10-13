@@ -1,17 +1,23 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pdfx/pdfx.dart';
+import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/widget/custom_normal_scaffold.dart';
+import 'package:pov2/core/widget/custom_progress_indicator.dart';
 
 class CustomPdfViewerPage extends StatefulWidget {
   final String url;
   final String fileName;
   final bool? isFull;
 
-  const CustomPdfViewerPage({super.key, this.isFull = true, required this.url, required this.fileName});
+  const CustomPdfViewerPage({
+    super.key,
+    this.isFull = true,
+    required this.url,
+    required this.fileName,
+  });
 
   @override
   State<CustomPdfViewerPage> createState() => _CustomPdfViewerPageState();
@@ -20,6 +26,7 @@ class CustomPdfViewerPage extends StatefulWidget {
 class _CustomPdfViewerPageState extends State<CustomPdfViewerPage> {
   PdfControllerPinch? _pdfController;
   Uint8List? _pdfBytes;
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -38,35 +45,47 @@ class _CustomPdfViewerPageState extends State<CustomPdfViewerPage> {
           );
         });
       } else {
-        throw Exception("Gagal download PDF");
+        setState(() {
+          _errorMessage = "Gagal download PDF (status ${response.statusCode})";
+        });
       }
     } catch (e) {
-      debugPrint("Error loading PDF: $e");
+      setState(() {
+        _errorMessage = "Error loading PDF: $e";
+      });
     }
   }
 
   @override
   void dispose() {
-    if (_pdfBytes != null) {
-      _pdfController?.dispose();
-    }
+    _pdfController?.dispose();
     super.dispose();
+  }
+
+  Widget _buildBody() {
+    if (_errorMessage != null) {
+      return CustomProgressIndicator.showInformation(context, 'Failed to load Document', 'Error');
+    }
+
+    if (_pdfBytes == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_pdfController != null) {
+      return PdfViewPinch(controller: _pdfController!);
+    }
+
+    return const SizedBox();
   }
 
   @override
   Widget build(BuildContext context) {
-    return  widget.isFull! ? CustomNormalScaffold(
+    return widget.isFull!
+        ? CustomNormalScaffold(
       context: context,
-      title: Text(widget.fileName, style: AppText.heading2,),
-      body: _pdfBytes == null
-          ? const Center(child: CircularProgressIndicator())
-          : _pdfController != null? PdfViewPinch(
-        controller: _pdfController!,
-      ) : SizedBox(),
-    ) : _pdfBytes == null
-        ? const Center(child: CircularProgressIndicator())
-        : _pdfController != null? PdfViewPinch(
-      controller: _pdfController!,
-    ) : SizedBox();
+      title: Text(widget.fileName, style: AppText.heading2),
+      body: _buildBody(),
+    )
+        : _buildBody();
   }
 }

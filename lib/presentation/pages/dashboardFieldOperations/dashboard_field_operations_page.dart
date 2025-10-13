@@ -81,18 +81,18 @@ class _DashboardFieldOfficerPageState extends State<DashboardFieldOfficerPage> {
               controller: controller,
               itemBuilder: (BuildContext context, int index){
                 final data = visitUncompleted[index];
-                return CustomCardDashboard(
-                    place: data['place'],
-                    priority: data['status'],
-                    status: data['status'],
-                    street: data['street'],
-                    city: data['city'],
-                    hourfrom: data['hourFrom'],
-                    hourTo: data['hourTo'],
-                    radius: data['radius'],
-                    description: data['description'],
-                    id: index
-                );
+                // return CustomCardDashboard(
+                //     place: data['place'],
+                //     priority: data['status'],
+                //     status: data['status'],
+                //     street: data['street'],
+                //     city: data['city'],
+                //     hourfrom: data['hourFrom'],
+                //     hourTo: data['hourTo'],
+                //     radius: data['radius'],
+                //     description: data['description'],
+                //     id: index
+                // );
               },
               separatorBuilder: (BuildContext context, int index) {
                 return SizedBox(height: AppSpacing.global);
