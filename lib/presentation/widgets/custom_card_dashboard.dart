@@ -4,6 +4,7 @@ import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/utils/parsing_helper.dart';
+import 'package:pov2/core/widget/custom_allert.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/data/models/mtLocation_model.dart';
@@ -66,21 +67,41 @@ class CustomCardDashboard extends StatelessWidget {
               backgroundColor: AppColor.primary,
               padding: EdgeInsets.all(2),
               onPressed: () async{
-                print('CEK ACTUAL DATE = ${scheduleData.actualStartDateTime}');
                 if(scheduleData.actualStartDateTime == '' || scheduleData.actualStartDateTime == null){
-                  var updateActStartDate = UpdateService.trVisitationSchedule(scheduleData.trVisitationScheduleID.toString(), {
-                    'ActualStartDateTime': DateTime.now().toIso8601String(),
-                  });
+                  final isConfirmed = await CustomAller().showConfirmDialog(
+                      context, 'Confirm',
+                      'are you sure want to start visit this schedule?');
+                  if (isConfirmed) {
+                    print('CEK ACTUAL DATE = ${scheduleData
+                        .actualStartDateTime}');
+                    if (scheduleData.actualStartDateTime == '' ||
+                        scheduleData.actualStartDateTime == null) {
+                      var updateActStartDate = UpdateService
+                          .trVisitationSchedule(
+                          scheduleData.trVisitationScheduleID.toString(), {
+                        'ActualStartDateTime': DateTime.now().toIso8601String(),
+                      });
 
-                  if(updateActStartDate == false){
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Internal Server Error'), backgroundColor: AppColor.error,));
+                      if (updateActStartDate == false) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Internal Server Error'),
+                              backgroundColor: AppColor.error,));
+                      }
+                    }
+                    context.pushNamed(AppRoutes.visit.name, pathParameters: {
+                      'id': scheduleData.trVisitationScheduleID.toString(),
+                    },
+                      extra: scheduleData,
+                    );
                   }
                 }
-                context.pushNamed(AppRoutes.visit.name, pathParameters: {
-                  'id':  scheduleData.trVisitationScheduleID.toString(),
-                },
-                  extra: scheduleData,
-                );
+                else{
+                  context.pushNamed(AppRoutes.visit.name, pathParameters: {
+                    'id': scheduleData.trVisitationScheduleID.toString(),
+                  },
+                    extra: scheduleData,
+                  );
+                }
               },
             ),
           ],
