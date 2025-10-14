@@ -83,6 +83,7 @@ class CustomCardJobList extends StatelessWidget {
                             .trVisitationSchedule(
                             scheduleData.trVisitationScheduleID.toString(), {
                           'ActualStartDateTime': DateTime.now().toIso8601String(),
+                          'Status': 'OnProgress',
                         });
 
                         if (updateActStartDate == false) {

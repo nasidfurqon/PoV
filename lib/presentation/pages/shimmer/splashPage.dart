@@ -34,8 +34,8 @@ class SplashPage extends StatelessWidget {
                 'ID': userId ?? ''
               });
             }
+            return;
           }
-          return;
         }
         catch(e){
           print('JWT ERROR: $e');

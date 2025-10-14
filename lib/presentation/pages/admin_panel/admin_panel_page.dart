@@ -1,9 +1,11 @@
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/utils/parsing_helper.dart';
 import 'package:pov2/core/utils/parsing_status_color.dart';
+import 'package:pov2/core/widget/custom_allert.dart';
 import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/core/widget/custom_date_picker.dart';
@@ -29,6 +31,7 @@ import 'package:pov2/presentation/widgets/custom_card_header_resume.dart';
 import 'package:pov2/presentation/widgets/custom_card_location_admin.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 import '../../../core/widget/custom_progress_indicator.dart';
+import '../../../data/models/mtVisitationPurpose_model.dart';
 import '../../../data/models/trVisitationSchedule_model.dart';
 import '../../../data/models/dropdown_model.dart';
 import '../../../data/services/dropdown_data.dart';
@@ -44,12 +47,14 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
   List<JobListModel> scheduleData = [];
   List<TRVisitationScheduleModel> scheduleCompletedData = [];
   List<TRVisitationScheduleModel> visitedData = [];
+  List<MTVisitationPurpose> visitationPurpose =[];
   List<MTLocationTypeModel> locationTypeData = [];
   List<MTLocationModel> locationData = [];
   List<MTUserModel> userData = [];
   late SharedPreferences pref;
   List<DropdownItemModel> personDropdown = [];
   List<DropdownItemModel> locationDropdown = [];
+  List<DropdownItemModel> visitationPurposeDropdown = [];
   List<DropdownItemModel> locationTypeDropdown = [];
   late Map<String, TextEditingController> scheduleControllers;
   late Map<String, TextEditingController> locationControllers;
@@ -130,6 +135,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
     List<MTLocationTypeModel> resType = await GetAdminService.getListLocationType();
     List<MTLocationModel> loc = await GetAdminService.getListLocation();
     List<MTUserModel> user = await GetAdminService.getListUser();
+    List<MTVisitationPurpose> purpose = await GetAdminService.getListVisitationPurpose();
     setState(() {
       scheduleData = res  ;
       scheduleCompletedData = resComp;
@@ -138,6 +144,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
       locationTypeData = resType;
       userData = user;
       isLoading = false;
+      visitationPurpose = purpose;
     });
 
     List<DropdownItemModel> temp1 = userData.asMap().entries.map((entry) {
@@ -150,6 +157,15 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
     }).toList();
 
     List<DropdownItemModel> temp2 = locationData.asMap().entries.map((entry) {
+      final index = (entry.value.id).toString();
+      final name = entry.value.name;
+      return DropdownItemModel(
+        id: index,
+        label: name ?? '',
+      );
+    }).toList();
+
+    List<DropdownItemModel> temp4 = visitationPurpose.asMap().entries.map((entry) {
       final index = (entry.value.id).toString();
       final name = entry.value.name;
       return DropdownItemModel(
@@ -171,6 +187,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
       personDropdown = temp1;
       locationDropdown = temp2;
       locationTypeDropdown = temp3;
+      visitationPurposeDropdown = temp4;
     });
   }
 
@@ -599,7 +616,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
         CustomDropdownWithLabel(
           label: 'Assign To',
           items: personDropdown,
-          initialValue: '1' ?? '',
+          initialValue: scheduleControllers['MTAssignedUserID']?.text,
           onChanged: (value){
               // selectedAssignValue = value;
             scheduleControllers['MTAssignedUserID']?.text = value!;
@@ -610,7 +627,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
         CustomDropdownWithLabel(
           label: 'Location',
           items: locationDropdown,
-          initialValue: '1' ?? '',
+          initialValue: scheduleControllers['MTLocationID']?.text,
           onChanged: (value){
               // selectedLocationValue = value;
             scheduleControllers['MTLocationID']?.text = value!;
@@ -654,7 +671,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
         CustomDropdownWithLabel(
           label: 'Priority',
           items: DropdownData.priorityData,
-          initialValue: 'Low' ?? '',
+          initialValue: scheduleControllers['Priority']?.text,
           onChanged: (value){
             scheduleControllers['Priority']?.text = value!;
             print('priority CHECK ${scheduleControllers['Priority']?.text}');
@@ -662,8 +679,19 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
           },
         ),
         SizedBox(height: AppSpacing.xs,),
+        CustomDropdownWithLabel(
+          label: 'Visitation Purpose',
+          items: visitationPurposeDropdown,
+          initialValue: scheduleControllers['MTVisitationPurposeID']?.text,
+          onChanged: (value){
+            scheduleControllers['MTVisitationPurposeID']?.text = value!;
+            print('priority CHECK ${scheduleControllers['MTVisitationPurposeID']?.text}');
+
+          },
+        ),
+        SizedBox(height: AppSpacing.xs,),
         CustomTextFieldWithLabel(
-            label: 'Visit Purpose',
+            label: 'Visit Purpose Description',
             maxLines: 3,
             hint: 'Describe the purpose of this visit',
             keyboardType: TextInputType.multiline,
@@ -676,17 +704,93 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
             backgroundColor: AppColor.primary,
             padding: EdgeInsets.zero,
             onPressed: () async{
-              scheduleControllers['Status']?.text = 'Scheduled';
-              scheduleControllers['CreatedByUserID']?.text = pref.getString('userId').toString();
-              scheduleControllers['CreatedDateTime']?.text = DateTime.now().toString();
-              Map<String, String?> updateData = {
-                for(var entry in scheduleControllers.entries) entry.key: entry.value.text == '' ? null : entry.value.text,
-              };
-              // updatedData = ref.read(crewCertificateProvider).information;
-              final data = TRVisitationScheduleModel.convertToModel(TRVisitationScheduleModel(), updateData);
-              print("CEK UPDATE = ${data.toJson()}");
-              bool cek = await AddService.trVisitationSchedule(data.toJson());
-              print('HASIL ADD SCHEDULE $cek');
+              bool check = await CustomAller().showConfirmDialog(context, 'Create Confirmation!', 'Are you sure you want to add the data?');
+              if(check){
+                final fields = [
+                  'MTAssignedUserID','MTLocationID', 'StartDateTime', 'EndDateTime', 'Priority', 'VisitationDescription',
+               'MTVisitationPurposeID'
+                ];
+
+                bool isValid = true;
+                for (var field in fields) {
+                  if (scheduleControllers[field]!.text.isEmpty) {
+                    print('FIELD = $field');
+                    isValid = false;
+                    break;
+                  }
+                }
+
+                if (!isValid) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please fill out all fields.'),
+                      backgroundColor: AppColor.error,
+                    ),
+                  );
+                  return Navigator.pop(context);
+                }
+                final formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+
+                // Parsing string ke DateTime
+                final DateTime firstDT = formatter.parse(scheduleControllers['StartDateTime']!.text);
+                final DateTime secondDT = formatter.parse(scheduleControllers['EndDateTime']!.text);
+
+                final DateTime firstDate = DateTime(firstDT.year, firstDT.month, firstDT.day);
+                final DateTime secondDate = DateTime(secondDT.year, secondDT.month, secondDT.day);
+
+                if (secondDate.isBefore(firstDate) || secondDT.isBefore(firstDT)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                          'The end date time cannot be earlier than the start date time.'), backgroundColor: Colors.red,
+                    ),
+                  );
+                  return Navigator.pop(context);
+                }
+
+                if (secondDate != firstDate){
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                          'The start date time and end date time must be on the same day'), backgroundColor: Colors.red,
+                    ),
+                  );
+                  return Navigator.pop(context);
+                }
+
+                scheduleControllers['Status']?.text = 'Scheduled';
+                scheduleControllers['CreatedByUserID']?.text = pref.getString('userId').toString();
+                scheduleControllers['CreatedDateTime']?.text = DateTime.now().toString();
+                Map<String, String?> updateData = {
+                  for(var entry in scheduleControllers.entries) entry.key: entry.value.text == '' ? null : entry.value.text,
+                };
+                // updatedData = ref.read(crewCertificateProvider).information;
+                final data = TRVisitationScheduleModel.convertToModel(TRVisitationScheduleModel(), updateData);
+                print("CEK UPDATE = ${data.toJson()}");
+                bool cek = await AddService.trVisitationSchedule(data.toJson());
+                print('HASIL ADD SCHEDULE $cek');
+                if(cek){
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                          'Successfully add new schedule.'), backgroundColor: AppColor.success,
+                    ),
+                  );
+                  for (var controller in scheduleControllers.values) {
+                    controller.clear();
+                  }
+                  return Navigator.pop(context);
+                }
+                else{
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                          'failed add new schedule.'), backgroundColor: AppColor.error,
+                    ),
+                  );
+                  return Navigator.pop(context);
+                }
+              }
             }
         )
       ],
@@ -787,7 +891,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
         CustomDropdownWithLabel(
           label: 'Type',
           items: locationTypeDropdown,
-          initialValue: '1' ?? '',
+          initialValue: locationControllers['MTLocationTypeID']?.text,
           onChanged: (value){
             locationControllers['MTLocationTypeID']?.text = value!;
             print('LOCATION TYPE CHECK ${locationControllers['MTLocationTypeID']?.text}');
@@ -845,17 +949,93 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
             backgroundColor: AppColor.primary,
             padding: EdgeInsets.zero,
             onPressed: () async{
-              // locationControllers['IsActive']?.text = 'true';
-              locationControllers['CreatedByUserID']?.text = pref.getString('userId').toString();
-              locationControllers['CreatedDateTime']?.text = DateTime.now().toString();
-              Map<String, String?> updateData = {
-                for(var entry in locationControllers.entries) entry.key: entry.value.text == '' ? null : entry.value.text,
-              };
-              // updatedData = ref.read(crewCertificateProvider).information;
-              final data = MTLocationModel.convertToModel(MTLocationModel(), updateData);
-              print("CEK UPDATE = ${data.toJson()}");
-              bool cek = await AddService.mtLocation(data.toJson());
-              print('HASIL ADD LOCATION $cek');
+              bool check = await CustomAller().showConfirmDialog(context, 'Create Confirmation!', 'Are you sure you want to add the data?');
+              if(check){
+                final fieldsLoc = [
+                  'Name','MTLocationTypeID', 'Address', 'Latitude', 'Longitude', 'GeoFence'
+                ];
+                bool isValid = true;
+                for (var field in fieldsLoc) {
+                  if (locationControllers[field]!.text.isEmpty) {
+                    print('FIELD = $field');
+                    isValid = false;
+                    break;
+                  }
+                }
+
+                if (!isValid) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please fill out all fields.'),
+                      backgroundColor: AppColor.error,
+                    ),
+                  );
+                  return Navigator.pop(context);
+                }
+
+                if(double.tryParse(locationControllers['Latitude']!.text) == null){
+                  print("Latitude must be a decimal.");
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                          'Latitude must be a decimal.'), backgroundColor: AppColor.error,
+                    ),
+                  );
+                  return Navigator.pop(context);
+                }
+                if(double.tryParse(locationControllers['Longitude']!.text) == null){
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                          'Longitude must be a decimal  .'), backgroundColor: AppColor.error,
+                    ),
+                  );
+                  return Navigator.pop(context);
+                }
+                if(int.tryParse(locationControllers['GeoFence']!.text) == null){
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                          'GeoFence must be a number.'), backgroundColor: AppColor.error,
+                    ),
+                  );
+                  return Navigator.pop(context);
+                }
+
+                // locationControllers['IsActive']?.text = 'true';
+                locationControllers['CreatedByUserID']?.text = pref.getString('userId').toString();
+                locationControllers['CreatedDateTime']?.text = DateTime.now().toString();
+                Map<String, String?> updateData = {
+                  for(var entry in locationControllers.entries) entry.key: entry.value.text == '' ? null : entry.value.text,
+                };
+                // updatedData = ref.read(crewCertificateProvider).information;
+                final data = MTLocationModel.convertToModel(MTLocationModel(), updateData);
+                print("CEK UPDATE = ${data.toJson()}");
+                bool cek = await AddService.mtLocation(data.toJson());
+                print('HASIL ADD LOCATION $cek');
+                if(cek){
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                          'Successfully add new location.'), backgroundColor: AppColor.success,
+                    ),
+                  );
+                  for (var controller in locationControllers.values) {
+                    controller.clear();
+                  }
+
+                  return Navigator.pop(context);
+                }
+                else{
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                          'failed add new location.'), backgroundColor: AppColor.error,
+                    ),
+                  );
+                  return Navigator.pop(context);
+                }
+              }
             }
         )
       ],

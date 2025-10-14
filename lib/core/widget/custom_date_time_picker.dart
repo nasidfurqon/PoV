@@ -73,14 +73,14 @@ class _CustomDateTimePicker extends State<CustomDateTimePicker>{
               widget.label,
               style: widget.textStyle ?? AppText.body,
             ),
-            const Text(
-              '*',
-              style: const TextStyle(
-                color: AppColor.error,
-                fontSize: 16,
-                fontWeight: FontWeight.normal,
-              ),
-            )
+            // const Text(
+            //   '*',
+            //   style: const TextStyle(
+            //     color: AppColor.error,
+            //     fontSize: 16,
+            //     fontWeight: FontWeight.normal,
+            //   ),
+            // )
           ],
         ):
         Text(

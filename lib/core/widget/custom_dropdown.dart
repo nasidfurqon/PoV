@@ -7,7 +7,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 
 class CustomDropdown extends StatefulWidget {
   final List<DropdownItemModel> items;
-  final String initialValue;
+  final String? initialValue;
   final void Function(String?) onChanged;
   final void Function(String?)? onSaved;
   final String? hint;
@@ -17,7 +17,7 @@ class CustomDropdown extends StatefulWidget {
     super.key,
     this.title = '',
     required this.items,
-    required this.initialValue,
+    this.initialValue,
     required this.onChanged,
     this.onSaved,
     this.hint,
@@ -28,18 +28,13 @@ class CustomDropdown extends StatefulWidget {
 }
 
 class _CustomDropdownState extends State<CustomDropdown> {
-  String? selectedId;
-
-  @override
-  void initState(){
-    super.initState();
-    selectedId = widget.initialValue;
-  }
 
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField2<String>(
-      value: selectedId,
+      value: widget.items.any((item) => item.id.toString() == widget.initialValue.toString())
+          ? widget.initialValue.toString()
+          : null,
       decoration: InputDecoration(
         isDense: true ,
         border: OutlineInputBorder(
@@ -52,7 +47,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
         ),
         contentPadding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
       ),
-      hint: Text(widget.hint ?? "Pilih item"),
+      hint: Text(widget.hint ?? "Pilih item", style: AppText.caption,),
       items: widget.items.map((item) {
         return DropdownMenuItem<String>(
           value: item.id,
@@ -60,16 +55,13 @@ class _CustomDropdownState extends State<CustomDropdown> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(item.label),
-              if (selectedId == item.id)
+              if (widget.initialValue == item.id)
                 const Icon(Icons.check_circle, color: AppColor.success, size: 20),
             ],
           ),
         );
       }).toList(),
       onChanged: (value) {
-        setState(() {
-          selectedId = value;
-        });
         if (widget.onChanged != null) widget.onChanged!(value);
       },
       onSaved: widget.onSaved,
@@ -91,7 +83,7 @@ class CustomDropdownWithLabel extends StatefulWidget {
   final String label;
   final TextStyle? textStyle;
   final List<DropdownItemModel> items;
-  final String initialValue;
+  final String? initialValue;
   final void Function(String?) onChanged;
   final void Function(String?)? onSaved;
   final String? hint;
@@ -101,7 +93,7 @@ class CustomDropdownWithLabel extends StatefulWidget {
     required this.label,
     this.textStyle,
     required this.items,
-    required this.initialValue,
+    this.initialValue,
     required this.onChanged,
     this.onSaved,
     this.hint,

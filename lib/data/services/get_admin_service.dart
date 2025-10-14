@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/utils/config.dart';
 import '../../core/utils/file_helper.dart';
 import '../models/jobList_model.dart';
+import '../models/mtVisitationPurpose_model.dart';
 import '../models/trVisitationSchedule_model.dart';
 import 'package:http/http.dart';
 
@@ -140,6 +141,32 @@ class GetAdminService{
     }
     catch(e){
       print("API RESPONSE FAILED: Failed to load list location type, $e!");
+      return [];
+    }
+  }
+
+  static Future<List<MTVisitationPurpose>> getListVisitationPurpose() async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              '${AppConfig.serverAddress}/api/list/MTVisitationPurpose'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API RESPONSE LIST MTVisitationPurpose TYPE CHECK: ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['MTVisitationPurpose'];
+        return res.map<MTVisitationPurpose>((item) => MTVisitationPurpose.fromJson(item)).toList();
+      }
+      else{
+        return [];
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load list MTVisitationPurpose type, $e!");
       return [];
     }
   }

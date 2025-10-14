@@ -53,4 +53,29 @@ class AddService {
       return false;
     }
   }
+
+  static Future<bool> trVisitationScheduleHistory(Map<String, dynamic> data) async{
+    var pref = await SharedPreferences.getInstance();
+    try {
+      Response response = await post(
+          Uri.parse(
+              '${AppConfig.serverAddress}/api/add/TRVisitationScheduleVerificationHistory'),
+          headers: {
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}'
+          },
+          body: data
+      );
+      print('RESPONSE ADD API TR VISITATION SCHEDULE HISTORY SCHEDULE: ${response.body}');
+      if(response.statusCode == 200){
+        return true;
+      }
+      else{
+        return false;
+      }
+    }
+    catch(e){
+      print('RESPONSE ADD API TR VISITATION SCHEDULE HISTORY SCHEDULE FAILED : $e');
+      return false;
+    }
+  }
 }

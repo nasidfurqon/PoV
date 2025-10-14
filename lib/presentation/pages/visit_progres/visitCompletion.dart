@@ -17,6 +17,7 @@ import 'package:pov2/core/widget/custom_textfield.dart';
 import 'package:pov2/data/models/file_watermark_model.dart';
 import 'package:pov2/data/models/mtUser_model.dart';
 import 'package:pov2/data/models/trVisitationScheduleEvidence_model.dart';
+import 'package:pov2/data/services/add_service.dart';
 import 'package:pov2/data/services/dropdown_data.dart';
 import 'package:pov2/data/services/upload_service.dart';
 import 'package:pov2/data/services/visitStep_data.dart';
@@ -24,7 +25,9 @@ import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 import 'package:pov2/presentation/widgets/custom_photo_dialog.dart';
 import 'package:pov2/presentation/widgets/custom_row_icon.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/widget/custom_allert.dart';
 import '../../../core/widget/custom_progress_indicator.dart';
+import '../../../data/models/jobList_model.dart';
 import '../../../data/models/mtLocation_model.dart';
 import '../../../data/models/trVisitationSchedule_model.dart';
 import '../../../data/services/get_service.dart';
@@ -35,11 +38,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class VisitCompletionPage extends StatefulWidget {
+  final JobListModel? scheduleData;
   final dynamic id;
 
 
   const VisitCompletionPage({
     super.key,
+    required this.scheduleData,
     required this.id,
   });
 
@@ -63,6 +68,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
   late SharedPreferences pref;
   TRVisitationScheduleEvidenceModel? evidenceData;
   late Map<String, TextEditingController> photoControllers;
+  late Map<String, TextEditingController> documentControllers;
   TextEditingController? schedControllers;
 
   final List<Map<String, dynamic>> photoEvidence = [
@@ -92,6 +98,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
     super.initState();
     _loadData();
     photoControllers = {};
+    documentControllers = {};
     Future.microtask((){
       setState(() {
         evidenceData = TRVisitationScheduleEvidenceModel();
@@ -114,6 +121,8 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
     for (var field in fields) {
       photoControllers[field] ??= TextEditingController();
       photoControllers[field]!.text = evidenceData?.toJson()[field] ?? '';
+      documentControllers[field] ??= TextEditingController();
+      documentControllers[field]!.text = evidenceData?.toJson()[field] ?? '';
     }
     schedControllers = TextEditingController();
     schedControllers?.text = '';
@@ -297,7 +306,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
                     label: 'Photo Type',
                     textStyle: AppText.heading5,
                     items: DropdownData.photoType,
-                    initialValue: 'General Evidence' ?? '',
+                    initialValue: photoControllers['EvidenceType']?.text,
                     onChanged: (value){
                       photoControllers['EvidenceType']?.text = value!;
                       print('PHOTO TYPE CHECK ${photoControllers['EvidenceType']?.text}');
@@ -329,7 +338,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
                             SizedBox(height: AppSpacing.xs),
                             CustomRowIcon(icon:  Icons.access_time_outlined, color:  AppColor.textSecondary, title:  imageTimeUploaded!,textStyle:  AppText.heading6Secondary),
                             SizedBox(height: AppSpacing.sm),
-                            CustomRowIcon(icon:  Icons.person, color:  AppColor.textSecondary, title:  '', textStyle:  AppText.heading6Secondary),
+                            CustomRowIcon(icon:  Icons.person, color:  AppColor.textSecondary, title: widget.scheduleData?.fullName, textStyle:  AppText.heading6Secondary),
                             SizedBox(height: AppSpacing.xs),
                             CustomRowIcon(icon:  Icons.location_on_outlined, color:  AppColor.textSecondary,title:  'GPS Verified',textStyle:  AppText.heading6Secondary),
                           ],
@@ -347,19 +356,74 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
                             backgroundColor: AppColor.primary,
                             padding: EdgeInsets.all(AppSpacing.xs),
                             onPressed: () async{
-                              photoControllers['AttachmentType']?.text = 'Photo';
-                              photoControllers['TRVisitationScheduleID']?.text = widget.id;
-                              Map<String, dynamic> updateData = {
-                                for(var entry in photoControllers.entries) entry.key: entry.value.text == '' ? null : entry.value.text,
-                                'Attachment': _capturedPhotos
-                              };
-                              // updatedData = ref.read(crewCertificateProvider).information;
-                              final data = TRVisitationScheduleEvidenceModel.convertToModel(TRVisitationScheduleEvidenceModel(), updateData);
-                              print("CEK UPDATE = ${updateData}");
-                              bool cek = await UploadService.evidenceFile(updateData);
-                              print('HASIL UPLOAD EVIDENCE PHOTO $cek');
-                              if(cek == false){
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed upload evidence photo'), backgroundColor: AppColor.error,));
+                              CustomProgressIndicator.showLoadingDialog(context);
+                              bool check = await CustomAller().showConfirmDialog(context, 'Upload Confirmation!', 'Are you sure you want to upload this evidence?');
+                              if(check) {
+                                final fields = [
+                                  'EvidenceType',
+                                  'Remark',
+                                ];
+
+                                bool isValid = true;
+                                for (var field in fields) {
+                                  if (photoControllers[field]!.text.isEmpty) {
+                                    print('FIELD = $field');
+                                    isValid = false;
+                                    CustomProgressIndicator.hideLoading();
+                                    break;
+                                  }
+                                }
+
+                                if (!isValid) {
+                                  CustomProgressIndicator.hideLoading();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Please fill out all fields.'),
+                                      backgroundColor: AppColor.error,
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                photoControllers['AttachmentType']?.text = 'Photo';
+                                photoControllers['TRVisitationScheduleID']?.text = (widget.id).toString();
+                                Map<String, dynamic> updateData = {
+                                  for(var entry in photoControllers.entries) entry.key: entry.value
+                                      .text == '' ? null : entry.value.text,
+                                  'Attachment': _capturedPhotos
+                                };
+                                // updatedData = ref.read(crewCertificateProvider).information;
+                                final data = TRVisitationScheduleEvidenceModel.convertToModel(
+                                    TRVisitationScheduleEvidenceModel(), updateData);
+                                print("CEK UPDATE = ${updateData}");
+                                bool cek = await UploadService.evidenceFile(updateData);
+                                print('HASIL UPLOAD EVIDENCE PHOTO $cek');
+                                CustomProgressIndicator.hideLoading();
+                                if (cek) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          'Successfully add new evidence.'),
+                                      backgroundColor: AppColor.success,
+                                    ),
+                                  );
+                                  for (var controller in photoControllers.values) {
+                                    controller.clear();
+                                  }
+                                  setState(() {
+                                    _capturedPhotos = null;
+                                  });
+                                  return;
+                                }
+                                else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          'failed add evidence.'), backgroundColor: AppColor.error,
+                                    ),
+                                  );
+                                  return;
+                                }
                               }
                             }
                         ),
@@ -433,7 +497,7 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
                       label: 'Description',
                       maxLines: 4,
                       keyboardType: TextInputType.multiline,
-                      controller: photoControllers['Remark'],
+                      controller: documentControllers['Remark'],
                       hint: 'Describe what this photo shows...'
                   ),
                   SizedBox(height: AppSpacing.sm),
@@ -447,19 +511,73 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
                             backgroundColor: AppColor.primary,
                             padding: EdgeInsets.all(AppSpacing.xs),
                             onPressed: () async{
-                              photoControllers['AttachmentType']?.text = 'Document';
-                              photoControllers['TRVisitationScheduleID']?.text = widget.id;
-                              Map<String, dynamic> updateData = {
-                                for(var entry in photoControllers.entries) entry.key: entry.value.text == '' ? null : entry.value.text,
-                                'Attachment': _uploadedDocuments
-                              };
-                              // updatedData = ref.read(crewCertificateProvider).information;
-                              final data = TRVisitationScheduleEvidenceModel.convertToModel(TRVisitationScheduleEvidenceModel(), updateData);
-                              print("CEK UPDATE = ${updateData}");
-                              bool cek = await UploadService.evidenceFile(updateData);
-                              print('HASIL UPLOAD EVIDENCE DOCUMENT $cek');
-                              if(cek == false){
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed upload evidence document'), backgroundColor: AppColor.error,));
+                              CustomProgressIndicator.showLoadingDialog(context);
+                              bool check = await CustomAller().showConfirmDialog(context, 'Upload Confirmation!', 'Are you sure you want to upload this evidence?');
+                              if(check) {
+                                final fields = [
+                                  'Remark',
+                                ];
+
+                                bool isValid = true;
+                                for (var field in fields) {
+                                  if (documentControllers[field]!.text.isEmpty) {
+                                    print('FIELD = $field');
+                                    isValid = false;
+                                    CustomProgressIndicator.hideLoading();
+                                    break;
+                                  }
+                                }
+
+                                if (!isValid) {
+                                  CustomProgressIndicator.hideLoading();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Please fill out all fields.'),
+                                      backgroundColor: AppColor.error,
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                documentControllers['AttachmentType']?.text = 'Document';
+                                documentControllers['TRVisitationScheduleID']?.text = (widget.id).toString();
+                                Map<String, dynamic> updateData = {
+                                  for(var entry in documentControllers.entries) entry.key: entry.value
+                                      .text == '' ? null : entry.value.text,
+                                  'Attachment': _capturedPhotos
+                                };
+                                // updatedData = ref.read(crewCertificateProvider).information;
+                                final data = TRVisitationScheduleEvidenceModel.convertToModel(
+                                    TRVisitationScheduleEvidenceModel(), updateData);
+                                print("CEK UPDATE = ${updateData}");
+                                bool cek = await UploadService.evidenceFile(updateData);
+                                CustomProgressIndicator.hideLoading();
+                                print('HASIL UPLOAD EVIDENCE PHOTO $cek');
+                                if (cek) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          'Successfully add new evidence.'),
+                                      backgroundColor: AppColor.success,
+                                    ),
+                                  );
+                                  for (var controller in documentControllers.values) {
+                                    controller.clear();
+                                  }
+                                  setState(() {
+                                    _uploadedDocuments = null;
+                                  });
+                                  return;
+                                }
+                                else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          'failed add evidence.'), backgroundColor: AppColor.error,
+                                    ),
+                                  );
+                                  return;
+                                }
                               }
                             }
                         ),
@@ -696,6 +814,13 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
           ),
           ElevatedButton(
             onPressed: () async{
+              bool isLoading = true;
+              if(isLoading) Center(child: CircularProgressIndicator());
+              if(schedControllers?.text == '') {
+                isLoading = false;
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Visit Notes cant be null!'), backgroundColor: AppColor.error,));
+                return Navigator.pop(context);
+              }
               var pref = await SharedPreferences.getInstance();
               print('CEK VISIT NOTES = ${ schedControllers?.text}');
               var updateActStartDate = UpdateService.trVisitationSchedule(widget.id, {
@@ -705,9 +830,29 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
               });
 
               if(updateActStartDate == false){
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Internal Server Error'), backgroundColor: AppColor.error,));
+                AddService.trVisitationScheduleHistory({
+                  'TRVisitationScheduleID' : widget.scheduleData?.trVisitationScheduleID.toString(),
+                  'Status': '0',
+                  'CreatedByUserID': pref.getString('userId'),
+                  'CreatedDateTime': DateTime.now().toIso8601String()
+                });
+                print("CEK CONFIRMATION GAGAL");
+                isLoading = false;
+
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed Completing this visit'), backgroundColor: AppColor.error,));
+                return;
               }
 
+              AddService.trVisitationScheduleHistory({
+                'TRVisitationScheduleID' : widget.scheduleData?.trVisitationScheduleID.toString(),
+                'Status': '1',
+                'CreatedByUserID': pref.getString('userId'),
+                'CreatedDateTime': DateTime.now().toIso8601String()
+              });
+              print("CEK CONFIRMATION SUCCESS");
+              isLoading = false;
+
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Successfully Completing this visit'), backgroundColor: AppColor.success,));
               context.goNamed(AppRoutes.home.name, pathParameters: {
                 'user': 'Administrator',
                 'ID': pref.getString('userId') ?? ''

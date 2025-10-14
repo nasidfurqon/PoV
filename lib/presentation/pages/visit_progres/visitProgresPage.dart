@@ -168,7 +168,7 @@ class _VisitProgressPageState extends State<VisitProgressPage> with TickerProvid
               // Progress Card
               SizedBox(height: AppSpacing.lg),
               if(currentStep == 3)
-                VisitCompletionPage(id: widget.scheduleData?.trVisitationScheduleID)
+                VisitCompletionPage(id: widget.scheduleData?.trVisitationScheduleID, scheduleData: widget.scheduleData,)
               else
                 _body(currentStepData)
             ],
