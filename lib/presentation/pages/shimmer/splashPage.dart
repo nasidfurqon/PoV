@@ -23,25 +23,26 @@ class SplashPage extends StatelessWidget {
       var jwt =  pref.getString('jwtToken');
       var userId = await pref.getString('userId');
       final isValid = _isTokenValid(jwt);
-      if(isValid){
-        try{
-          final isExpired = JwtDecoder.isExpired(jwt!);
-          print('SHIMMER CHECK : IS EXPIRED = $isExpired');
-          if(!isExpired){
-            if(context.mounted){
-              context.goNamed(AppRoutes.home.name, pathParameters: {
-                'user': 'Administrator',
-                'ID': userId ?? ''
-              });
-            }
-            return;
-          }
-        }
-        catch(e){
-          print('JWT ERROR: $e');
-        }
-      }
-      await pref.remove('jwtToken');
+      // if(isValid) {
+        //   try{
+        //     final isExpired = JwtDecoder.isExpired(jwt!);
+        //     print('SHIMMER CHECK : IS EXPIRED = $isExpired');
+        //     if(!isExpired){
+        //       if(context.mounted){
+        //         context.goNamed(AppRoutes.home.name, pathParameters: {
+        //           'user': 'Administrator',
+        //           'ID': userId ?? ''
+        //         });
+        //       }
+        //       return;
+        //     }
+        //   }
+        //   catch(e){
+        //     print('JWT ERROR: $e');
+        //   }
+        // }
+        // await pref.remove('jwtToken');
+      // }
       if(context.mounted){
         if(context.mounted){
           context.goNamed(AppRoutes.login.name);

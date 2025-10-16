@@ -12,61 +12,64 @@ import 'package:pov2/data/models/mtUserPosition_model.dart';
 import 'package:pov2/data/models/mtUser_model.dart';
 import 'package:pov2/data/services/count_service.dart';
 import 'package:pov2/data/services/get_service.dart';
+import 'package:pov2/data/services/user_notifier.dart';
 import 'package:pov2/presentation/widgets/custom_header_card.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 import 'package:pov2/presentation/widgets/custom_row_icon.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-  class ProfilePage extends StatefulWidget {
+class ProfilePage extends ConsumerStatefulWidget {
     const ProfilePage({super.key});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  ConsumerState<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
-    MTUserModel? userData;
+class _ProfilePageState extends ConsumerState<ProfilePage> {
+    // MTUserModel? userData;
     int completedVisitation = 0;
     int totalVisitation = 0;
     MTUserPositionModel? userPositionData;
-    bool isLoading = true;
+    // bool isLoading = true;
 
     late SharedPreferences pref;
     @override
     void initState(){
       super.initState();
-      _loadData();
+      // _loadData();
     }
-
-    Future<void> _loadData() async{
-      pref = await SharedPreferences.getInstance();
-      MTUserModel? data = await GetService.getUser(pref.getString('userId'));
-      MTUserPositionModel? posData = await GetService.getUserPosition(data?.mtUserPositionId);
-      var temp = await CountService.countStatus('Completed', pref.getString('userId'));
-      var temp2 = await CountService.countTotalVisitation();
-      setState(() {
-        userData = data;
-        userPositionData = posData;
-        completedVisitation = temp;
-        totalVisitation = temp2;
-        isLoading = false;
-      });
-    }
+    //
+    // Future<void> _loadData() async{
+    //   // pref = await SharedPreferences.getInstance();
+    //   // MTUserModel? data = await GetService.getUser(pref.getString('userId'));
+    //   // MTUserPositionModel? posData = await GetService.getUserPosition(data?.mtUserPositionId);
+    //   // var temp = await CountService.countStatus('Completed', pref.getString('userId'));
+    //   // var temp2 = await CountService.countTotalVisitation();
+    //   // setState(() {
+    //   //   userData = data;
+    //   //   userPositionData = posData;
+    //   //   completedVisitation = temp;
+    //   //   totalVisitation = temp2;
+    //   //   isLoading = false;
+    //   // });
+    // }
 
     @override
     Widget build(BuildContext context) {
+      final userData = ref.watch(userProvider);
+
       return CustomScaffold(
         body: AppLayout(
             child: Padding(
               padding: EdgeInsets.all(AppSpacing.global),
-              child: isLoading ?
-              Center(child: CircularProgressIndicator()) : ListView(
+              child:  ListView(
                 children: [
-                  _header(),
+                  _header(userData),
                   SizedBox(height: AppSpacing.sm,),
                   _card(),
                   SizedBox(height: AppSpacing.sm,),
-                  _personalInformation(),
+                  _personalInformation(userData),
                   SizedBox(height: AppSpacing.sm,),
                   CustomButtonFull(
                       textStyle: AppText.heading5Tertiary,
@@ -107,7 +110,7 @@ class _ProfilePageState extends State<ProfilePage> {
       );
     }
 
-    Widget _header(){
+    Widget _header(MTUserModel? userData){
       return CustomCard(
           gradient: LinearGradient(
             colors: [AppColor.onAccentHigh, AppColor.onAccentMedium],
@@ -173,7 +176,7 @@ class _ProfilePageState extends State<ProfilePage> {
       );
     }
 
-    Widget _personalInformation(){
+    Widget _personalInformation(MTUserModel? userData){
       return CustomCard(
           padding: EdgeInsets.zero,
           child: Padding(

@@ -1,11 +1,12 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pov2/data/models/mtUser_model.dart';
+import 'package:pov2/data/services/user_notifier.dart';
 import '../../core/utils/config.dart';
 
 class AuthService{
-  static Future<Map<String, dynamic>> login(String email, String password) async {
+  static Future<Map<String, dynamic>> login(WidgetRef ref, String email, String password) async {
     final url = Uri.parse('${AppConfig.serverAddress}/api/login');
     print("CEK LOGIN");
     final response = await http.post(
@@ -17,7 +18,7 @@ class AuthService{
       },
     );
     final body = response.body.isNotEmpty ? jsonDecode(response.body) : {};
-    print("RESPONSE API LOGIN : $body");
+    print("RESPONSE API LOGIN SERVICE: $body");
     if (response.statusCode == 200) {
       return {
         'success': true,

@@ -1,7 +1,7 @@
 import '../../core/utils/parsing_helper.dart';
 
 class MTUserModel {
-  final int id;
+  final int? id;
   final int? mtUserLevelId;
   final int? mtUserPositionId;
   final String? userName;
@@ -15,7 +15,7 @@ class MTUserModel {
   final String? lastUpdatedDateTime;
 
   MTUserModel({
-    required this.id,
+    this.id,
     this.mtUserLevelId,
     this.mtUserPositionId,
     this.userName,
@@ -31,7 +31,7 @@ class MTUserModel {
 
   factory MTUserModel.fromJson(Map<String, dynamic> data) {
     return MTUserModel(
-      id: ParsingHelper.parseInt(data['ID'])!,
+      id: ParsingHelper.parseInt(data['ID']),
       mtUserLevelId: ParsingHelper.parseInt(data['MTUserLevelID']),
       mtUserPositionId: ParsingHelper.parseInt(data['MTUserPositionID']),
       userName: data['UserName'],
@@ -44,5 +44,22 @@ class MTUserModel {
       lastUpdatedByUserId: ParsingHelper.parseInt(data['LastUpdatedByUserID']),
       lastUpdatedDateTime: data['LastUpdatedDateTime'] != null ? ParsingHelper.splitTimePre(data['LastUpdatedDateTime']) : null,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'ID': id,
+      'MTUserLevelID': mtUserLevelId,
+      'MTUserPositionID': mtUserPositionId,
+      'UserName': userName,
+      'Email': email,
+      'FullName': fullName,
+      'EmployeeID': employeeId,
+      'CreatedByUserID': createdByUserId,
+      'CreatedDateTime': createdDateTime,
+      'IsActive': isActive,
+      'LastUpdatedByUserID': lastUpdatedByUserId,
+      'LastUpdatedDateTime': lastUpdatedDateTime,
+    };
   }
 }

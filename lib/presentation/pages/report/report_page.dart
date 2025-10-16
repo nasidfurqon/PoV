@@ -65,7 +65,7 @@ class _ReportPageState extends State<ReportPage> {
             children: [
               CustomHeaderCard(number: totalVisit.toString(), status: 'Total Kunjungan'),
               SizedBox(height: AppSpacing.sm,),
-              CustomHeaderCard(number: '${percentage}%', status: 'Tingkat Kepatuhan'),
+              CustomHeaderCard(number: '${percentage.toStringAsFixed(2)}%', status: 'Tingkat Kepatuhan'),
               SizedBox(height: AppSpacing.sm,),
               _newReport(),
               SizedBox(height: AppSpacing.sm,),

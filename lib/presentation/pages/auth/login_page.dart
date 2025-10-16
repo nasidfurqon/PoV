@@ -22,6 +22,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:pov2/data/services/auth_service.dart';
 
 import '../../../data/models/login_model.dart';
+import '../../../data/services/user_notifier.dart';
 final loginProvider = StateNotifierProvider<LoginProvider, LoginModel>((ref) => LoginProvider());
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -130,7 +131,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             CustomProgressIndicator.showLoadingDialog(context);
                             print("STATE EMAIL : ${state.email}");
                             print("STATE PASSWORD : ${state.password}");
-                            Map<String, dynamic> responseLogin = await AuthService.login(state.email, state.password);
+                            Map<String, dynamic> responseLogin = await AuthService.login(ref, state.email, state.password);
                             print('RESPONSE API LOGIN : $responseLogin');
 
                             var pref = await SharedPreferences.getInstance();
@@ -141,6 +142,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               print("USER ID USER LOGIN : $userId");
                               pref.setString('userId', userId);
                               MTUserModel? userData =  await GetService.getUser(userId);
+                              await ref.read(userProvider.notifier).login(userData!);
                               print("EMPLOYEE ID AFTER LOGIN = ${userData!.employeeId.toString()}");
                               pref.setString('employeeId', userData.employeeId.toString());
                               CustomProgressIndicator.hideLoading();
