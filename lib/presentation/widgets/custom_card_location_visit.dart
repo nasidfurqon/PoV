@@ -52,7 +52,7 @@ class CustomCardLocationVisit extends StatelessWidget {
                     return const Text('');
                   } else {
                     return Text(
-                      snapshot.data!.name ?? '',
+                      snapshot.data?.name ?? '',
                       style: AppText.caption,
 
                     );

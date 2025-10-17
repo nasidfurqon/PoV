@@ -24,9 +24,10 @@ import 'package:pov2/data/services/count_service.dart';
 import 'package:pov2/data/services/get_admin_service.dart';
 import 'package:pov2/data/services/get_service.dart';
 import 'package:pov2/data/services/location_data.dart';
+import 'package:pov2/data/services/location_notifier.dart';
 import 'package:pov2/data/services/users_data.dart';
 import 'package:pov2/data/services/visit_data.dart';
-import 'package:pov2/data/services/visitationProvider.dart';
+import 'package:pov2/data/services/visitation_notifier.dart';
 import 'package:pov2/presentation/widgets/custom_card_body_resume.dart';
 import 'package:pov2/presentation/widgets/custom_card_header_resume.dart';
 import 'package:pov2/presentation/widgets/custom_card_location_admin.dart';
@@ -197,6 +198,11 @@ class _AdminPanelPageState extends ConsumerState<AdminPanelPage> {
   @override
   Widget build(BuildContext context) {
     var visitedDataAsync = ref.watch(visitationFullProvider);
+    var locationDataAsync = ref.watch(locationProvider);
+
+    final isAnyLoading = visitedDataAsync.isLoading || locationDataAsync.isLoading;
+    final hasError = visitedDataAsync.hasError || locationDataAsync.hasError;
+
     return CustomNormalScaffold(
         context: context,
         title: Text(
@@ -206,77 +212,72 @@ class _AdminPanelPageState extends ConsumerState<AdminPanelPage> {
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.global),
           child: isLoading ? Center(child: CircularProgressIndicator(),):
-          visitedDataAsync.when(
-              data: (listSchdule) {
-                return DefaultTabController(
-                    length: 4,
-                    child: Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(99),
+              isAnyLoading ? Center(child: CircularProgressIndicator()) :
+                  hasError? CustomProgressIndicator.showInformation(context, 'Gagal mengambil admin panel', 'Error') :
+                  DefaultTabController(
+                      length: 4,
+                      child: Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(99),
+                            ),
+                            child: TabBar(
+                                tabAlignment: TabAlignment.start,
+                                indicatorColor: Colors.transparent,
+                                dividerColor: Colors.transparent,
+                                labelColor: Colors.white,
+                                labelStyle: AppText.heading5,
+                                indicator: BoxDecoration(
+                                  color: AppColor.primary,
+                                  borderRadius: BorderRadius.circular(99),
+                                ),
+                                indicatorPadding: const EdgeInsets.all(AppSpacing.xxs),
+                                indicatorSize: TabBarIndicatorSize.tab,
+                                isScrollable: true,
+                                tabs: const <Widget>[
+                                  Tab(
+                                    text: 'Ringkasan',
+                                  ),
+                                  Tab(
+                                    text: 'Jadwal Kunjungan',
+                                  ),
+                                  Tab(
+                                    text: 'Lokasi',
+                                  ),
+                                  Tab(
+                                    text: 'Pengguna',
+                                  ),
+                                ]
+                            ),
                           ),
-                          child: TabBar(
-                              tabAlignment: TabAlignment.start,
-                              indicatorColor: Colors.transparent,
-                              dividerColor: Colors.transparent,
-                              labelColor: Colors.white,
-                              labelStyle: AppText.heading5,
-                              indicator: BoxDecoration(
-                                color: AppColor.primary,
-                                borderRadius: BorderRadius.circular(99),
-                              ),
-                              indicatorPadding: const EdgeInsets.all(AppSpacing.xxs),
-                              indicatorSize: TabBarIndicatorSize.tab,
-                              isScrollable: true,
-                              tabs: const <Widget>[
-                                Tab(
-                                  text: 'Ringkasan',
+                          Expanded(
+                            child: TabBarView(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(AppSpacing.xs),
+                                  child: _resume(),
                                 ),
-                                Tab(
-                                  text: 'Jadwal Kunjungan',
+                                Padding(
+                                  padding: const EdgeInsets.all(AppSpacing.xs),
+                                  child: _schedule(visitedDataAsync.value ?? []),
                                 ),
-                                Tab(
-                                  text: 'Lokasi',
+                                Padding(
+                                  padding: const EdgeInsets.all(AppSpacing.xs),
+                                  child: _location(locationDataAsync.value ?? []),
                                 ),
-                                Tab(
-                                  text: 'Pengguna',
+                                Padding(
+                                  padding: const EdgeInsets.all(AppSpacing.xs),
+                                  child: _users(),
                                 ),
-                              ]
-                          ),
-                        ),
-                        Expanded(
-                          child: TabBarView(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(AppSpacing.xs),
-                                child: _resume(),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(AppSpacing.xs),
-                                child: _schedule(listSchdule),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(AppSpacing.xs),
-                                child: _location(),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(AppSpacing.xs),
-                                child: _users(),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    )
-                );
-              },
-            error: (e, _) => CustomProgressIndicator.showInformation(context, 'Gagal mengambil admin panel', 'Error'),
-            loading: () => const Center(child: CircularProgressIndicator()),
+                              ],
+                            ),
+                          )
+                        ],
+                      )
+                  )
           )
-
-        )
     );
   }
 
@@ -770,7 +771,7 @@ class _AdminPanelPageState extends ConsumerState<AdminPanelPage> {
     );
   }
 
-  Widget _location(){
+  Widget _location(List<MTLocationModel> listLocationData){
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -829,11 +830,11 @@ class _AdminPanelPageState extends ConsumerState<AdminPanelPage> {
           //     })
           //   ],
           // ),
-          if(locationData.isEmpty)
+          if(listLocationData.isEmpty)
             CustomProgressIndicator.showInformation(context, 'Tidak ada lokasi terdaftar', 'Info'),
           Column(
             children: [
-              ...locationData.asMap().entries.map((entry) {
+              ...listLocationData.asMap().entries.map((entry) {
                 final data = entry.value;
                 return Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -903,7 +904,7 @@ class _AdminPanelPageState extends ConsumerState<AdminPanelPage> {
         ),
         SizedBox(height: AppSpacing.xs,),
         CustomTextFieldWithLabel(
-          label: 'Geofence',
+          label: 'Geofence (m)',
           hint: '100',
           controller: locationControllers['GeoFence'],
         ),
@@ -980,6 +981,7 @@ class _AdminPanelPageState extends ConsumerState<AdminPanelPage> {
                 locationControllers['CreatedDateTime']?.text = DateTime.now().toString();
                 Map<String, String?> updateData = {
                   for(var entry in locationControllers.entries) entry.key: entry.value.text == '' ? null : entry.value.text,
+                  'IsActive': '1'
                 };
                 // updatedData = ref.read(crewCertificateProvider).information;
                 final data = MTLocationModel.convertToModel(MTLocationModel(), updateData);
@@ -987,6 +989,7 @@ class _AdminPanelPageState extends ConsumerState<AdminPanelPage> {
                 bool cek = await AddService.mtLocation(data.toJson());
                 print('HASIL ADD LOCATION $cek');
                 if(cek){
+                  await ref.read(locationProvider.notifier).reload();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text(

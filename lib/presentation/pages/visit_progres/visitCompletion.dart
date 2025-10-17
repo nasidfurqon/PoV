@@ -33,7 +33,7 @@ import '../../../data/models/trVisitationSchedule_model.dart';
 import '../../../data/services/get_service.dart';
 import '../../../data/services/update_service.dart';
 import '../../../data/services/visit_data.dart';
-import '../../../data/services/visitationProvider.dart';
+import '../../../data/services/visitation_notifier.dart';
 import '../../widgets/custom_header_visit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';

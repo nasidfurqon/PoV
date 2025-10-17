@@ -5,7 +5,7 @@ import 'package:pov2/core/utils/parsing_helper.dart';
 import 'package:pov2/core/widget/custom_layout.dart';
 import 'package:pov2/core/widget/custom_progress_indicator.dart';
 import 'package:pov2/core/widget/custom_scaffold.dart';
-import 'package:pov2/data/services/visitationProvider.dart';
+import 'package:pov2/data/services/visitation_notifier.dart';
 import 'package:pov2/presentation/widgets/custom_card_completed_activity.dart';
 
 import '../../../data/models/trVisitationSchedule_model.dart';

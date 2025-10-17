@@ -8,7 +8,7 @@ import 'package:pov2/data/models/jobList_model.dart';
 import 'package:pov2/data/models/trVisitationSchedule_model.dart';
 import 'package:pov2/data/services/count_service.dart';
 import 'package:pov2/data/services/visit_data.dart';
-import 'package:pov2/data/services/visitationProvider.dart';
+import 'package:pov2/data/services/visitation_notifier.dart';
 import 'package:pov2/presentation/widgets/custom_card_job_list.dart';
 import 'package:pov2/presentation/widgets/custom_header_card.dart';
 import 'package:shared_preferences/shared_preferences.dart';
