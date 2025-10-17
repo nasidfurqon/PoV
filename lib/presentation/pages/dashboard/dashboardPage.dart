@@ -16,53 +16,66 @@ import 'package:pov2/data/models/trVisitationSchedule_model.dart';
 import 'package:pov2/data/services/visit_data.dart';
 import 'package:pov2/presentation/pages/dashboard/quickMenu.dart';
 import 'package:pov2/presentation/widgets/custom_card_dashboard.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/services/get_service.dart';
+import '../../../data/services/user_notifier.dart';
+import '../../../data/services/visitationProvider.dart';
 
-class DashboardPage extends StatefulWidget {
+class DashboardPage extends ConsumerStatefulWidget {
   final dynamic ID;
   const DashboardPage({super.key, required this.ID});
   @override
-  State<DashboardPage> createState() => _DashboardPageState();
+  ConsumerState<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage> {
-  String name = '';
-  List<JobListModel> listSchedule = [];
-  bool isLoading = true;
+class _DashboardPageState extends ConsumerState<DashboardPage> {
+  // String name = '';
+  // List<JobListModel> listSchedule = [];
+  // bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadName();
-    _loadListSchedule();
+    // _loadName();
+    // Future(() async {
+    //   await ref.read(visitationTodayProvider.notifier).reload();
+    // });
+    // _loadListSchedule();
   }
 
 
-  Future<void> _loadName() async {
-    final res = await GetService.name(widget.ID);
-    setState(() {
-      name = res;
-    });
-  }
+  // Future<void> _loadName() async {
+  //   final res = await GetService.name(widget.ID);
+  //   setState(() {
+  //     name = res;
+  //   });
+  // }
 
-  Future<void> _loadListSchedule() async{
-    List<JobListModel> res = await GetService.getListJobToday(widget.ID);
-    setState(() {
-      listSchedule = res  ;
-      isLoading = false;
-    });
-  }
+  // Future<void> _loadListSchedule() async{
+  //   List<JobListModel> res = await GetService.getListJobToday(widget.ID);
+  //   setState(() {
+  //     listSchedule = res  ;
+  //     isLoading = false;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
+    final today = ref.watch(visitationTodayProvider);
+    final userData = ref.watch(userProvider);
+
     return CustomDashboard(
-        user: name,
-        child: (controller) => _cardActivity(controller)
+        user: userData!.fullName ?? '',
+        child: (controller) => today.when(
+          data: (listSchedule) =>
+              _cardActivity(controller, listSchedule),
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, _) => Center(child: Text('Error: $e')),
+        ),
     );
   }
 
-  Widget _cardActivity(ScrollController controller) {
+  Widget _cardActivity(ScrollController controller, List<JobListModel> listSchedule) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal:   AppSpacing.global),
       child: Column(
@@ -83,9 +96,9 @@ class _DashboardPageState extends State<DashboardPage> {
             ],
           ),
           SizedBox(height: AppSpacing.global),
-          if(isLoading)
-            Center(child: CircularProgressIndicator(),),
-          if(listSchedule.isEmpty && !isLoading)
+          // if(isLoading)
+          //   Center(child: CircularProgressIndicator(),),
+          if(listSchedule.isEmpty)
           CustomProgressIndicator.showInformation(context, 'Tidak ada jadwal', 'Info'),
           Expanded(
             child: ListView.separated(

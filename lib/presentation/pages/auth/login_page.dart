@@ -23,6 +23,7 @@ import 'package:pov2/data/services/auth_service.dart';
 
 import '../../../data/models/login_model.dart';
 import '../../../data/services/user_notifier.dart';
+import '../../../data/services/visitationProvider.dart';
 final loginProvider = StateNotifierProvider<LoginProvider, LoginModel>((ref) => LoginProvider());
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -141,9 +142,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               String userId = decodedToken['UserId'].toString();
                               print("USER ID USER LOGIN : $userId");
                               pref.setString('userId', userId);
+
                               MTUserModel? userData =  await GetService.getUser(userId);
                               await ref.read(userProvider.notifier).login(userData!);
-                              print("EMPLOYEE ID AFTER LOGIN = ${userData!.employeeId.toString()}");
+                              Future(() async {
+                                await ref.read(visitationTodayProvider.notifier).reload();
+                                await ref.read(visitationCompletedProvider.notifier).reload();
+                                await ref.read(visitationFullProvider.notifier).reload();
+                              });
+
+                              print("EMPLOYEE ID AFTER LOGIN = ${userData.employeeId.toString()}");
                               pref.setString('employeeId', userData.employeeId.toString());
                               CustomProgressIndicator.hideLoading();
                               context.goNamed(AppRoutes.home.name, pathParameters: {
