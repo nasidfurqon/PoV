@@ -8,25 +8,26 @@ import 'package:pov2/data/models/jobList_model.dart';
 import 'package:pov2/data/models/trVisitationSchedule_model.dart';
 import 'package:pov2/data/services/count_service.dart';
 import 'package:pov2/data/services/visit_data.dart';
+import 'package:pov2/data/services/visitationProvider.dart';
 import 'package:pov2/presentation/widgets/custom_card_job_list.dart';
 import 'package:pov2/presentation/widgets/custom_header_card.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/services/get_service.dart';
-class JobListPage extends StatefulWidget {
+class JobListPage extends ConsumerStatefulWidget {
   const JobListPage({super.key});
 
   @override
-  State<JobListPage> createState() => _JobListPageState();
+  ConsumerState<JobListPage> createState() => _JobListPageState();
 }
 
-class _JobListPageState extends State<JobListPage> {
+class _JobListPageState extends ConsumerState<JobListPage> {
   int onGoingCount = 0;
   int waitingCount =0;
   int finishCount = 0;
-  List<JobListModel> listSchedule = [];
-  late SharedPreferences pref;
-  bool isLoading = true;
+  // List<JobListModel> listSchedule = [];
+  // late SharedPreferences pref;
+  // bool isLoading = true;
 
   @override
   void initState() {
@@ -36,26 +37,27 @@ class _JobListPageState extends State<JobListPage> {
   }
 
   Future<void> _loadData() async{
-    pref = await SharedPreferences.getInstance();
-    dynamic userId = pref.getString('userId');
-    int cntOnGoing = await CountService.countStatus('OnProgress', userId);
-    int cntWaiting = await CountService.countStatus('Scheduled', userId);
-    int cntFinish = await CountService.countStatus('Completed', userId);
-    setState(() {
-      onGoingCount = cntOnGoing;
-      waitingCount = cntWaiting;
-      finishCount = cntFinish;
-    });
+    // pref = await SharedPreferences.getInstance();
+    // dynamic userId = pref.getString('userId');
+    // int cntOnGoing = await CountService.countStatus('OnProgress', userId);
+    // int cntWaiting = await CountService.countStatus('Scheduled', userId);
+    // int cntFinish = await CountService.countStatus('Completed', userId);
+    // setState(() {
+    //   onGoingCount = cntOnGoing;
+    //   waitingCount = cntWaiting;
+    //   finishCount = cntFinish;
+    // });
 
-    List<JobListModel> res = await GetService.getListJob(userId);
-    setState(() {
-      listSchedule = res  ;
-      isLoading = false;
-    });
+    // List<JobListModel> res = await GetService.getListJob(userId);
+    // setState(() {
+    //   listSchedule = res  ;
+    //   isLoading = false;
+    // });
 
   }
   @override
   Widget build(BuildContext context) {
+    var listScheduleAsync = ref.watch(visitationFullProvider);
     return CustomNormalScaffold(
         context: context,
         title: Text(
@@ -64,36 +66,45 @@ class _JobListPageState extends State<JobListPage> {
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.global),
-          child: isLoading ? Center(child: CircularProgressIndicator(),) :listSchedule.isEmpty ?
-              CustomProgressIndicator.showInformation(context, 'Tidak ada tugas', 'Info'):
-          ListView(
-            children: [
-              CustomHeaderCard(
-                  number: waitingCount.toString(),
-                  status: 'Menunggu'
-              ),
-              SizedBox(height: AppSpacing.sm,),
-              CustomHeaderCard(
-                  number: onGoingCount.toString(),
-                  status: 'Berlangsung'
-              ),
-              SizedBox(height: AppSpacing.sm,),
-              CustomHeaderCard(
-                  number: finishCount.toString(),
-                  status: 'Selesai'
-              ),
-              SizedBox(height: AppSpacing.sm,),
-              ...listSchedule.asMap().entries.map((entry){
-                final data = entry.value;
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                  child: CustomCardJobList(
-                    scheduleData: data,
-                  ),
-                );
-              })
-            ],
-          ),
+          child:
+              listScheduleAsync.when(
+                  data: (listSchedule){
+                    if (listSchedule.isEmpty) {
+                      return CustomProgressIndicator.showInformation(
+                          context, 'Tidak ada tugas', 'Info');
+                    }
+                    return ListView(
+                      children: [
+                        CustomHeaderCard(
+                            number: waitingCount.toString(),
+                            status: 'Menunggu'
+                        ),
+                        SizedBox(height: AppSpacing.sm,),
+                        CustomHeaderCard(
+                            number: onGoingCount.toString(),
+                            status: 'Berlangsung'
+                        ),
+                        SizedBox(height: AppSpacing.sm,),
+                        CustomHeaderCard(
+                            number: finishCount.toString(),
+                            status: 'Selesai'
+                        ),
+                        SizedBox(height: AppSpacing.sm,),
+                        ...listSchedule.asMap().entries.map((entry){
+                          final data = entry.value;
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                            child: CustomCardJobList(
+                              scheduleData: data,
+                            ),
+                          );
+                        })
+                      ],
+                    );
+                  },
+                  error: (e, _) => CustomProgressIndicator.showInformation(context, 'Gagal mengambil tugas', 'Error'),
+                  loading: () => const Center(child: CircularProgressIndicator()),
+              )
         )
     );
   }
