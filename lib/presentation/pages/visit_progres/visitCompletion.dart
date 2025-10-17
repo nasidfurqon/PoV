@@ -33,11 +33,12 @@ import '../../../data/models/trVisitationSchedule_model.dart';
 import '../../../data/services/get_service.dart';
 import '../../../data/services/update_service.dart';
 import '../../../data/services/visit_data.dart';
+import '../../../data/services/visitationProvider.dart';
 import '../../widgets/custom_header_visit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-class VisitCompletionPage extends StatefulWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+class VisitCompletionPage extends ConsumerStatefulWidget {
   final JobListModel? scheduleData;
   final dynamic id;
 
@@ -49,10 +50,10 @@ class VisitCompletionPage extends StatefulWidget {
   });
 
   @override
-  State<VisitCompletionPage> createState() => _VisitCompletionPageState();
+  ConsumerState<VisitCompletionPage> createState() => _VisitCompletionPageState();
 }
 
-class _VisitCompletionPageState extends State<VisitCompletionPage> {
+class _VisitCompletionPageState extends ConsumerState<VisitCompletionPage> {
   // late Map<String, dynamic> visitData = VisitData().taskData[int.tryParse(widget.id )!];
   // late List<Map<String, dynamic>> visitStepData = VisitStepData().stepData;
   final TextEditingController _notesController = TextEditingController();
@@ -852,11 +853,14 @@ class _VisitCompletionPageState extends State<VisitCompletionPage> {
               print("CEK CONFIRMATION SUCCESS");
               isLoading = false;
 
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Successfully Completing this visit'), backgroundColor: AppColor.success,));
+              await ref.read(visitationTodayProvider.notifier).reload();
+              await ref.read(visitationCompletedProvider.notifier).reload();
+              await ref.read(visitationFullProvider.notifier).reload();
               context.goNamed(AppRoutes.home.name, pathParameters: {
                 'user': 'Administrator',
                 'ID': pref.getString('userId') ?? ''
               });
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Successfully Completing this visit'), backgroundColor: AppColor.success,));
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,

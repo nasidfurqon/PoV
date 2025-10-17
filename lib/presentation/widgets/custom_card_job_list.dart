@@ -79,7 +79,7 @@ class CustomCardJobList extends StatelessWidget {
                           .actualStartDateTime}');
                       if (scheduleData.actualStartDateTime == '' ||
                           scheduleData.actualStartDateTime == null) {
-                        var updateActStartDate = UpdateService
+                        var updateActStartDate = await UpdateService
                             .trVisitationSchedule(
                             scheduleData.trVisitationScheduleID.toString(), {
                           'ActualStartDateTime': DateTime.now().toIso8601String(),
@@ -90,6 +90,8 @@ class CustomCardJobList extends StatelessWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text('Internal Server Error'),
                                 backgroundColor: AppColor.error,));
+                          return;
+
                         }
                       }
                       context.pushNamed(AppRoutes.visit.name, pathParameters: {

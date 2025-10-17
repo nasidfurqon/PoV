@@ -68,7 +68,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                               );
                           },
                           separatorBuilder: (BuildContext context, int index) {
-                            return SizedBox(height: AppSpacing.global);
+                            return SizedBox(height: AppSpacing.xs);
                           },
                           itemCount: listSchedule.length,
                         );

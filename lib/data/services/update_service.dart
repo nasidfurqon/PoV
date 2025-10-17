@@ -17,7 +17,7 @@ class UpdateService {
           },
           body: data
       );
-      print('RESPONSE EDIT API TR VISITATION SCHEDULE: ${response.body}');
+      print('RESPONSE EDIT API TR VISITATION SCHEDULE: ${response.body}, CODE = ${response.statusCode}');
       if(response.statusCode == 200){
         return true;
       }
