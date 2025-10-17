@@ -4,10 +4,12 @@ import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pov2/data/services/user_notifier.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SplashPage extends StatelessWidget {
+class SplashPage extends ConsumerWidget {
   const SplashPage({super.key});
 
   bool _isTokenValid(String? token){
@@ -17,32 +19,33 @@ class SplashPage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     Future.delayed(const Duration(seconds: 1), () async{
       var pref = await SharedPreferences.getInstance();
       var jwt =  pref.getString('jwtToken');
       var userId = await pref.getString('userId');
       final isValid = _isTokenValid(jwt);
-      // if(isValid) {
-        //   try{
-        //     final isExpired = JwtDecoder.isExpired(jwt!);
-        //     print('SHIMMER CHECK : IS EXPIRED = $isExpired');
-        //     if(!isExpired){
-        //       if(context.mounted){
-        //         context.goNamed(AppRoutes.home.name, pathParameters: {
-        //           'user': 'Administrator',
-        //           'ID': userId ?? ''
-        //         });
-        //       }
-        //       return;
-        //     }
-        //   }
-        //   catch(e){
-        //     print('JWT ERROR: $e');
-        //   }
-        // }
-        // await pref.remove('jwtToken');
-      // }
+      print('JWT CHECK = $isValid');
+      if(isValid) {
+        try{
+          final isExpired = JwtDecoder.isExpired(jwt!);
+          await ref.read(userProvider.notifier).loadUserFromStorage();
+          print('SHIMMER CHECK : IS EXPIRED = $isExpired');
+          if(!isExpired){
+            if(context.mounted){
+              context.goNamed(AppRoutes.home.name, pathParameters: {
+                'user': 'Administrator',
+                'ID': userId ?? ''
+              });
+            }
+            return;
+          }
+        }
+        catch(e){
+          print('JWT ERROR: $e');
+        }
+      }
+      await pref.remove('jwtToken');
       if(context.mounted){
         if(context.mounted){
           context.goNamed(AppRoutes.login.name);

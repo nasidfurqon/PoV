@@ -115,6 +115,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 itemCount: listSchedule.length,
             ),
           ),
+          SizedBox(height: AppSpacing.xxxl),
+
         ],
       ),
     );

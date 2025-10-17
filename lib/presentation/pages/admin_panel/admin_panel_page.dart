@@ -26,6 +26,7 @@ import 'package:pov2/data/services/get_service.dart';
 import 'package:pov2/data/services/location_data.dart';
 import 'package:pov2/data/services/users_data.dart';
 import 'package:pov2/data/services/visit_data.dart';
+import 'package:pov2/data/services/visitationProvider.dart';
 import 'package:pov2/presentation/widgets/custom_card_body_resume.dart';
 import 'package:pov2/presentation/widgets/custom_card_header_resume.dart';
 import 'package:pov2/presentation/widgets/custom_card_location_admin.dart';
@@ -36,17 +37,19 @@ import '../../../data/models/trVisitationSchedule_model.dart';
 import '../../../data/models/dropdown_model.dart';
 import '../../../data/services/dropdown_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-class AdminPanelPage extends StatefulWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class AdminPanelPage extends ConsumerStatefulWidget {
   const AdminPanelPage({super.key});
 
   @override
-  State<AdminPanelPage> createState() => _AdminPanelPageState();
+  ConsumerState<AdminPanelPage> createState() => _AdminPanelPageState();
 }
 
-class _AdminPanelPageState extends State<AdminPanelPage> {
+class _AdminPanelPageState extends ConsumerState<AdminPanelPage> {
   List<JobListModel> scheduleData = [];
   List<TRVisitationScheduleModel> scheduleCompletedData = [];
-  List<TRVisitationScheduleModel> visitedData = [];
+  // List<TRVisitationScheduleModel> visitedData = [];
   List<MTVisitationPurpose> visitationPurpose =[];
   List<MTLocationTypeModel> locationTypeData = [];
   List<MTLocationModel> locationData = [];
@@ -131,7 +134,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
     pref = await SharedPreferences.getInstance();
     List<JobListModel> res = await GetAdminService.getListJobToday();
     List<TRVisitationScheduleModel> resComp = await GetAdminService.getListScheduleTodayCompleted();
-    List<TRVisitationScheduleModel> resSche = await GetAdminService.getListSchedule();
+    // List<TRVisitationScheduleModel> resSche = await GetAdminService.getListSchedule();
     List<MTLocationTypeModel> resType = await GetAdminService.getListLocationType();
     List<MTLocationModel> loc = await GetAdminService.getListLocation();
     List<MTUserModel> user = await GetAdminService.getListUser();
@@ -139,7 +142,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
     setState(() {
       scheduleData = res  ;
       scheduleCompletedData = resComp;
-      visitedData = resSche;
+      // visitedData = resSche;
       locationData = loc;
       locationTypeData = resType;
       userData = user;
@@ -193,6 +196,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
 
   @override
   Widget build(BuildContext context) {
+    var visitedDataAsync = ref.watch(visitationFullProvider);
     return CustomNormalScaffold(
         context: context,
         title: Text(
@@ -202,69 +206,76 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.global),
           child: isLoading ? Center(child: CircularProgressIndicator(),):
-          DefaultTabController(
-              length: 4,
-              child: Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(99),
-                    ),
-                    child: TabBar(
-                      tabAlignment: TabAlignment.start,
-                        indicatorColor: Colors.transparent,
-                        dividerColor: Colors.transparent,
-                        labelColor: Colors.white,
-                        labelStyle: AppText.heading5,
-                        indicator: BoxDecoration(
-                          color: AppColor.primary,
-                          borderRadius: BorderRadius.circular(99),
-                        ),
-                        indicatorPadding: const EdgeInsets.all(AppSpacing.xxs),
-                        indicatorSize: TabBarIndicatorSize.tab,
-                        isScrollable: true,
-                        tabs: const <Widget>[
-                          Tab(
-                            text: 'Ringkasan',
-                          ),
-                          Tab(
-                            text: 'Jadwal Kunjungan',
-                          ),
-                          Tab(
-                            text: 'Lokasi',
-                          ),
-                          Tab(
-                            text: 'Pengguna',
-                          ),
-                        ]
-                    ),
-                  ),
-                  Expanded(
-                    child: TabBarView(
+          visitedDataAsync.when(
+              data: (listSchdule) {
+                return DefaultTabController(
+                    length: 4,
+                    child: Column(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(AppSpacing.xs),
-                          child: _resume(),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(99),
+                          ),
+                          child: TabBar(
+                              tabAlignment: TabAlignment.start,
+                              indicatorColor: Colors.transparent,
+                              dividerColor: Colors.transparent,
+                              labelColor: Colors.white,
+                              labelStyle: AppText.heading5,
+                              indicator: BoxDecoration(
+                                color: AppColor.primary,
+                                borderRadius: BorderRadius.circular(99),
+                              ),
+                              indicatorPadding: const EdgeInsets.all(AppSpacing.xxs),
+                              indicatorSize: TabBarIndicatorSize.tab,
+                              isScrollable: true,
+                              tabs: const <Widget>[
+                                Tab(
+                                  text: 'Ringkasan',
+                                ),
+                                Tab(
+                                  text: 'Jadwal Kunjungan',
+                                ),
+                                Tab(
+                                  text: 'Lokasi',
+                                ),
+                                Tab(
+                                  text: 'Pengguna',
+                                ),
+                              ]
+                          ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(AppSpacing.xs),
-                          child: _schedule(),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(AppSpacing.xs),
-                          child: _location(),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(AppSpacing.xs),
-                          child: _users(),
-                        ),
+                        Expanded(
+                          child: TabBarView(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(AppSpacing.xs),
+                                child: _resume(),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(AppSpacing.xs),
+                                child: _schedule(listSchdule),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(AppSpacing.xs),
+                                child: _location(),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(AppSpacing.xs),
+                                child: _users(),
+                              ),
+                            ],
+                          ),
+                        )
                       ],
-                    ),
-                  )
-                ],
-              )
-          ),
+                    )
+                );
+              },
+            error: (e, _) => CustomProgressIndicator.showInformation(context, 'Gagal mengambil admin panel', 'Error'),
+            loading: () => const Center(child: CircularProgressIndicator()),
+          )
+
         )
     );
   }
@@ -450,7 +461,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
     );
   }
 
-  Widget _schedule(){
+  Widget _schedule(List<JobListModel> visitedData){
     return ListView(
       children: [
         SizedBox(height: AppSpacing.sm,),
@@ -526,7 +537,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
     );
   }
 
-  List<DataCell> _buildScheduleVisitCells(TRVisitationScheduleModel data) {
+  List<DataCell> _buildScheduleVisitCells(JobListModel data) {
     return [
       DataCell(
         Padding(
@@ -534,52 +545,22 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              FutureBuilder<MTLocationModel?>(
-                future: GetService.getLocationbyID(data.mtLocationId),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Text("...");
-                  } else if (snapshot.hasError) {
-                    return const Text('');
-                  } else {
-                    return Text(
-                      snapshot.data?.name ?? ''
-                    );
-                  }
-                },),
-              FutureBuilder<MTLocationModel?>(
-                future: GetService.getLocationbyID(data.mtLocationId),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Text("...");
-                  } else if (snapshot.hasError) {
-                    return const Text('');
-                  } else {
-                    return Text(
-                        snapshot.data?.address ?? '',
-                      style: AppText.caption,
-                    );
-                  }
-                },),
+              Text(
+                data.locationName ?? ''
+              ),
+              Text(
+                data.locationAddress ?? '',
+                style: AppText.caption,
+              )
             ],
           ),
         ),
       ),
       DataCell(Padding(
         padding: const EdgeInsets.all(AppSpacing.xs),
-        child: FutureBuilder<String?>(
-          future: GetService.name(data.mtAssignedUserId),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Text("...");
-            } else if (snapshot.hasError) {
-              return const Text('');
-            } else {
-              return Text(
-                snapshot.data ?? '',
-              );
-            }
-          },),
+        child: Text(
+          data.fullName ?? '',
+        )
       )),
       DataCell(Padding(
         padding: const EdgeInsets.all(AppSpacing.xs),
@@ -593,17 +574,17 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
         padding: const EdgeInsets.all(AppSpacing.xs),
         child:
           CustomHighlightDashboard(
-              title: data.priority ?? '',
-              fontColor: ParsingColor.cekColor(data.priority ?? '')[0],
-              containerColor: ParsingColor.cekColor(data.priority ?? '')[1]
+              title: data.schedulePriority ?? '',
+              fontColor: ParsingColor.cekColor(data.schedulePriority ?? '')[0],
+              containerColor: ParsingColor.cekColor(data.schedulePriority ?? '')[1]
           )
       )),
       DataCell(Padding(
         padding: const EdgeInsets.all(AppSpacing.xs),
         child: CustomHighlightDashboard(
-            title: data.status ?? '',
-            fontColor: ParsingColor.cekColor(data.status ?? '')[0],
-            containerColor: ParsingColor.cekColor(data.status ?? '')[1]
+            title: data.scheduleStatus ?? '',
+            fontColor: ParsingColor.cekColor(data.scheduleStatus ?? '')[0],
+            containerColor: ParsingColor.cekColor(data.scheduleStatus ?? '')[1]
         )
       )),
     ];
@@ -650,24 +631,6 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
 
         ),
         SizedBox(height: AppSpacing.xs,),
-        // Row(
-        //   children: [
-        //     Expanded(
-        //       child: CustomDateTimePicker(
-        //           label: 'Start Date Time',
-        //           controller: scheduleControllers['StartDateTime']!
-        //       ),
-        //     ),
-        //     SizedBox(width: AppSpacing.xs,),
-        //     Expanded(
-        //       child: CustomDateTimePicker(
-        //           label: 'End Date Time',
-        //           controller: scheduleControllers['StartDateTime']!
-        //       ),
-        //     ),
-        //   ],
-        // ),
-        // SizedBox(height: AppSpacing.xs,),
         CustomDropdownWithLabel(
           label: 'Priority',
           items: DropdownData.priorityData,
@@ -706,6 +669,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
             onPressed: () async{
               bool check = await CustomAller().showConfirmDialog(context, 'Create Confirmation!', 'Are you sure you want to add the data?');
               if(check){
+                CustomProgressIndicator.showLoadingDialog(context);
                 final fields = [
                   'MTAssignedUserID','MTLocationID', 'StartDateTime', 'EndDateTime', 'Priority', 'VisitationDescription',
                'MTVisitationPurposeID'
@@ -727,6 +691,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                       backgroundColor: AppColor.error,
                     ),
                   );
+                  CustomProgressIndicator.hideLoading();
                   return Navigator.pop(context);
                 }
                 final formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
@@ -738,24 +703,28 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                 final DateTime firstDate = DateTime(firstDT.year, firstDT.month, firstDT.day);
                 final DateTime secondDate = DateTime(secondDT.year, secondDT.month, secondDT.day);
 
-                if (secondDate.isBefore(firstDate) || secondDT.isBefore(firstDT)) {
+                if (secondDate.isBefore(firstDate)) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text(
                           'The end date time cannot be earlier than the start date time.'), backgroundColor: Colors.red,
                     ),
                   );
+                  CustomProgressIndicator.hideLoading();
                   return Navigator.pop(context);
                 }
 
-                if (secondDate != firstDate){
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                          'The start date time and end date time must be on the same day'), backgroundColor: Colors.red,
-                    ),
-                  );
-                  return Navigator.pop(context);
+                if(secondDate == firstDate){
+                  if(secondDT.isBefore(firstDT)){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                            'The end date time cannot be earlier than the start date time.'), backgroundColor: Colors.red,
+                      ),
+                    );
+                    CustomProgressIndicator.hideLoading();
+                    return Navigator.pop(context);
+                  }
                 }
 
                 scheduleControllers['Status']?.text = 'Scheduled';
@@ -779,6 +748,9 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                   for (var controller in scheduleControllers.values) {
                     controller.clear();
                   }
+                  await ref.read(visitationTodayProvider.notifier).reload();
+                  await ref.read(visitationFullProvider.notifier).reload();
+                  CustomProgressIndicator.hideLoading();
                   return Navigator.pop(context);
                 }
                 else{
@@ -788,6 +760,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
                           'failed add new schedule.'), backgroundColor: AppColor.error,
                     ),
                   );
+                  CustomProgressIndicator.hideLoading();
                   return Navigator.pop(context);
                 }
               }
