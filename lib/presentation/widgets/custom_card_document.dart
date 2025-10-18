@@ -39,13 +39,18 @@ class CustomCardDocument extends StatelessWidget {
                   ),
                   SizedBox(width: AppSpacing.xs,),
                   CustomHighlightDashboard(
-                      title: data.type ?? '',
+                      title: '${_cekCount(data.type ?? '', data)} ${data.type ?? ''}',
                       fontColor: ParsingColor.cekColor(
                           data.type ?? '')[0],
                       containerColor: ParsingColor.cekColor(
                           data.type ?? '')[1])
                 ],
               ),
+              SizedBox(height: AppSpacing.sm,),
+              CustomRowIcon(icon: Icons.person_outline,
+                  color: AppColor.textSecondary,
+                  title: 'Oleh: ${data.fullName}',
+                  textStyle: AppText.caption),
               SizedBox(height: AppSpacing.sm,),
               CustomRowIcon(icon: Icons.calendar_today,
                   color: AppColor.textSecondary,
@@ -127,5 +132,20 @@ class CustomCardDocument extends StatelessWidget {
           ),
         )
     );
+  }
+  
+  String _cekCount(String type, DocumentationModel data){
+    if(type == 'Photo'){
+      return data.countPhoto!;
+    }
+    else if(type == 'Document'){
+      return data.countDocument!;
+    }
+    else if(type == 'Video'){
+      return data.countVideo!;
+    }
+    else{
+      return '';
+    }
   }
 }
