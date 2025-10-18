@@ -1,12 +1,11 @@
 import 'dart:convert';
 
 import 'package:pov2/data/models/trVisitationScheduleEvidence_model.dart';
-import 'package:pov2/data/services/get_admin_service.dart';
-import 'package:pov2/data/services/get_service.dart';
+import 'package:pov2/data/services/api/get_admin_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart';
-import '../../core/utils/config.dart';
-import '../../core/utils/file_helper.dart';
+import '../../../core/utils/config.dart';
+import '../../../core/utils/file_helper.dart';
 class CountService{
   static Future<int> countStatus(String status, dynamic id) async{
     var pref = await SharedPreferences.getInstance();
@@ -113,6 +112,32 @@ class CountService{
   }
 
   // ADMIN
+
+  static Future<int> countAdminStatus(String status) async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              '${AppConfig.serverAddress}/api/countAdmin/TRVisitationSchedule/Status/$status'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API COUNT RESPONSE CHECK status $status: ${response.body} ");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['data'];
+        return res;
+      }
+      else{
+        return 0;
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load count status, $e!");
+      return 0;
+    }
+  }
   static Future<int> countAdminLocation() async{
     var pref = await SharedPreferences.getInstance();
     try{

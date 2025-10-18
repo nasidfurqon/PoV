@@ -10,7 +10,7 @@ class MTLocationModel {
   final String? longitude;
   final String? geoFence;
   final String? createdByUserId;
-  final bool? isActive;
+  final String? isActive;
   final String? createdDateTime;
   final String? lastUpdatedByUserId;
   final String? lastUpdatedDateTime;
@@ -39,7 +39,7 @@ class MTLocationModel {
       name: data['Name'],
       address: data['Address'],
       latitude: data['Latitude'],
-      isActive:ParsingHelper.parseBool(data['IsActive']),
+      isActive: data['IsActive'],
       longitude: data['Longitude'],
       geoFence: (data['GeoFence']).toString(),
       createdByUserId: (data['CreatedByUserID']).toString(),
@@ -58,7 +58,7 @@ class MTLocationModel {
       address: data['Address'] ?? current.address,
       latitude: data['Latitude'] ?? current.latitude,
       longitude: data['Longitude'] ?? current.longitude,
-      isActive: ParsingHelper.parseBool(data['IsActive']) ?? current.isActive,
+      isActive:data['IsActive'] ?? current.isActive,
       geoFence: (data['GeoFence'] ?? current.geoFence).toString(),
       createdByUserId: (data['CreatedByUserID'] ?? current.createdByUserId).toString(),
       createdDateTime: data['CreatedDateTime'] ?? current.createdDateTime,

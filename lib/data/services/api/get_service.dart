@@ -8,10 +8,11 @@ import 'package:pov2/data/models/mtUserPosition_model.dart';
 import 'package:pov2/data/models/mtUser_model.dart';
 import 'package:pov2/data/models/trVisitationSchedule_model.dart';
 import 'package:pov2/presentation/pages/job_list/job_list_page.dart';
-import '../../core/utils/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/jobList_model.dart';
+import '../../../core/utils/config.dart';
+import '../../models/jobList_model.dart';
+
 class GetService{
   static Future<String> name(dynamic id) async{
     var pref = await SharedPreferences.getInstance();

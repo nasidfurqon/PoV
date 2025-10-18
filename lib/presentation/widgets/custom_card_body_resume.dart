@@ -4,7 +4,6 @@ import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/utils/parsing_status_color.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/data/models/trVisitationSchedule_model.dart';
-import 'package:pov2/data/services/get_service.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 
 class CustomCardBodyResume extends StatelessWidget {

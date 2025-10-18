@@ -7,11 +7,11 @@ import 'package:pov2/data/models/mtUser_model.dart';
 import 'package:pov2/data/models/report_model.dart';
 import 'package:pov2/data/models/trVisitationScheduleEvidence_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../core/utils/config.dart';
-import '../../core/utils/file_helper.dart';
-import '../models/jobList_model.dart';
-import '../models/mtVisitationPurpose_model.dart';
-import '../models/trVisitationSchedule_model.dart';
+import '../../../core/utils/config.dart';
+import '../../../core/utils/file_helper.dart';
+import '../../models/jobList_model.dart';
+import '../../models/mtVisitationPurpose_model.dart';
+import '../../models/trVisitationSchedule_model.dart';
 import 'package:http/http.dart';
 
 class GetAdminService{
@@ -341,6 +341,32 @@ class GetAdminService{
     }
     catch(e){
       print("API RESPONSE FAILED: Failed to load list job today , $e!");
+      return [];
+    }
+  }
+
+  static Future<List<JobListModel>> getListJobTodayNotCompleted() async{
+    var pref = await SharedPreferences.getInstance();
+    try{
+      Response response = await get(
+          Uri.parse(
+              '${AppConfig.serverAddress}/api/filterAdmin/JobListTodayNotCompleted'),
+          headers: <String, String>{
+            'Authorization': 'Bearer ${pref.getString('jwtToken') ?? ''}',
+          });
+
+      print("API RESPONSE LIST JOB TODAY Not Completed CHECK: ${response.body}");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final res = data['data'];
+        return res.map<JobListModel>((item) => JobListModel.fromJson(item)).toList();
+      }
+      else{
+        return [];
+      }
+    }
+    catch(e){
+      print("API RESPONSE FAILED: Failed to load list job today not completed , $e!");
       return [];
     }
   }

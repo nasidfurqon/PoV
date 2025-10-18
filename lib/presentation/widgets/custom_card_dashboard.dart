@@ -9,12 +9,12 @@ import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/data/models/mtLocation_model.dart';
 import 'package:pov2/data/models/trVisitationSchedule_model.dart';
-import 'package:pov2/data/services/update_service.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/utils/parsing_status_color.dart';
 import '../../data/models/jobList_model.dart';
+import '../../data/services/api/update_service.dart';
 class CustomCardDashboard extends StatelessWidget {
   final JobListModel scheduleData;
   const CustomCardDashboard({

@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pov2/data/models/mtUser_model.dart';
-import 'package:pov2/data/services/user_notifier.dart';
-import '../../core/utils/config.dart';
+
+import '../../../core/utils/config.dart';
 
 class AuthService{
   static Future<Map<String, dynamic>> login(WidgetRef ref, String email, String password) async {

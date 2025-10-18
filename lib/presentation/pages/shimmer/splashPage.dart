@@ -4,10 +4,11 @@ import 'package:pov2/config/theme/app_color.dart';
 import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pov2/data/services/user_notifier.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../data/services/provider/user_notifier.dart';
 
 class SplashPage extends ConsumerWidget {
   const SplashPage({super.key});

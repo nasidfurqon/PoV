@@ -17,9 +17,8 @@ import 'package:pov2/data/services/visit_data.dart';
 import 'package:pov2/presentation/pages/dashboard/quickMenu.dart';
 import 'package:pov2/presentation/widgets/custom_card_dashboard.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../data/services/get_service.dart';
-import '../../../data/services/user_notifier.dart';
-import '../../../data/services/visitation_notifier.dart';
+import '../../../data/services/provider/user_notifier.dart';
+import '../../../data/services/provider/visitation_notifier.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   final dynamic ID;

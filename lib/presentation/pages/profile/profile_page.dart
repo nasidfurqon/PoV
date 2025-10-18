@@ -10,15 +10,15 @@ import 'package:pov2/core/widget/custom_layout.dart';
 import 'package:pov2/core/widget/custom_scaffold.dart';
 import 'package:pov2/data/models/mtUserPosition_model.dart';
 import 'package:pov2/data/models/mtUser_model.dart';
-import 'package:pov2/data/services/count_service.dart';
-import 'package:pov2/data/services/get_service.dart';
-import 'package:pov2/data/services/user_notifier.dart';
+import 'package:pov2/data/services/api/count_service.dart';
 import 'package:pov2/presentation/widgets/custom_header_card.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 import 'package:pov2/presentation/widgets/custom_row_icon.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../data/services/provider/user_notifier.dart';
 class ProfilePage extends ConsumerStatefulWidget {
     const ProfilePage({super.key});
 

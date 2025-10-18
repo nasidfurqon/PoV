@@ -11,7 +11,6 @@ import 'package:pov2/core/widget/custom_normal_scaffold.dart';
 import 'package:pov2/core/widget/custom_photo_preview.dart';
 import 'package:pov2/core/widget/custom_progress_indicator.dart';
 import 'package:pov2/data/models/jobList_model.dart';
-import 'package:pov2/data/services/upload_service.dart';
 import 'package:pov2/data/services/visit_data.dart';
 import 'package:pov2/data/services/visitStep_data.dart';
 import 'package:pov2/presentation/pages/visit_progres/visitCompletion.dart';
@@ -22,7 +21,8 @@ import '../../../core/utils/camera_helper.dart';
 import '../../../core/utils/config.dart';
 import '../../../data/models/mtLocation_model.dart';
 import '../../../data/models/trVisitationSchedule_model.dart';
-import '../../../data/services/get_service.dart';
+import '../../../data/services/api/get_service.dart';
+import '../../../data/services/api/upload_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class VisitProgressPage extends StatefulWidget {

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pov2/data/models/mtLocation_model.dart';
-import 'package:pov2/data/services/get_admin_service.dart';
+
+import '../api/get_admin_service.dart';
 
 final locationProvider =
 AsyncNotifierProvider<LocationNotifier, List<MTLocationModel>>(LocationNotifier.new);

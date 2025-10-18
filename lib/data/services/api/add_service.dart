@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
-import '../../core/utils/config.dart';
+import '../../../core/utils/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 class AddService {
   static Future<bool> trVisitationSchedule(Map<String, dynamic> data) async{

@@ -9,10 +9,11 @@ import 'package:pov2/core/widget/custom_normal_scaffold.dart';
 import 'package:pov2/core/widget/custom_pdf_viewer.dart';
 import 'package:pov2/core/widget/custom_progress_indicator.dart';
 import 'package:pov2/data/models/documentation_model.dart';
-import 'package:pov2/data/services/get_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:http/http.dart' as http;
+
+import '../../../data/services/api/get_service.dart';
 
 class DocumentationDetailPage extends StatefulWidget {
   final dynamic id;

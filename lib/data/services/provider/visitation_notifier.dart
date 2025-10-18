@@ -1,8 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pov2/data/models/jobList_model.dart';
 import 'package:pov2/data/models/trVisitationSchedule_model.dart';
-import 'package:pov2/data/services/get_admin_service.dart';
-import 'package:pov2/data/services/get_service.dart';
+import 'package:pov2/data/services/api/get_admin_service.dart';
 
 final visitationTodayProvider =
 AsyncNotifierProvider<VisitationTodayNotifier, List<JobListModel>>(VisitationTodayNotifier.new);
@@ -11,7 +10,7 @@ class VisitationTodayNotifier extends AsyncNotifier<List<JobListModel>> {
   @override
   Future<List<JobListModel>> build() async {
     ref.keepAlive();
-    return await GetAdminService.getListJobToday();
+    return await GetAdminService.getListJobTodayNotCompleted();
   }
 
   Future<void> reload() async {

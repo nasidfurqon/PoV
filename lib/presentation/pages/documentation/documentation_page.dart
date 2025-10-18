@@ -4,13 +4,13 @@ import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/widget/custom_normal_scaffold.dart';
 import 'package:pov2/data/models/documentation_model.dart';
 import 'package:pov2/data/models/trVisitationScheduleEvidence_model.dart';
-import 'package:pov2/data/services/count_service.dart';
+import 'package:pov2/data/services/api/count_service.dart';
 import 'package:pov2/data/services/document_data.dart';
-import 'package:pov2/data/services/get_admin_service.dart';
 import 'package:pov2/presentation/widgets/custom_card_document.dart';
 import 'package:pov2/presentation/widgets/custom_header_card.dart';
 
 import '../../../core/widget/custom_progress_indicator.dart';
+import '../../../data/services/api/get_admin_service.dart';
 
 class DocumentationPage extends StatefulWidget {
   const DocumentationPage({super.key});

@@ -17,9 +17,7 @@ import 'package:pov2/core/widget/custom_textfield.dart';
 import 'package:pov2/data/models/file_watermark_model.dart';
 import 'package:pov2/data/models/mtUser_model.dart';
 import 'package:pov2/data/models/trVisitationScheduleEvidence_model.dart';
-import 'package:pov2/data/services/add_service.dart';
 import 'package:pov2/data/services/dropdown_data.dart';
-import 'package:pov2/data/services/upload_service.dart';
 import 'package:pov2/data/services/visitStep_data.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 import 'package:pov2/presentation/widgets/custom_photo_dialog.dart';
@@ -30,10 +28,12 @@ import '../../../core/widget/custom_progress_indicator.dart';
 import '../../../data/models/jobList_model.dart';
 import '../../../data/models/mtLocation_model.dart';
 import '../../../data/models/trVisitationSchedule_model.dart';
-import '../../../data/services/get_service.dart';
-import '../../../data/services/update_service.dart';
+import '../../../data/services/api/add_service.dart';
+import '../../../data/services/api/get_service.dart';
+import '../../../data/services/api/update_service.dart';
+import '../../../data/services/api/upload_service.dart';
+import '../../../data/services/provider/visitation_notifier.dart';
 import '../../../data/services/visit_data.dart';
-import '../../../data/services/visitation_notifier.dart';
 import '../../widgets/custom_header_visit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -541,11 +541,12 @@ class _VisitCompletionPageState extends ConsumerState<VisitCompletionPage> {
                                 }
 
                                 documentControllers['AttachmentType']?.text = 'Document';
+                                documentControllers['EvidenceType']?.text = '';
                                 documentControllers['TRVisitationScheduleID']?.text = (widget.id).toString();
                                 Map<String, dynamic> updateData = {
                                   for(var entry in documentControllers.entries) entry.key: entry.value
                                       .text == '' ? null : entry.value.text,
-                                  'Attachment': _capturedPhotos
+                                  'Attachment': _uploadedDocuments
                                 };
                                 // updatedData = ref.read(crewCertificateProvider).information;
                                 final data = TRVisitationScheduleEvidenceModel.convertToModel(
@@ -553,7 +554,7 @@ class _VisitCompletionPageState extends ConsumerState<VisitCompletionPage> {
                                 print("CEK UPDATE = ${updateData}");
                                 bool cek = await UploadService.evidenceFile(updateData);
                                 CustomProgressIndicator.hideLoading();
-                                print('HASIL UPLOAD EVIDENCE PHOTO $cek');
+                                print('HASIL UPLOAD EVIDENCE DOCUMENT $cek');
                                 if (cek) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(

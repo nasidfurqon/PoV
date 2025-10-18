@@ -19,15 +19,10 @@ import 'package:pov2/data/models/jobList_model.dart';
 import 'package:pov2/data/models/mtLocationType_model.dart';
 import 'package:pov2/data/models/mtLocation_model.dart';
 import 'package:pov2/data/models/mtUser_model.dart';
-import 'package:pov2/data/services/add_service.dart';
-import 'package:pov2/data/services/count_service.dart';
-import 'package:pov2/data/services/get_admin_service.dart';
-import 'package:pov2/data/services/get_service.dart';
+import 'package:pov2/data/services/api/count_service.dart';
 import 'package:pov2/data/services/location_data.dart';
-import 'package:pov2/data/services/location_notifier.dart';
 import 'package:pov2/data/services/users_data.dart';
 import 'package:pov2/data/services/visit_data.dart';
-import 'package:pov2/data/services/visitation_notifier.dart';
 import 'package:pov2/presentation/widgets/custom_card_body_resume.dart';
 import 'package:pov2/presentation/widgets/custom_card_header_resume.dart';
 import 'package:pov2/presentation/widgets/custom_card_location_admin.dart';
@@ -36,9 +31,15 @@ import '../../../core/widget/custom_progress_indicator.dart';
 import '../../../data/models/mtVisitationPurpose_model.dart';
 import '../../../data/models/trVisitationSchedule_model.dart';
 import '../../../data/models/dropdown_model.dart';
+import '../../../data/services/api/add_service.dart';
+import '../../../data/services/api/get_admin_service.dart';
+import '../../../data/services/api/get_service.dart';
 import '../../../data/services/dropdown_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../data/services/provider/location_notifier.dart';
+import '../../../data/services/provider/visitation_notifier.dart';
 
 class AdminPanelPage extends ConsumerStatefulWidget {
   const AdminPanelPage({super.key});
@@ -979,9 +980,9 @@ class _AdminPanelPageState extends ConsumerState<AdminPanelPage> {
                 // locationControllers['IsActive']?.text = 'true';
                 locationControllers['CreatedByUserID']?.text = pref.getString('userId').toString();
                 locationControllers['CreatedDateTime']?.text = DateTime.now().toString();
-                Map<String, String?> updateData = {
+                Map<String, dynamic> updateData = {
                   for(var entry in locationControllers.entries) entry.key: entry.value.text == '' ? null : entry.value.text,
-                  'IsActive': '1'
+                  'IsActive': 'true'
                 };
                 // updatedData = ref.read(crewCertificateProvider).information;
                 final data = MTLocationModel.convertToModel(MTLocationModel(), updateData);

@@ -7,14 +7,13 @@ import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/core/widget/custom_normal_scaffold.dart';
 import 'package:pov2/data/models/report_model.dart';
 import 'package:pov2/data/models/trVisitationSchedule_model.dart';
-import 'package:pov2/data/services/count_service.dart';
-import 'package:pov2/data/services/get_admin_service.dart';
-import 'package:pov2/data/services/get_service.dart';
+import 'package:pov2/data/services/api/count_service.dart';
 import 'package:pov2/data/services/report_data.dart';
 import 'package:pov2/presentation/widgets/custom_card_report.dart';
 import 'package:pov2/presentation/widgets/custom_header_card.dart';
 
 import '../../../core/widget/custom_progress_indicator.dart';
+import '../../../data/services/api/get_admin_service.dart';
 
 class ReportPage extends StatefulWidget {
   const ReportPage({super.key});

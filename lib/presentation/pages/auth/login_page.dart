@@ -15,16 +15,18 @@ import 'package:pov2/core/widget/custom_scaffold.dart';
 import 'package:pov2/core/widget/custom_textfield.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:pov2/data/models/mtUser_model.dart';
-import 'package:pov2/data/services/get_service.dart';
-import 'package:pov2/data/services/location_notifier.dart';
+import 'package:pov2/data/services/provider/count_location_notifier.dart';
+import 'package:pov2/data/services/provider/count_schedule_notifier.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:pov2/data/services/auth_service.dart';
 
 import '../../../data/models/login_model.dart';
-import '../../../data/services/user_notifier.dart';
-import '../../../data/services/visitation_notifier.dart';
+import '../../../data/services/api/auth_service.dart';
+import '../../../data/services/api/get_service.dart';
+import '../../../data/services/provider/location_notifier.dart';
+import '../../../data/services/provider/user_notifier.dart';
+import '../../../data/services/provider/visitation_notifier.dart';
 final loginProvider = StateNotifierProvider<LoginProvider, LoginModel>((ref) => LoginProvider());
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -151,6 +153,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 await ref.read(visitationCompletedProvider.notifier).reload();
                                 await ref.read(visitationFullProvider.notifier).reload();
                                 await ref.read(locationProvider.notifier).reload();
+                                await ref.read(countNotifierProvider.notifier).reload();
+                                await ref.read(locationCountNotifierProvider.notifier).reload();
                               });
 
                               print("EMPLOYEE ID AFTER LOGIN = ${userData.employeeId.toString()}");

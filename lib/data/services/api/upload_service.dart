@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import '../../core/utils/config.dart';
+import '../../../core/utils/config.dart';
 
 class  UploadService{
   static Future<bool> evidenceFile(Map<String, dynamic> data) async{
@@ -17,7 +17,7 @@ class  UploadService{
       request.fields['ScheduleID'] = data['TRVisitationScheduleID'].toString();
       request.fields['UserID'] = pref.getString('userId').toString();
       request.fields['Remark'] = data['Remark'];
-      request.fields['EvidenceType'] = data['EvidenceType'];
+      request.fields['EvidenceType'] = data['EvidenceType'] ?? '';
       request.fields['AttachmentType'] = data['AttachmentType'];
 
       request.files.add(

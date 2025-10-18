@@ -8,9 +8,10 @@ import 'package:pov2/core/widget/custom_button.dart';
 import 'package:pov2/core/widget/custom_card.dart';
 import 'package:pov2/data/models/mtLocationType_model.dart';
 import 'package:pov2/data/models/mtLocation_model.dart';
-import 'package:pov2/data/services/get_service.dart';
 import 'package:pov2/presentation/widgets/custom_highlight_dashboard.dart';
 import 'package:pov2/presentation/widgets/custom_row_icon.dart';
+
+import '../../data/services/api/get_service.dart';
 
 class CustomCardLocationVisit extends StatelessWidget {
   final String id;

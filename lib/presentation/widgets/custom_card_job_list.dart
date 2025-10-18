@@ -12,7 +12,7 @@ import 'package:go_router/go_router.dart';
 import '../../config/router/app_routes.dart';
 import '../../core/widget/custom_allert.dart';
 import '../../core/widget/custom_button.dart';
-import '../../data/services/update_service.dart';
+import '../../data/services/api/update_service.dart';
 
 class CustomCardJobList extends StatelessWidget {
   final JobListModel scheduleData;
@@ -53,9 +53,10 @@ class CustomCardJobList extends StatelessWidget {
               CustomRowIcon(icon: Icons.person, color: AppColor.textSecondary, title: scheduleData.fullName ?? '', textStyle: AppText.caption),
               SizedBox(height: AppSpacing.xs),
               Text(
-                scheduleData.visitationDescription ?? '',
+                scheduleData.visitationDescription ?? '-',
                 style: AppText.caption,
               ),
+              if(!((scheduleData.scheduleStatus ?? '') == 'Completed'))
               SizedBox(height: AppSpacing.sm,),
               if(!((scheduleData.scheduleStatus ?? '') == 'Completed'))
               CustomButtonFull(

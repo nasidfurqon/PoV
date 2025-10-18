@@ -3,13 +3,13 @@ import 'package:pov2/config/theme/app_spacing.dart';
 import 'package:pov2/config/theme/app_text.dart';
 import 'package:pov2/core/widget/custom_normal_scaffold.dart';
 import 'package:pov2/data/models/mtLocation_model.dart';
-import 'package:pov2/data/services/count_service.dart';
-import 'package:pov2/data/services/get_service.dart';
-import 'package:pov2/data/services/location_notifier.dart';
+import 'package:pov2/data/services/provider/count_location_notifier.dart';
+import 'package:pov2/data/services/api/count_service.dart';
 import 'package:pov2/data/services/visit_data.dart';
 import 'package:pov2/presentation/widgets/custom_card_location_visit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/widget/custom_progress_indicator.dart';
+import '../../../data/services/provider/location_notifier.dart';
 import '../../widgets/custom_header_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 class LocationVisitPage extends ConsumerStatefulWidget {
@@ -20,8 +20,6 @@ class LocationVisitPage extends ConsumerStatefulWidget {
 }
 
 class _LocationVisitPageState extends ConsumerState<LocationVisitPage> {
-  int activeCount = 0;
-  int totCount = 0;
   late SharedPreferences pref;
   // List<MTLocationModel?> listLocation = [];
   // bool isLoading = true;
@@ -52,6 +50,15 @@ class _LocationVisitPageState extends ConsumerState<LocationVisitPage> {
   @override
   Widget build(BuildContext context) {
     var listLocationAsync = ref.watch(locationProvider);
+    var countLocation = ref.watch(locationCountNotifierProvider);
+
+    final isAnyLoading = listLocationAsync.isLoading || countLocation.isLoading;
+    final hasError = listLocationAsync.hasError || countLocation.hasError;
+    var listLocation = [];
+
+    if(!hasError) {
+      listLocation = listLocationAsync.value ?? [];
+    }
     return CustomNormalScaffold(
         context: context,
         title: Text(
@@ -60,20 +67,19 @@ class _LocationVisitPageState extends ConsumerState<LocationVisitPage> {
         ),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.global),
-          child: listLocationAsync.when(
-              data: (listLocation){
-                if(listLocation.isEmpty){
-                  CustomProgressIndicator.showInformation(context, 'Tidak ada lokasi terdaftar', 'Info');
-                }
-                return ListView(
+          child: isAnyLoading ? Center(child: CircularProgressIndicator()) :
+              hasError ? CustomProgressIndicator.showInformation(context, 'Gagal mengambil lokasi', 'Info') :
+              listLocation.isEmpty ?
+                  CustomProgressIndicator.showInformation(context, 'Tidak ada lokasi terdaftar', 'Info') :
+                ListView(
                   children: [
                     CustomHeaderCard(
-                        number: totCount.toString(),
+                        number: countLocation.value!.total.toString(),
                         status: 'Total Lokasi'
                     ),
                     SizedBox(height: AppSpacing.sm,),
                     CustomHeaderCard(
-                        number: activeCount.toString(),
+                        number: countLocation.value!.active.toString(),
                         status: 'Aktif'
                     ),
                     SizedBox(height: AppSpacing.sm,),
@@ -86,13 +92,8 @@ class _LocationVisitPageState extends ConsumerState<LocationVisitPage> {
                       );
                     })
                   ],
-                );
-              },
-              error: (e, _) => CustomProgressIndicator.showInformation(context, 'Gagal mengambil lokasi', 'Info'),
-              loading: () => Center(child: CircularProgressIndicator(),)
+                )
           )
-
-        )
     );
   }
 }

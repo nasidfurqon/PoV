@@ -6,14 +6,14 @@ import 'package:pov2/core/widget/custom_normal_scaffold.dart';
 import 'package:pov2/core/widget/custom_progress_indicator.dart';
 import 'package:pov2/data/models/jobList_model.dart';
 import 'package:pov2/data/models/trVisitationSchedule_model.dart';
-import 'package:pov2/data/services/count_service.dart';
+import 'package:pov2/data/services/provider/count_schedule_notifier.dart';
+import 'package:pov2/data/services/api/count_service.dart';
 import 'package:pov2/data/services/visit_data.dart';
-import 'package:pov2/data/services/visitation_notifier.dart';
+import 'package:pov2/data/services/provider/visitation_notifier.dart';
 import 'package:pov2/presentation/widgets/custom_card_job_list.dart';
 import 'package:pov2/presentation/widgets/custom_header_card.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../data/services/get_service.dart';
 class JobListPage extends ConsumerStatefulWidget {
   const JobListPage({super.key});
 
@@ -22,9 +22,6 @@ class JobListPage extends ConsumerStatefulWidget {
 }
 
 class _JobListPageState extends ConsumerState<JobListPage> {
-  int onGoingCount = 0;
-  int waitingCount =0;
-  int finishCount = 0;
   // List<JobListModel> listSchedule = [];
   // late SharedPreferences pref;
   // bool isLoading = true;
@@ -58,6 +55,15 @@ class _JobListPageState extends ConsumerState<JobListPage> {
   @override
   Widget build(BuildContext context) {
     var listScheduleAsync = ref.watch(visitationFullProvider);
+    var countSchedule = ref.watch(countNotifierProvider);
+
+    final isAnyLoading = listScheduleAsync.isLoading || countSchedule.isLoading;
+    final hasError = listScheduleAsync.hasError || countSchedule.hasError;
+    var listSchedule = [];
+
+    if(!hasError) {
+      listSchedule = listScheduleAsync.value ?? [];
+    }
     return CustomNormalScaffold(
         context: context,
         title: Text(
@@ -66,27 +72,24 @@ class _JobListPageState extends ConsumerState<JobListPage> {
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.global),
-          child:
-              listScheduleAsync.when(
-                  data: (listSchedule){
-                    if (listSchedule.isEmpty) {
-                      return CustomProgressIndicator.showInformation(
-                          context, 'Tidak ada tugas', 'Info');
-                    }
-                    return ListView(
+          child: isAnyLoading ? Center(child: CircularProgressIndicator()) :
+              hasError ? CustomProgressIndicator.showInformation(context, 'Gagal mengambil data kunjungan', 'Info') :
+              listSchedule.isEmpty ?
+              CustomProgressIndicator.showInformation(context, 'Tidak ada tugas kunjungan terdaftar', 'Info') :
+                  ListView(
                       children: [
                         CustomHeaderCard(
-                            number: waitingCount.toString(),
+                            number: countSchedule.value!.waiting.toString(),
                             status: 'Menunggu'
                         ),
                         SizedBox(height: AppSpacing.sm,),
                         CustomHeaderCard(
-                            number: onGoingCount.toString(),
+                            number: countSchedule.value!.onGoing.toString(),
                             status: 'Berlangsung'
                         ),
                         SizedBox(height: AppSpacing.sm,),
                         CustomHeaderCard(
-                            number: finishCount.toString(),
+                            number: countSchedule.value!.finish.toString(),
                             status: 'Selesai'
                         ),
                         SizedBox(height: AppSpacing.sm,),
@@ -100,11 +103,7 @@ class _JobListPageState extends ConsumerState<JobListPage> {
                           );
                         })
                       ],
-                    );
-                  },
-                  error: (e, _) => CustomProgressIndicator.showInformation(context, 'Gagal mengambil tugas', 'Error'),
-                  loading: () => const Center(child: CircularProgressIndicator()),
-              )
+                    )
         )
     );
   }

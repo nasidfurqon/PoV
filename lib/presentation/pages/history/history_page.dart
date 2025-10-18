@@ -5,11 +5,10 @@ import 'package:pov2/core/utils/parsing_helper.dart';
 import 'package:pov2/core/widget/custom_layout.dart';
 import 'package:pov2/core/widget/custom_progress_indicator.dart';
 import 'package:pov2/core/widget/custom_scaffold.dart';
-import 'package:pov2/data/services/visitation_notifier.dart';
 import 'package:pov2/presentation/widgets/custom_card_completed_activity.dart';
 
 import '../../../data/models/trVisitationSchedule_model.dart';
-import '../../../data/services/get_service.dart';
+import '../../../data/services/provider/visitation_notifier.dart';
 import '../../../data/services/visit_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
